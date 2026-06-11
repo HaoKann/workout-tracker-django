@@ -7,7 +7,10 @@ def workout_list(request):
     # Достаем все записи из базы данных с помощью ORM
     workouts = WorkOut.objects.all()
 
-    # Формируем простой текст для вывода
-    result = "<br>".join([f"Тренировка: {w.title} | Дата: {w.date}" for w in workouts])
+    # Передаем данные в шаблон через словарь контекста
+    context = {
+        'workouts': workouts
+    }
 
-    return HttpResponse(f"<h1>Мой Workout Tracker</h1><p>{result}</p>")
+    # render сам ищет папку templates внутри зарегистрированных приложений
+    return render(request, 'workouts/index.html', context)
