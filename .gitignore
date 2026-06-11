@@ -1,0 +1,19 @@
+# Виртуальные окружения
+.venv/
+venv/
+env/
+
+# Кэш Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Локальные базы данных
+db.sqlite3
+
+# Файлы переменных окружения (безопасность!)
+.env
+
+# Системные файлы Windows/Mac
+.DS_Store
+Thumbs.db
