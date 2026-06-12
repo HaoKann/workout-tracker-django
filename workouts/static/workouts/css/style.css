@@ -1,0 +1,5 @@
+ body { font-family: sans-serif; background: #f4f4f9; color: #333; padding: 40px; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 500px; }
+        h1 { color: #2c3e50; }
+        ul { list-style-type: none; padding: 0; }
+        li { padding: 10px; background: #ecf0f1; margin-bottom: 8px; border-radius: 4px; }

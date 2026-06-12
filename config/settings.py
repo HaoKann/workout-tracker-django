@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
+import os
 
 from pathlib import Path
 
@@ -119,6 +120,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+# Указываем Django, где искать общие статические файлы
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
+# Настройки для загружаемых пользователями файлов (Media)
+MEDIA_URL = 'media/'
+# Папка, куда будут физически сохраняться файлы (например, фото результатов)
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
