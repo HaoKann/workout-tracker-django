@@ -13,4 +13,4 @@ def workout_list(request):
     }
 
     # render сам ищет папку templates внутри зарегистрированных приложений
-    return render(request, 'workouts/index.html', context)
+    return render(request, 'workouts/main.html', context)

@@ -1,0 +1,52 @@
+{% extends 'workouts/base.html' %}
+{% load static %}
+
+
+{% block content %}
+    <div class="card">
+        <h1>Мой Workout Tracker</h1>
+
+        {% if workouts %}
+        <ul>
+            {% for workout in workouts %}
+            <li>
+                <strong>{{ workout.title }}</strong> - {{ workout.date }}
+                {% if workout.notes %}
+                    <br><small style="color: #666;">Заметка: {{workout.notes}}</small>
+                {% endif %}
+
+                <!-- НОВЫЙ БЛОК: Вывод подходов -->
+                {% if workout.sets.all %}
+                    <table style="width: 100%; margin-top: 15px; border-collapse: collapse; font-size: 0.9em; background-color: white;">
+                        <tr style="background-color: #bdc3c7; text-align: left;">
+                            <th style="padding: 8px; border-radius: 4px 0 0 0;">Упражнение</th>
+                            <th style="padding: 8px;">Вес (кг)</th>
+                            <th style="padding: 8px; border-radius: 0 4px 0 0;">Повторения</th>
+                        </tr>
+
+                        <!-- Проходимся по всем подходам, привязанным к этой тренировке -->
+                        {% for set in workout.sets.all %}
+                        <tr style="border-bottom: 1px solid #ecf0f1;"> 
+                            <!-- Через точку проваливаемся в справочник упражнений за названием -->
+                            <td style="padding: 8px;">{{ set.exercise.name }}</td>
+                            <td style="padding: 8px; font-weight: bold;">{{ set.weight }}</td>
+                            <td style="padding: 8px;">{{ set.reps }}</td>
+                        </tr>
+                        {% endfor %}
+
+                    </table>
+                {% else %}
+                    <p style="font-size: 0.8em; color: #7f8c8d; margin-top: 10px;">Подходов пока нет.</p>
+                {% endif %}
+
+
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p>Тренировок пока не добавлено</p>
+        {% endif %}
+    </div>
+
+{% endblock %}
+

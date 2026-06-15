@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Tracker</title>
+    <link rel="stylesheet" href="{% static 'workouts/css/style.css' %}">
+</head>
+<body>
+
+
+    <div style="max-width: 800px; margin: 0 auto;">
+        {% block content %}
+        <!-- Сюда попадает уникальный контент каждой страницы -->
+        {% endblock %}
+    </div>
+
+
+</body>
+</html>
