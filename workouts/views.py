@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from .models import WorkOut
 from django.contrib.auth.models import User
 from .forms import WorkOutForm
+from django.contrib import messages
 # Create your views here.
 
 def workout_list(request):
@@ -30,6 +31,7 @@ def workout_create(request):
             workout.user = User.objects.first()
 
             workout.save()
+            messages.success(request, 'Тренировка успешно добавлена! 🎉')
             return redirect('workout_list')
     else:
         # Если пользователь просто открыл страницу, показываем пустую форму

@@ -11,6 +11,16 @@
 
 
     <div style="max-width: 800px; margin: 0 auto;">
+        {% if messages %}
+            <ul style="list-style: none; margin: 0 auto;">
+                {% for message in messages %}
+                    <li style="padding: 10px; margin-bottom: 15px; border-radius: 4px; background-color: #dffece; color: #2e6615; border: 1px solid #b8dfa3;">
+                       {{ message }}  
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
         {% block content %}
         <!-- Сюда попадает уникальный контент каждой страницы -->
         {% endblock %}
