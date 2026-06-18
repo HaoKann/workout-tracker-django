@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     # Путь пустой '', значит он будет срабатывать на главной странице приложения
-    path('', views.workout_list, name='workout_list'),
-    path('/new/', views.workout_create, name='workout_create')
+    # Заменяем функцию на вызов метода as_view() у нашего класса
+    path('', views.WorkOutList.as_view(), name='workout_list'),
+    path('new/', views.WorkOutCreate.as_view(), name='workout_create')
 ]
