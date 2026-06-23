@@ -126,7 +126,7 @@ STATICFILES_DIRS = [
 ]
 
 # Настройки для загружаемых пользователями файлов (Media)
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 # Папка, куда будут физически сохраняться файлы (например, фото результатов)
 MEDIA_ROOT = BASE_DIR / 'media'
 

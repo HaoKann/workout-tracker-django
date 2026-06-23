@@ -13,7 +13,7 @@ class WorkOutForm(forms.ModelForm):
 
     class Meta:
         model = WorkOut
-        fields = ['title', 'notes']
+        fields = ['title', 'notes', 'photo']
 
     def clean_title(self):
         # 1. Достаем очищенный текст, который ввел пользователь

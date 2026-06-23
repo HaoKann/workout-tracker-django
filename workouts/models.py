@@ -7,6 +7,8 @@ class WorkOut(models.Model):
     title = models.CharField(max_length=100, help_text="Название тренировки (например, 'День ног')")
     date = models.DateField(auto_now_add=True)
     notes = models.TextField(blank=True, null=True, help_text="Заметки к тренировке")
+    photo = models.ImageField(upload_to='workout_images/', blank=True, null=True)
+
 
     def __str__(self):
         return f"{self.title} - {self.date} ({self.user.username})"
