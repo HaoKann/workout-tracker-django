@@ -1,5 +1,588 @@
- body { font-family: sans-serif; background: #f4f4f9; color: #333; padding: 40px; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 500px; }
-        h1 { color: #2c3e50; }
-        ul { list-style-type: none; padding: 0; }
-        li { padding: 10px; background: #ecf0f1; margin-bottom: 8px; border-radius: 4px; }
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0F172A;
+  color: #E2E8F0;
+  min-height: 100vh;
+}
+
+/* ── TOP HERO HEADER ───────────────────────────── */
+.wt-hero {
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 60%, #0F2744 100%);
+  padding: 48px 40px 40px;
+  border-bottom: 1px solid rgba(59,130,246,0.15);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.wt-hero-left .eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #06B6D4;
+  margin-bottom: 8px;
+}
+
+.wt-hero-left h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(42px, 6vw, 72px);
+  letter-spacing: 0.04em;
+  line-height: 0.92;
+  color: #F8FAFC;
+}
+
+.wt-hero-left h1 span {
+  color: #3B82F6;
+}
+
+.wt-hero-meta {
+  display: flex;
+  gap: 32px;
+  margin-top: 20px;
+}
+
+.wt-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.wt-stat-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  color: #F8FAFC;
+  line-height: 1;
+}
+
+.wt-stat-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #64748B;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.wt-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: #3B82F6;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
+  box-shadow: 0 4px 20px rgba(59,130,246,0.35);
+  white-space: nowrap;
+}
+
+.wt-add-btn:hover {
+  background: #2563EB;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(59,130,246,0.45);
+}
+
+.wt-add-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── MAIN CONTENT AREA ─────────────────────────── */
+.wt-main {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── EMPTY STATE ───────────────────────────────── */
+.wt-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 40px;
+  text-align: center;
+}
+
+.wt-empty-icon {
+  width: 80px;
+  height: 80px;
+  background: #1E293B;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  border: 2px dashed #334155;
+}
+
+.wt-empty-icon svg { width: 36px; height: 36px; color: #475569; }
+
+.wt-empty h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 0.05em;
+  color: #94A3B8;
+  margin-bottom: 8px;
+}
+
+.wt-empty p {
+  color: #475569;
+  font-size: 14px;
+}
+
+/* ── WORKOUT GRID ──────────────────────────────── */
+.wt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+/* ── WORKOUT CARD ──────────────────────────────── */
+.wt-card {
+  background: #1E293B;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #263348;
+  transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+  position: relative;
+}
+
+.wt-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  border-color: rgba(59,130,246,0.3);
+}
+
+/* Accent stripe per card (cycles through 4 colors) */
+.wt-card:nth-child(4n+1) .wt-card-stripe { background: #3B82F6; }
+.wt-card:nth-child(4n+2) .wt-card-stripe { background: #06B6D4; }
+.wt-card:nth-child(4n+3) .wt-card-stripe { background: #F97316; }
+.wt-card:nth-child(4n+4) .wt-card-stripe { background: #8B5CF6; }
+
+.wt-card-stripe {
+  height: 4px;
+  width: 100%;
+}
+
+.wt-card-body {
+  padding: 20px 22px;
+}
+
+.wt-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.wt-card-title {
+  font-weight: 700;
+  font-size: 17px;
+  color: #F1F5F9;
+  line-height: 1.3;
+  flex: 1;
+  padding-right: 12px;
+}
+
+.wt-card-date {
+  font-size: 11px;
+  font-weight: 500;
+  color: #475569;
+  background: #0F172A;
+  padding: 4px 9px;
+  border-radius: 6px;
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.wt-card-note {
+  font-size: 13px;
+  color: #94A3B8;
+  background: rgba(255,255,255,0.03);
+  border-left: 2px solid #334155;
+  padding: 8px 12px;
+  border-radius: 0 6px 6px 0;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.wt-card-photo {
+  width: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+  max-height: 180px;
+  margin-bottom: 16px;
+  display: block;
+}
+
+/* ── SETS TABLE ────────────────────────────────── */
+.wt-sets-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #475569;
+  margin-bottom: 8px;
+}
+
+.wt-sets-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.wt-sets-table thead tr {
+  background: #0F172A;
+}
+
+.wt-sets-table th {
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #64748B;
+  border-bottom: 1px solid #263348;
+}
+
+.wt-sets-table th:first-child { border-radius: 6px 0 0 0; }
+.wt-sets-table th:last-child  { border-radius: 0 6px 0 0; text-align: right; }
+
+.wt-sets-table tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.12s;
+}
+
+.wt-sets-table tbody tr:last-child { border-bottom: none; }
+
+.wt-sets-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+.wt-sets-table td {
+  padding: 9px 10px;
+  color: #CBD5E1;
+  vertical-align: middle;
+}
+
+.wt-sets-table td:first-child {
+  font-weight: 500;
+  color: #E2E8F0;
+}
+
+.wt-weight-badge {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.04em;
+  color: #F8FAFC;
+}
+
+.wt-weight-unit {
+  font-size: 10px;
+  color: #64748B;
+  margin-left: 2px;
+  font-weight: 500;
+}
+
+.wt-reps-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #94A3B8;
+  float: right;
+}
+
+.wt-reps-badge span {
+  color: #E2E8F0;
+  font-size: 15px;
+}
+
+.wt-no-sets {
+  font-size: 12px;
+  color: #475569;
+  padding: 12px 0 4px;
+  text-align: center;
+  font-style: italic;
+}
+
+/* ── SECTION HEADER ─────────────────────────────── */
+.wt-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.wt-section-header .label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #64748B;
+}
+
+.wt-section-header .line {
+  flex: 1;
+  height: 1px;
+  background: #1E293B;
+}
+
+/* ── RESPONSIVE ─────────────────────────────────── */
+@media (max-width: 640px) {
+  .wt-hero      { padding: 32px 20px 28px; }
+  .wt-main      { padding: 24px 16px; }
+  .wt-grid      { grid-template-columns: 1fr; }
+  .wt-hero-meta { gap: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wt-card, .wt-add-btn { transition: none; }
+}
+
+
+/* ═══════════════════════════════════════════════
+   WORKOUT FORM PAGE  (workout_create / workout_edit)
+   ═══════════════════════════════════════════════ */
+
+.wf-wrapper {
+  min-height: 100vh;
+  background: #0F172A;
+  padding: 40px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── BACK LINK ───────────────────────────────── */
+.wf-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #475569;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  margin-bottom: 28px;
+  align-self: flex-start;
+  max-width: 560px;
+  width: 100%;
+  transition: color 0.15s;
+}
+
+.wf-back:hover { color: #94A3B8; }
+
+.wf-back svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ── CARD ────────────────────────────────────── */
+.wf-card {
+  background: #1E293B;
+  border: 1px solid #263348;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 560px;
+  overflow: hidden;
+}
+
+/* ── HEADER ──────────────────────────────────── */
+.wf-header {
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 60%, #0F2744 100%);
+  padding: 32px 36px 28px;
+  border-bottom: 1px solid #263348;
+}
+
+.wf-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #06B6D4;
+  margin-bottom: 8px;
+}
+
+.wf-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 42px;
+  letter-spacing: 0.04em;
+  line-height: 0.92;
+  color: #F8FAFC;
+}
+
+.wf-title span { color: #3B82F6; }
+
+/* ── FORM BODY ───────────────────────────────── */
+.wf-form {
+  padding: 32px 36px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── FIELD WRAPPER ───────────────────────────── */
+.wf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.wf-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #64748B;
+}
+
+/* ── ALL INPUTS / TEXTAREA / SELECT ─────────── */
+.wf-form input[type="text"],
+.wf-form input[type="date"],
+.wf-form input[type="number"],
+.wf-form input[type="email"],
+.wf-form input[type="url"],
+.wf-form input[type="file"],
+.wf-form textarea,
+.wf-form select {
+  width: 100%;
+  background: #0F172A;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 11px 14px;
+  color: #E2E8F0;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.wf-form input[type="file"] {
+  color: #64748B;
+  cursor: pointer;
+  padding: 10px 14px;
+}
+
+.wf-form input[type="file"]::-webkit-file-upload-button {
+  background: #1E293B;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  color: #94A3B8;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  padding: 5px 12px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background 0.15s;
+}
+
+.wf-form input[type="file"]::-webkit-file-upload-button:hover {
+  background: #263348;
+}
+
+.wf-form textarea {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.6;
+}
+
+.wf-form select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 38px;
+  cursor: pointer;
+}
+
+.wf-form input:focus,
+.wf-form textarea:focus,
+.wf-form select:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+
+/* ── ERROR STATE ─────────────────────────────── */
+.wf-field--error input,
+.wf-field--error textarea,
+.wf-field--error select {
+  border-color: #EF4444;
+}
+
+.wf-field--error input:focus,
+.wf-field--error textarea:focus,
+.wf-field--error select:focus {
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.15);
+}
+
+.wf-error {
+  font-size: 12px;
+  color: #EF4444;
+  margin-top: 2px;
+}
+
+.wf-help {
+  font-size: 12px;
+  color: #475569;
+  margin-top: 2px;
+  line-height: 1.5;
+}
+
+/* ── SUBMIT BUTTON ───────────────────────────── */
+.wf-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 14px 28px;
+  background: #3B82F6;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.12s, box-shadow 0.18s;
+  box-shadow: 0 4px 20px rgba(59,130,246,0.35);
+  width: 100%;
+}
+
+.wf-submit:hover {
+  background: #2563EB;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(59,130,246,0.45);
+}
+
+.wf-submit svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* ── RESPONSIVE ──────────────────────────────── */
+@media (max-width: 640px) {
+  .wf-wrapper  { padding: 24px 16px 48px; }
+  .wf-header   { padding: 24px 22px 20px; }
+  .wf-form     { padding: 24px 22px 28px; }
+  .wf-title    { font-size: 34px; }
+}

@@ -1,56 +1,115 @@
 {% extends 'workouts/base.html' %}
 {% load static %}
 
-
 {% block content %}
-    <div class="card">
-        <h1>Мой Workout Tracker</h1>
-
-        <a href="{% url 'workout_create' %}" style="display: inline-block; margin-bottom: 20px; padding: 10px; background-color: #27ae60; color: white; text-decoration: none; border-radius: 4px;">
-            + Добавить тренировку
-        </a>
-
-        {% if workouts %}
-        <ul>
-            {% for workout in workouts %}
-            <li>
-                <strong>{{ workout.title }}</strong> - {{ workout.date }}
-                {% if workout.notes %}
-                    <br><small style="color: #666;">Заметка: {{workout.notes}}</small>
-                {% endif %}
-
-                <!-- НОВЫЙ БЛОК: Вывод подходов -->
-                {% if workout.sets.all %}
-                    <table style="width: 100%; margin-top: 15px; border-collapse: collapse; font-size: 0.9em; background-color: white;">
-                        <tr style="background-color: #bdc3c7; text-align: left;">
-                            <th style="padding: 8px; border-radius: 4px 0 0 0;">Упражнение</th>
-                            <th style="padding: 8px;">Вес (кг)</th>
-                            <th style="padding: 8px; border-radius: 0 4px 0 0;">Повторения</th>
-                        </tr>
-
-                        <!-- Проходимся по всем подходам, привязанным к этой тренировке -->
-                        {% for set in workout.sets.all %}
-                        <tr style="border-bottom: 1px solid #ecf0f1;"> 
-                            <!-- Через точку проваливаемся в справочник упражнений за названием -->
-                            <td style="padding: 8px;">{{ set.exercise.name }}</td>
-                            <td style="padding: 8px; font-weight: bold;">{{ set.weight }}</td>
-                            <td style="padding: 8px;">{{ set.reps }}</td>
-                        </tr>
-                        {% endfor %}
-
-                    </table>
-                {% else %}
-                    <p style="font-size: 0.8em; color: #7f8c8d; margin-top: 10px;">Подходов пока нет.</p>
-                {% endif %}
 
 
-            </li>
-            {% endfor %}
-        </ul>
-        {% else %}
-            <p>Тренировок пока не добавлено</p>
-        {% endif %}
+<!-- HERO HEADER -->
+<div class="wt-hero">
+  <div class="wt-hero-left">
+    <p class="eyebrow">Dashboard</p>
+    <h1>WORKOUT<br><span>TRACKER</span></h1>
+    <div class="wt-hero-meta">
+      <div class="wt-stat">
+        <span class="wt-stat-value">{{ workouts|length }}</span>
+        <span class="wt-stat-label">Тренировок</span>
+      </div>
+      <div class="wt-stat">
+        <span class="wt-stat-value">
+          {% with total=0 %}
+            {% for w in workouts %}{% with total=total|add:w.sets.count %}{% endwith %}{% endfor %}
+            {{ workouts|length }}
+          {% endwith %}
+        </span>
+        <span class="wt-stat-label">Всего записей</span>
+      </div>
+    </div>
+  </div>
+
+  <a href="{% url 'workout_create' %}" class="wt-add-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+    Добавить тренировку
+  </a>
+</div>
+
+<!-- MAIN -->
+<div class="wt-main">
+
+  {% if workouts %}
+    <div class="wt-section-header">
+      <span class="label">Последние тренировки</span>
+      <span class="line"></span>
     </div>
 
-{% endblock %}
+    <div class="wt-grid">
+      {% for workout in workouts %}
+      <div class="wt-card">
+        <div class="wt-card-stripe"></div>
+        <div class="wt-card-body">
 
+          <div class="wt-card-top">
+            <div class="wt-card-title">{{ workout.title }}</div>
+            <div class="wt-card-date">{{ workout.date }}</div>
+          </div>
+
+          {% if workout.notes %}
+          <div class="wt-card-note">{{ workout.notes }}</div>
+          {% endif %}
+
+          {% if workout.photo %}
+          <img src="{{ workout.photo.url }}" alt="Фото тренировки" class="wt-card-photo">
+          {% endif %}
+
+          {% if workout.sets.all %}
+            <div class="wt-sets-label">Подходы</div>
+            <table class="wt-sets-table">
+              <thead>
+                <tr>
+                  <th>Упражнение</th>
+                  <th>Вес</th>
+                  <th style="text-align:right;">Повторения</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for set in workout.sets.all %}
+                <tr>
+                  <td>{{ set.exercise.name }}</td>
+                  <td>
+                    <span class="wt-weight-badge">{{ set.weight }}</span>
+                    <span class="wt-weight-unit">кг</span>
+                  </td>
+                  <td>
+                    <span class="wt-reps-badge">
+                      <span>{{ set.reps }}</span> повт.
+                    </span>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <p class="wt-no-sets">Подходов пока нет</p>
+          {% endif %}
+
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+  {% else %}
+    <div class="wt-empty">
+      <div class="wt-empty-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6.5 6.5h11M6.5 17.5h11M4 12h16M9 4.5v15M15 4.5v15"/>
+        </svg>
+      </div>
+      <h3>Тренировок пока нет</h3>
+      <p>Нажмите «Добавить тренировку», чтобы начать</p>
+    </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}
