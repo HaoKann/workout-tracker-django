@@ -1,0 +1,19 @@
+{% extends 'workouts/main.html' %} 
+
+{% block content %}
+<div style="margin: 50px;">
+    <h2>Мой профиль</h2>
+    <hr>
+    <h4>Пользователь: {{ user.username }}</h4>
+    
+    <p><strong>Текущий вес:</strong> 
+        {% if user.weight %}{{ user.weight }} кг{% else %}Не указан{% endif %}
+    </p>
+
+    {% if user.avatar %}
+        <img src="{{ user.avatar.url }}" alt="Аватар" style="max-width: 200px; border-radius: 10px;">
+    {% else %}
+        <p><i>Фото пока нет</i></p>
+    {% endif %}
+</div>
+{% endblock %}

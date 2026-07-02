@@ -26,8 +26,13 @@ SECRET_KEY = 'django-insecure-2e7eyz++1d_q@ap@@1um23b_32#$p(_3!_$k07sf6v%7q#v1fj
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000', 
+    'http://127.0.0.1:8000',
+    'http://localhost:8008', 
+    'http://127.0.0.1:8008'
+]
 
 # Application definition
 
@@ -38,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'users',
     # Наши приложения
     'workouts',
 ]
@@ -136,3 +141,5 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.CustomUser'

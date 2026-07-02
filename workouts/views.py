@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, CreateView
 from .models import WorkOut, Exercise
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from .forms import WorkOutForm
 from django.contrib import messages
 from django.urls import reverse_lazy
 # Create your views here.
+
+User = get_user_model()
 
 class WorkOutList(ListView):
     # Указываем, с какой моделью (таблицей) работаем
@@ -26,7 +28,7 @@ class WorkOutCreate(CreateView):
     # Тот самый перехватчик конвейера
     def form_valid(self, form):
         # form.instance — это наша тренировка. Аналог commit=False
-        form.instance.user = User.objects.first()
+        form.instance.user = self.request.user
 
         # Создаем зеленое уведомление
         messages.success(self.request, 'Тренировка успешно добавлена! 🎉')
