@@ -17,3 +17,5 @@ db.sqlite3
 # Системные файлы Windows/Mac
 .DS_Store
 Thumbs.db
+
+.md
