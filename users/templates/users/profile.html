@@ -1,19 +1,56 @@
 {% extends 'workouts/main.html' %} 
 
 {% block content %}
-<div style="margin: 50px;">
+<div style="margin: 50px; max-width: 500px; font-family: sans-serif;">
     <h2>Мой профиль</h2>
-    <hr>
-    <h4>Пользователь: {{ user.username }}</h4>
-    
-    <p><strong>Текущий вес:</strong> 
-        {% if user.weight %}{{ user.weight }} кг{% else %}Не указан{% endif %}
-    </p>
+    <hr style="border-color: #4a5568;">
 
-    {% if user.avatar %}
-        <img src="{{ user.avatar.url }}" alt="Аватар" style="max-width: 200px; border-radius: 10px;">
+    {% if message %}
+        {% for message in messages %}
+            <div style="padding: 12px; background-color: #2f855a; color: white; border-radius: 8px; margin-bottom: 20px;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if edit_mode %}
+        <form method="POST" enctype="multipart/form-data" style="background: #1a202c; padding: 25px; border-radius: 12px; border: 1px solid #2d3748;">
+            {% csrf_token %}
+
+            <div class="margin-bottom: 20px">
+                {{ form.as_p }}
+            </div>
+            
+            <div style="display: flex; gap: 10px; align-items: center; margin-top: 20px;">
+                <button type="submit" class="wt-add-btn" style="border: none; cursor: pointer; padding: 10px 20px;">
+                    Сохранить
+                </button>
+                <a href="{% url 'profile' %}" style="color: #a0aec0; text-decoration: none; font-size: 0.9em; margin-left: 10px;">
+                    Отмена
+                </a>
+            </div>
+        </form>
     {% else %}
-        <p><i>Фото пока нет</i></p>
+
+        <div style="background: #1a202c; padding: 25px; border-radius: 12px; border: 1px solid #2d3748;">
+            <h4 style="margin-top: 0; color: #e2e8f0;">Пользователь: {{ user.username }}</h4>
+            
+            <p style="color: #cbd5e0;"><strong>Текущий вес:</strong> 
+                {% if user.weight %}{{ user.weight }} кг{% else %}<span style="color: #718096;">Не указан</span>{% endif %}
+            </p>
+
+            <div style="margin-top: 20px; margin-bottom: 25px;">
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="Аватар" style="max-width: 100%; height: auto; border-radius: 10px; border: 2px solid #4a5568;">
+                {% else %}
+                    <p style="color: #718096; font-style: italic;">Фото профиля не загружено</p>
+                {% endif %}
+            </div>
+
+            <a href="?edit=y" class="wt-add-btn" style="text-decoration: none; display: inline-block; padding: 10px 20px;">
+                Редактировать профиль
+            </a>
+        </div>
     {% endif %}
 </div>
 {% endblock %}
