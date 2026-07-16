@@ -25,6 +25,7 @@ urlpatterns = [
     # Подключаем все пути из нашего приложения workouts на главную страницу
     path('', include('workouts.urls')),
     path('profile/', user_views.profile, name='profile'),
+    path('register/', user_views.register, name='register'),
 ]
 
 

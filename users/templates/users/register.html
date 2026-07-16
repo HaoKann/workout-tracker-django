@@ -1,0 +1,42 @@
+{% extends 'workouts/base.html' %} 
+
+{% block content %}
+<div class="wf-wrapper">
+    <div class="wf-card">
+        
+        <!-- Красивая шапка, как в твоем дизайне -->
+        <div class="wf-header">
+            <div class="wf-eyebrow">Workout Tracker</div>
+            <h2 class="wf-title"><span>Регистрация</span></h2>
+        </div>
+        
+        <!-- Сама форма с твоим классом wf-form -->
+        <form method="POST" class="wf-form">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <!-- Если есть ошибка, добавляем класс wf-field--error -->
+                <div class="wf-field {% if field.errors %}wf-field--error{% endif %}">
+                    <label class="wf-label">{{ field.label }}</label>
+                    
+                    {{ field }}
+                    
+                    {% if field.errors %}
+                        <div class="wf-error">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+            <button type="submit" class="wf-submit">
+                Зарегистрироваться
+            </button>
+            
+            <!-- Тот самый новый футер для ссылок -->
+            <div class="wf-auth-footer">
+                Уже есть аккаунт? <a href="#">Войти</a>
+            </div>
+            
+        </form>
+    </div>
+</div>
+{% endblock %}

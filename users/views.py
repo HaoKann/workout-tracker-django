@@ -1,9 +1,26 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import UserUpdateForm
+from .forms import UserUpdateForm, CustomUserCreationForm
 
 
+
+def register(request):
+    # Если кто-то нажал кнопку "Зарегистрироваться" (отправил данные)
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save() # Создаем пользователя в базе данных PostgreSQL
+            username = form.cleaned_data.get('username')
+            messages.success(request, f"Аккаунт {username} успешно создан!")
+            return redirect('login')
+    else:
+        # Если человек просто перешел на страницу регистрации, выдаем пустую форму
+        form = CustomUserCreationForm()      
+
+    return render(request, 'users/register.html', {'form': form})
+        
+        
 @login_required
 def profile(request): 
     # Проверяем, передан ли GET-параметр ?edit=y

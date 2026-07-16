@@ -586,3 +586,62 @@ body {
   .wf-form     { padding: 24px 22px 28px; }
   .wf-title    { font-size: 34px; }
 }
+
+/* ── ДОПОЛНЕНИЯ ДЛЯ СИСТЕМЫ АВТОРИЗАЦИИ ──────── */
+
+/* Добавляем стили для полей пароля (раньше их не было в списке) */
+.wf-form input[type="password"] {
+  width: 100%;
+  background: #0F172A;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 11px 14px;
+  color: #E2E8F0;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.wf-form input[type="password"]:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+
+.wf-field--error input[type="password"] {
+  border-color: #EF4444;
+}
+
+/* Стили для стандартных списков ошибок Django */
+.wf-form ul.errorlist {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0 0;
+  color: #EF4444;
+  font-size: 12px;
+}
+.wf-form ul.errorlist li {
+  margin-bottom: 2px;
+}
+
+/* Стили для ссылок под формой (вход / регистрация) */
+.wf-auth-footer {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 13px;
+  color: #64748B;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  padding-top: 20px;
+}
+
+.wf-auth-footer a {
+  color: #3B82F6;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+
+.wf-auth-footer a:hover {
+  color: #60A5FA;
+  text-decoration: underline;
+}
