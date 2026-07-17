@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UserUpdateForm, CustomUserCreationForm
+from django.contrib.auth import login as auth_login
+from django.contrib.auth.forms import AuthenticationForm 
 
 
-
-def register(request):
+def register_view(request):
     # Если кто-то нажал кнопку "Зарегистрироваться" (отправил данные)
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -20,7 +21,21 @@ def register(request):
 
     return render(request, 'users/register.html', {'form': form})
         
-        
+       
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            # Получаем пользователя и логиним его
+            user = form.get_user()
+            auth_login(request, user)
+            return redirect('home')
+    else:
+        form = AuthenticationForm()
+    
+    return render(request, 'users/login.html', {'form': form})     
+
+ 
 @login_required
 def profile(request): 
     # Проверяем, передан ли GET-параметр ?edit=y

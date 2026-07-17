@@ -1,0 +1,13 @@
+{% extends 'workouts/base.html' %} 
+
+{% block content %}
+<div class="login-container">
+    <h2>Вход</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn-primary">Войти</button>
+    </form>
+    <p>Еще нет аккаунта? <a href="{% url 'login' %}">Зарегистрироваться</a></p>
+</div>
+{% endblock %}

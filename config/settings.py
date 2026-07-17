@@ -34,6 +34,9 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8008'
 ]
 
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
+
 # Application definition
 
 INSTALLED_APPS = [

@@ -23,9 +23,10 @@ from users import views as user_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     # Подключаем все пути из нашего приложения workouts на главную страницу
-    path('', include('workouts.urls')),
+    path('', include('workouts.urls'), name='home'),
     path('profile/', user_views.profile, name='profile'),
-    path('register/', user_views.register, name='register'),
+    path('register/', user_views.register_view, name='register'),
+    path('login/', user_views.login_view, name='login')
 ]
 
 
