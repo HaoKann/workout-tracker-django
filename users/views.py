@@ -29,7 +29,7 @@ def login_view(request):
             # Получаем пользователя и логиним его
             user = form.get_user()
             auth_login(request, user)
-            return redirect('home')
+            return redirect('profile')
     else:
         form = AuthenticationForm()
     

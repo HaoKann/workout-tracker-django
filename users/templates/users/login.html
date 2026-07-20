@@ -1,13 +1,51 @@
-{% extends 'workouts/base.html' %} 
+{% extends 'workouts/base.html' %}
 
 {% block content %}
-<div class="login-container">
-    <h2>Вход</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn-primary">Войти</button>
-    </form>
-    <p>Еще нет аккаунта? <a href="{% url 'login' %}">Зарегистрироваться</a></p>
+<div class="wf-wrapper">
+    <div class="wf-card">
+        <!-- Шапка карточки в стиле приложения -->
+        <div class="wf-header">
+            <div class="wf-eyebrow">Авторизация</div>
+            <h1 class="wf-title">Вход в <span>систему</span></h1>
+        </div>
+        
+        <!-- Сама форма -->
+        <form method="POST" class="wf-form">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="wf-error" style="background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(239, 68, 68, 0.3);">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            {% for field in form %}
+                <div class="wf-field {% if field.errors %}wf-field--error{% endif %}">
+                    <label class="wf-label" for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+                    
+                    {{ field }}
+
+                    {% if field.help_text %}
+                        <div class="wf-help">{{ field.help_text|safe }}</div>
+                    {% endif %}
+
+                    {% if field.errors %}
+                        <div class="wf-error">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="wf-submit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                Войти
+            </button>
+            
+            <div class="wf-auth-footer">
+                Еще нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}

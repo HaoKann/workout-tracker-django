@@ -30,18 +30,18 @@
 ---
 
 ## 🟧 Блок 3: Продвинутый Backend
-- [ ] Custom User Model (Абстрактный пользователь)
+- [x] Custom User Model (Абстрактный пользователь)
 - [ ] Оптимизация запросов: select_related и prefetch_related
 - [ ] Middleware (Свои прослойки)
 - [ ] Django Signals
-- [ ] Аутентификация и права доступа (Permissions)
+- [x] Аутентификация и права доступа (Permissions)
 
 ➕ Дополнительно (очень важно)
 - [ ] Транзакции (atomic)
 - [ ] Обработка ошибок (custom exceptions, handlers)
 - [ ] Логирование (logging)
 - [ ] Работа с кэшем (Django cache + Redis)
-- [ ] Основы безопасности (CSRF, XSS, CORS)
+- [x] Основы безопасности (CSRF, XSS, CORS)
 
 ---
 
