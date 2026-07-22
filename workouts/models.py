@@ -3,7 +3,11 @@ from django.conf import settings
 
 # Create your models here.
 class WorkOut(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='workouts')
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE,
+        related_name='workouts'
+    )
     title = models.CharField(max_length=100, help_text="Название тренировки (например, 'День ног')")
     date = models.DateField(auto_now_add=True)
     notes = models.TextField(blank=True, null=True, help_text="Заметки к тренировке")

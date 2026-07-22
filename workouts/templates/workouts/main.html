@@ -45,10 +45,14 @@
 </div>
 </div>
 
+
+
 <!-- MAIN -->
 <div class="wt-main">
 
   {% if workouts %}
+  
+
     <div class="wt-section-header">
       <span class="label">Последние тренировки</span>
       <span class="line"></span>
@@ -63,6 +67,20 @@
           <div class="wt-card-top">
             <div class="wt-card-title">{{ workout.title }}</div>
             <div class="wt-card-date">{{ workout.date }}</div>
+          </div>
+          <!-- Контейнер для кнопок управления внутри wt-card-body -->
+          <div class="wt-card-actions" style="margin-top: 10px; display: flex; gap: 10px;">
+            
+            <!-- Кнопка редактирования -->
+            <a href="{% url 'workout_update' workout.pk %}" style="color: #63b3ed; text-decoration: none; font-size: 0.9em;">
+              Редактировать
+            </a>
+            
+            <!-- Кнопка удаления -->
+            <a href="{% url 'workout_delete' workout.pk %}" style="color: #fc8181; text-decoration: none; font-size: 0.9em;">
+              Удалить
+            </a>
+
           </div>
 
           {% if workout.notes %}
