@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 
+
 # Create your models here.
 class WorkOut(models.Model):
     user = models.ForeignKey(
@@ -12,6 +13,8 @@ class WorkOut(models.Model):
     date = models.DateField(auto_now_add=True)
     notes = models.TextField(blank=True, null=True, help_text="Заметки к тренировке")
     photo = models.ImageField(upload_to='workout_images/', blank=True, null=True)
+    
+    exercises = models.ManyToManyField('Exercise', related_name='workouts')
 
 
     def __str__(self):

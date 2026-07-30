@@ -1,0 +1,39 @@
+{% extends 'workouts/base.html' %}
+
+{% block content %}
+<div class="wt-main">
+  
+  <div class="wt-section-header">
+    <span class="label">Удаление тренировки</span>
+    <span class="line"></span>
+  </div>
+
+  <div class="wt-card">
+    <div class="wt-card-body">
+      
+      <!-- Обрати внимание: переменная object автоматически передается классом DeleteView -->
+      <h3 style="color: #fc8181; margin-bottom: 10px;">Вы уверены?</h3>
+      <p>Вы действительно хотите удалить тренировку <strong>«{{ object.title }}»</strong> за {{ object.date }}?</p>
+      <p style="color: #a0aec0; font-size: 0.9em; margin-top: 10px;">Это действие нельзя будет отменить.</p>
+
+      <!-- Самое важное: метод POST и токен безопасности -->
+      <form method="POST" style="margin-top: 25px;">
+        {% csrf_token %}
+        
+        <div style="display: flex; gap: 15px;">
+          <button type="submit" class="wt-add-btn" style="background-color: #fc8181; border: none; cursor: pointer;">
+            Да, удалить навсегда
+          </button>
+          
+          <a href="{% url 'workout_list' %}" class="wt-add-btn" style="background-color: #4a5568; text-decoration: none;">
+            Отмена
+          </a>
+        </div>
+        
+      </form>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}

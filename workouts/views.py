@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from .models import WorkOut, Exercise
+from .models import WorkOut, Exercise, WorkoutSet
 from django.contrib.auth import get_user_model
 from .forms import WorkOutForm
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Prefetch
 
 User = get_user_model()
 
@@ -17,7 +18,13 @@ class WorkOutList(LoginRequiredMixin, ListView):
     context_object_name = 'workouts'
     
     def get_queryset(self):
-        return WorkOut.objects.filter(user = self.request.user)
+        return (
+            WorkOut.objects.filter(user = self.request.user)
+            .select_related('user')
+            .prefetch_related(
+                Prefetch('sets', queryset=WorkoutSet.objects.filter(weight__gt=0), to_attr='heavy_sets')
+            )
+        )
 
 
 class WorkOutCreate(LoginRequiredMixin, CreateView):
