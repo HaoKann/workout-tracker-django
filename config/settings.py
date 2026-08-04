@@ -34,6 +34,10 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8008',
 ]
 
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
+
 LOGIN_URL = 'login'
 
 CSRF_COOKIE_SECURE = False
@@ -51,6 +55,7 @@ INSTALLED_APPS = [
     'users',
     # Наши приложения
     'workouts',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -61,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
 ROOT_URLCONF = 'config.urls'

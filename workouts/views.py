@@ -22,9 +22,18 @@ class WorkOutList(LoginRequiredMixin, ListView):
             WorkOut.objects.filter(user = self.request.user)
             .select_related('user')
             .prefetch_related(
-                Prefetch('sets', queryset=WorkoutSet.objects.filter(weight__gt=0), to_attr='heavy_sets')
+                Prefetch('sets', queryset=WorkoutSet.objects.filter(weight__gt=0).select_related('exercise'), to_attr='heavy_sets')
             )
         )
+    
+    def get_context_data(self, **kwargs):
+        # Получаем стандартный набор данных
+        context = super().get_context_data(**kwargs)
+        
+        # Делаем один быстрый запрос в базу: считаем все подходы этого пользователя
+        context['total_sets'] = WorkoutSet.objects.filter(workout__user=self.request.user).count()
+        
+        return context
 
 
 class WorkOutCreate(LoginRequiredMixin, CreateView):

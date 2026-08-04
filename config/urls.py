@@ -26,7 +26,8 @@ urlpatterns = [
     path('', include('workouts.urls'), name='home'),
     path('profile/', user_views.profile, name='profile'),
     path('register/', user_views.register_view, name='register'),
-    path('login/', user_views.login_view, name='login')
+    path('login/', user_views.login_view, name='login'),
+    path('__debug__/', include("debug_toolbar.urls"))
 ]
 
 

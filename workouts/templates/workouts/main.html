@@ -15,13 +15,8 @@
         <span class="wt-stat-label">Тренировок</span>
       </div>
       <div class="wt-stat">
-        <span class="wt-stat-value">
-          {% with total=0 %}
-            {% for w in workouts %}{% with total=total|add:w.sets.count %}{% endwith %}{% endfor %}
-            {{ workouts|length }}
-          {% endwith %}
-        </span>
-        <span class="wt-stat-label">Всего записей</span>
+          <span class="wt-stat-value">{{ total_sets }}</span>
+          <span class="wt-stat-label">Всего записей</span>
       </div>
     </div>
   </div>
@@ -91,7 +86,7 @@
           <img src="{{ workout.photo.url }}" alt="Фото тренировки" class="wt-card-photo">
           {% endif %}
 
-          {% if workout.sets.all %}
+          {% if workout.heavy_sets %}
             <div class="wt-sets-label">Подходы</div>
             <table class="wt-sets-table">
               <thead>
@@ -102,7 +97,7 @@
                 </tr>
               </thead>
               <tbody>
-                {% for set in workout.sets.all %}
+                {% for set in workout.heavy_sets %}
                 <tr>
                   <td>{{ set.exercise.name }}</td>
                   <td>
