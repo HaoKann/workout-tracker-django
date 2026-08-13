@@ -1,12 +1,14 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser, UserProfile
 # Register your models here.
+
+# Склеивание профиля пользователя и основной информации пользователя для удобства редактирования
+class UserProfileInline(admin.StackedInline):
+    model = UserProfile
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
-    # Добавление новых полей к стандартным блокам админки
-    fieldsets = UserAdmin.fieldsets + (
-        ('Дополнительная информация', {'fields': ('avatar', 'weight')}), # <-- ВОТ ЭТА ЗАПЯТАЯ!
-    )
+    inlines = [UserProfileInline]
+    
 admin.site.register(CustomUser, CustomUserAdmin)

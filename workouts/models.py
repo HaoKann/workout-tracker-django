@@ -41,3 +41,30 @@ class WorkoutSet(models.Model):
 
     def __str__(self):
         return f"{self.exercise.name}: {self.weight} кг x {self.reps}"
+    
+
+class WorkOutRoutine(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='routines'
+    )
+    title = models.CharField(max_length=100, help_text='Название рутины')
+    notes = models.TextField(blank=True, null=True, help_text='Заметки')
+    
+    def __str__(self):
+        return f"Рутина {self.title} пользователя {self.user.username}"
+    
+
+class RoutineExercise(models.Model):
+    routine = models.ForeignKey(WorkOutRoutine, on_delete=models.CASCADE, related_name='routine_exercises')
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    
+    # Поле для сортировки, чтобы упражнения шли в правильном порядке
+    order = models.PositiveIntegerField(default=0, help_text='Порядок упражнения в рутине')
+    
+    class Meta:
+        ordering = ['order']
+        
+    def __str__(self):
+        return f"{self.exercise.name} в {self.routine.title}"

@@ -16,7 +16,7 @@ class WorkOutSetInline(admin.TabularInline):
     extra = 1 # Сколько пустых строк для подходов показывать по умолчанию
 
 
-# Обновляем  старую админку для тренировок
+# Обновляем старую админку для тренировок
 @admin.register(WorkOut)
 class WorkOutAdmin(admin.ModelAdmin):
     # Эти поля будут отображаться в виде красивой таблицы
