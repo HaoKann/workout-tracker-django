@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from .models import WorkOut, Exercise, WorkoutSet
+from .models import WorkOut, WorkoutSet, RoutineExercise, WorkOutRoutine
 from django.contrib.auth import get_user_model
 from .forms import WorkOutForm
 from django.contrib import messages
@@ -50,7 +50,7 @@ class WorkOutCreate(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
 
         # Создаем зеленое уведомление
-        messages.success(self.request, 'Тренировка успешно добавлена! 🎉')
+        messages.success(self.request, 'Тренировка успешно добавлена! ')
         
         # Возвращаем форму на конвейер для финального сохранения в базу
         return super().form_valid(form)
@@ -73,3 +73,24 @@ class WorkOutDelete(LoginRequiredMixin, DeleteView):
     def get_queryset(self):
         return WorkOut.objects.filter(user = self.request.user)
     
+    
+class RoutineList(LoginRequiredMixin, ListView):
+    model = WorkOutRoutine
+    template_name = 'workouts/routines.html'
+    
+    def get_queryset(self):
+        return (
+            WorkOutRoutine.objects.filter(user = self.request.user)
+        )
+        
+class RoutineCreate(LoginRequiredMixin, CreateView):
+    model = WorkOutRoutine
+    fields= ['title', 'notes']
+    template_name = 'workouts/create_routine.html'
+    success_url = reverse_lazy('workout_routines')
+    
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        messages.success(self.request, "Рутина успешно создана!")
+        
+        return super().form_valid(form)

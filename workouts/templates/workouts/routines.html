@@ -1,0 +1,35 @@
+{% extends 'workouts/base.html' %}
+
+{% block content %}
+<!-- Шапка страницы -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <h2 class="wf-title" style="margin: 0;">Мои <span>рутины</span></h2>
+    
+    <a href="{% url 'create_routine' %}" class="wt-add-btn" style="margin: 0; padding: 8px 16px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Создать
+    </a>
+</div>
+
+<!-- Сетка рутин -->
+<div style="display: flex; flex-direction: column; gap: 16px;">
+    {% for routine in object_list %}
+        <div class="wf-card" style="padding: 20px; border-left: 4px solid #3B82F6;">
+            <h3 style="margin: 0 0 8px 0; color: #E2E8F0; font-size: 18px;">{{ routine.title }}</h3>
+            
+            {% if routine.notes %}
+                <p style="margin: 0; color: #94A3B8; font-size: 14px;">{{ routine.notes }}</p>
+            {% endif %}
+        </div>
+    {% empty %}
+        <!-- Сообщение, если список пуст -->
+        <div class="wf-card" style="padding: 40px 20px; text-align: center;">
+            <p style="color: #94A3B8; margin: 0; font-size: 16px;">У вас пока нет ни одной рутины 😔</p>
+            <p style="color: #64748B; font-size: 14px; margin-top: 8px;">Нажмите кнопку "Создать", чтобы добавить свой первый шаблон!</p>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
