@@ -19,6 +19,11 @@
         <div class="wf-card" style="padding: 20px; border-left: 4px solid #3B82F6;">
             <h3 style="margin: 0 0 8px 0; color: #E2E8F0; font-size: 18px;">{{ routine.title }}</h3>
             
+            <a href="{% url 'routine_details' routine.pk %}" style="color: #63b3ed; text-decoration: none; font-size: 0.9em;">
+              Редактировать
+            </a>
+
+
             {% if routine.notes %}
                 <p style="margin: 0; color: #94A3B8; font-size: 14px;">{{ routine.notes }}</p>
             {% endif %}

@@ -1,0 +1,32 @@
+{% extends 'workouts/base.html' %}
+
+{% block content %}
+<!-- Шапка рутины -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <h2 class="wf-title" style="margin: 0;">{{ object.title }}</h2>
+    <a href="{% url 'workout_routines' %}" style="color: #64748B; text-decoration: none; font-size: 14px;">← К списку</a>
+</div>
+
+<!-- Заметки (если есть) -->
+{% if object.notes %}
+<div class="wf-card" style="padding: 16px; margin-bottom: 24px; border-left: 4px solid #10B981;">
+    <p style="margin: 0; color: #94A3B8; font-size: 14px;">📝 {{ object.notes }}</p>
+</div>
+{% endif %}
+
+<!-- Блок со списком упражнений -->
+<div class="wf-card" style="padding: 20px; margin-bottom: 24px;">
+    <h3 style="margin: 0 0 16px 0; color: #E2E8F0; font-size: 18px;">🏋️‍♂️ Упражнения</h3>
+    
+    <!-- Здесь позже будет цикл вывода добавленных упражнений -->
+    <p style="color: #64748B; font-size: 14px;">В этой рутине пока нет упражнений.</p>
+</div>
+
+<!-- Блок формы добавления -->
+<div class="wf-card" style="padding: 20px; border: 2px dashed #334155;">
+    <h3 style="margin: 0 0 16px 0; color: #E2E8F0; font-size: 16px;">➕ Добавить упражнение</h3>
+    
+    <!-- Здесь скоро появится форма -->
+    <p style="color: #64748B; font-size: 14px;">(Форма в разработке...)</p>
+</div>
+{% endblock %}

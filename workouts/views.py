@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.shortcuts import render, redirect, post
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from .models import WorkOut, WorkoutSet, RoutineExercise, WorkOutRoutine
 from django.contrib.auth import get_user_model
 from .forms import WorkOutForm
@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Prefetch
+
 
 User = get_user_model()
 
@@ -94,3 +95,18 @@ class RoutineCreate(LoginRequiredMixin, CreateView):
         messages.success(self.request, "Рутина успешно создана!")
         
         return super().form_valid(form)
+
+
+class RoutineDetail(LoginRequiredMixin, DetailView):
+    model = WorkOutRoutine
+    template_name = 'workouts/routine_details.html'
+    
+    # Метод для отлова POST-запросов
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        
+        RoutineExercise.objects.create(routine=self.object, exercise_id=request.POST.get('exercise'))
+        
+        return redirect('routine_details', self.object.pk)
+    
+        
