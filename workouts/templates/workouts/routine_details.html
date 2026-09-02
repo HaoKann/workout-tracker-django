@@ -14,19 +14,33 @@
 </div>
 {% endif %}
 
-<!-- Блок со списком упражнений -->
-<div class="wf-card" style="padding: 20px; margin-bottom: 24px;">
-    <h3 style="margin: 0 0 16px 0; color: #E2E8F0; font-size: 18px;">🏋️‍♂️ Упражнения</h3>
-    
-    <!-- Здесь позже будет цикл вывода добавленных упражнений -->
-    <p style="color: #64748B; font-size: 14px;">В этой рутине пока нет упражнений.</p>
-</div>
 
 <!-- Блок формы добавления -->
 <div class="wf-card" style="padding: 20px; border: 2px dashed #334155;">
     <h3 style="margin: 0 0 16px 0; color: #E2E8F0; font-size: 16px;">➕ Добавить упражнение</h3>
     
-    <!-- Здесь скоро появится форма -->
-    <p style="color: #64748B; font-size: 14px;">(Форма в разработке...)</p>
+    <form method="POST">
+        {% csrf_token %}
+        <select name="exercise">
+            {% for ex in exercises %}
+                <option value="{{ ex.id }}">{{ex.name}}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Добавить</button>
+    </form>
 </div>
+
+
+<!-- Блок со списком упражнений -->
+<div class="wf-card" style="padding: 20px; margin-bottom: 24px;">
+    <h3 style="margin: 0 0 16px 0; color: #E2E8F0; font-size: 18px;">🏋️‍♂️ Упражнения</h3>
+    
+    <!-- Здесь позже будет цикл вывода добавленных упражнений -->
+    {% for ex in object.routine_exercises.all %}
+        <p>{{ ex.exercise.name }}</p>
+    {% empty %}
+        <p>Упражнений пока нет</p> 
+    {% endfor %}
+</div>
+
 {% endblock %}

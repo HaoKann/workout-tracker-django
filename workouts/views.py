@@ -1,6 +1,6 @@
-from django.shortcuts import render, redirect, post
+from django.shortcuts import render, redirect
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
-from .models import WorkOut, WorkoutSet, RoutineExercise, WorkOutRoutine
+from .models import WorkOut, WorkoutSet, RoutineExercise, WorkOutRoutine, Exercise
 from django.contrib.auth import get_user_model
 from .forms import WorkOutForm
 from django.contrib import messages
@@ -108,5 +108,11 @@ class RoutineDetail(LoginRequiredMixin, DetailView):
         RoutineExercise.objects.create(routine=self.object, exercise_id=request.POST.get('exercise'))
         
         return redirect('routine_details', self.object.pk)
-    
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         
+        context['exercises'] = Exercise.objects.all()
+        
+        return context

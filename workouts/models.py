@@ -59,7 +59,7 @@ class WorkOutRoutine(models.Model):
 class RoutineExercise(models.Model):
     routine = models.ForeignKey(WorkOutRoutine, on_delete=models.CASCADE, related_name='routine_exercises')
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
-    
+
     # Поле для сортировки, чтобы упражнения шли в правильном порядке
     order = models.PositiveIntegerField(default=0, help_text='Порядок упражнения в рутине')
     
