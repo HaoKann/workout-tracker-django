@@ -1,13 +1,15 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from .models import WorkOut, WorkoutSet, RoutineExercise, WorkOutRoutine, Exercise
 from django.contrib.auth import get_user_model
 from .forms import WorkOutForm
 from django.contrib import messages
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Prefetch
-
+import json
+from django.db import transaction
+from django.http import JsonResponse
 
 User = get_user_model()
 
@@ -116,3 +118,20 @@ class RoutineDetail(LoginRequiredMixin, DetailView):
         context['exercises'] = Exercise.objects.all()
         
         return context
+
+
+class RoutineExerciseDelete(LoginRequiredMixin,DeleteView):
+    model = RoutineExercise
+    
+    
+    def get_success_url(self):
+        routine_id = self.object.routine.id
+        return reverse('routine_details', kwargs={'pk': routine_id})
+    
+
+def update_exercise_order(request):
+    data = json.loads(request.body)
+    
+    with transaction.atomic():
+        for index, item_id in enumerate(data['order']):
+            pass    

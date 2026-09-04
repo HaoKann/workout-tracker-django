@@ -1,0 +1,23 @@
+{% extends 'workouts/base.html' %}
+
+{% block content %}
+<div class="wf-card" style="padding: 20px; border-left: 4px solid #EF4444; max-width: 600px; margin: 0 auto;">
+    <h2 style="margin-top: 0; color: #E2E8F0;">Удаление упражнения</h2>
+    
+    <p style="color: #94A3B8; margin-bottom: 24px;">
+        Вы уверены, что хотите удалить <strong>{{ object.exercise.name }}</strong> из программы <strong>{{ object.routine.title }}</strong>?
+    </p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div style="display: flex; gap: 12px;">
+            <button type="submit" style="background-color: #EF4444; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;">
+                Да, удалить
+            </button>
+            <a href="{% url 'routine_details' object.routine.id %}" style="padding: 8px 16px; background-color: #334155; color: #E2E8F0; text-decoration: none; border-radius: 4px;">
+                Отмена
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

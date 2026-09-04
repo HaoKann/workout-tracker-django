@@ -16,17 +16,17 @@
 
 
 <!-- Блок формы добавления -->
-<div class="wf-card" style="padding: 20px; border: 2px dashed #334155;">
+<div class="wf-card" style="padding: 20px; border: 2px dashed #334155; margin-bottom: 24px;">
     <h3 style="margin: 0 0 16px 0; color: #E2E8F0; font-size: 16px;">➕ Добавить упражнение</h3>
     
-    <form method="POST">
+    <form method="POST" style="display: flex; gap: 12px; align-items: center;">
         {% csrf_token %}
-        <select name="exercise">
+        <select name="exercise" style="padding: 8px; border-radius: 4px; flex-grow: 1; background-color: #1E293B; color: #E2E8F0; border: 1px solid #475569;">
             {% for ex in exercises %}
                 <option value="{{ ex.id }}">{{ex.name}}</option>
             {% endfor %}
         </select>
-        <button type="submit">Добавить</button>
+        <button type="submit" style="background-color: #3B82F6; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;">Добавить</button>
     </form>
 </div>
 
@@ -35,12 +35,63 @@
 <div class="wf-card" style="padding: 20px; margin-bottom: 24px;">
     <h3 style="margin: 0 0 16px 0; color: #E2E8F0; font-size: 18px;">🏋️‍♂️ Упражнения</h3>
     
-    <!-- Здесь позже будет цикл вывода добавленных упражнений -->
-    {% for ex in object.routine_exercises.all %}
-        <p>{{ ex.exercise.name }}</p>
-    {% empty %}
-        <p>Упражнений пока нет</p> 
-    {% endfor %}
+    <!-- Добавили id="exercise-list" -->
+    <div id="exercise-list" style="display: flex; flex-direction: column; gap: 12px;">
+        {% for ex in object.routine_exercises.all %}
+            <!-- Добавили data-id и cursor: grab -->
+            <div data-id="{{ ex.id }}" style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background-color: #1E293B; border-radius: 6px; border: 1px solid #334155; cursor: grab;">
+                <p style="margin: 0; color: #E2E8F0; font-weight: 500;">
+                    <span style="color: #64748B; margin-right: 12px; cursor: grab;">☰</span>
+                    {{ ex.exercise.name }}
+                </p>
+                <a href="{% url 'routine_delete_exercise' ex.id %}" style="background-color: #EF4444; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 14px; transition: background-color 0.2s;">Удалить</a>
+            </div>
+        {% empty %}
+            <p style="color: #94A3B8; margin: 0;">Упражнений пока нет</p> 
+        {% endfor %}
+    </div>
 </div>
+
+<!-- Подключаем библиотеку SortableJS -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const list = document.getElementById("exercise-list");
+
+        if (list) {
+            Sortable.create(list, {
+                animation: 150,
+
+                onEnd: function() {
+                    let newOrder = [];
+                    list.querySelectorAll('[data-id]').forEach(function(item) {
+                        newOrder.push(item.getAttribute('data-id'));
+                    });
+                    
+                    // Находим CSRF-токен на странице
+                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                    // Отправляем данные на сервер
+                    fetch("{% url 'update_exercise_order' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken
+                        },
+                        body: JSON.stringify({ order: newOrder })
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log("Порядок успешно сохранен!");
+                        } else {
+                            console.error("Ошибка при сохранении");
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>
 
 {% endblock %}
