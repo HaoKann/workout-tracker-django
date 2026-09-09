@@ -52,6 +52,38 @@
     </div>
 </div>
 
+<div id="toast-notification" class="toast-hidden">
+    ✅ Порядок сохранен
+</div>
+
+<style>
+    #toast-notification {
+    position: fixed; /* Фиксируем поверх других элементов */
+    bottom: 20px;
+    right: 20px;
+    background-color: #4caf50; /* Приятный зеленый цвет */
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Плавная анимация */
+    z-index: 1000;
+}
+
+    /* Состояние, когда уведомление спрятано */
+    .toast-hidden {
+        opacity: 0;
+        transform: translateY(20px); /* Слегка сдвинуто вниз */
+        pointer-events: none; /* Чтобы не мешало кликать по тому, что под ним */
+    }
+
+    /* Состояние, когда уведомление показано */
+    .toast-visible {
+        opacity: 1;
+        transform: translateY(0); /* Возвращается на место */
+    }
+</style>
+
 <!-- Подключаем библиотеку SortableJS -->
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
@@ -84,6 +116,17 @@
                     .then(response => {
                         if (response.ok) {
                             console.log("Порядок успешно сохранен!");
+                            
+                            const toast = document.getElementById('toast-notification');
+                            // Показываем тост
+                            toast.classList.remove('toast-hidden');
+                            toast.classList.add('toast-visible');
+
+                            // Прячем тост через 3 секунды (3000 миллисекунд)
+                            setTimeout(() => {
+                                toast.classList.remove('toast-visible');
+                                toast.classList.add('toast-hidden');
+                            }, 3000);
                         } else {
                             console.error("Ошибка при сохранении");
                         }

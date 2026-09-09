@@ -134,4 +134,6 @@ def update_exercise_order(request):
     
     with transaction.atomic():
         for index, item_id in enumerate(data['order']):
-            pass    
+            RoutineExercise.objects.filter(id=item_id).update(order=index)
+            
+    return JsonResponse({"status": "ok"})
