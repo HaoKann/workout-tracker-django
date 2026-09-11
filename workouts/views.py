@@ -118,6 +118,9 @@ class RoutineDetail(LoginRequiredMixin, DetailView):
         context['exercises'] = Exercise.objects.all()
         
         return context
+    
+    def get_queryset(self):
+            return WorkOutRoutine.objects.filter(user = self.request.user)
 
 
 class RoutineExerciseDelete(LoginRequiredMixin,DeleteView):
@@ -127,6 +130,10 @@ class RoutineExerciseDelete(LoginRequiredMixin,DeleteView):
     def get_success_url(self):
         routine_id = self.object.routine.id
         return reverse('routine_details', kwargs={'pk': routine_id})
+    
+    def get_queryset(self):
+        return RoutineExercise.objects.filter(routine__user = self.request.user)
+    
     
 
 def update_exercise_order(request):
