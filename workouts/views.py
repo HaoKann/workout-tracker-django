@@ -10,6 +10,11 @@ from django.db.models import Prefetch
 import json
 from django.db import transaction
 from django.http import JsonResponse
+import logging
+from django.core.cache import cache
+
+
+logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
@@ -76,15 +81,28 @@ class WorkOutDelete(LoginRequiredMixin, DeleteView):
     def get_queryset(self):
         return WorkOut.objects.filter(user = self.request.user)
     
+    def form_valid(self, form):
+        logger.warning("Тренировка успешно удалена!")
+        return super().form_valid(form)
+    
     
 class RoutineList(LoginRequiredMixin, ListView):
     model = WorkOutRoutine
     template_name = 'workouts/routines.html'
     
     def get_queryset(self):
-        return (
-            WorkOutRoutine.objects.filter(user = self.request.user)
-        )
+        # 1. Создаем уникальный ключ (например: "routines_user_5")
+        cache_key = f"routines_user_{self.request.user.id}"
+        
+        # 2. Пытаемся достать данные
+        routines = cache.get(cache_key)
+        
+        # 3. Если в кэше пусто (None)
+        if not routines:
+            routines = WorkOutRoutine.objects.filter(user = self.request.user)
+            cache.set(cache_key, routines, 120)
+        
+        return routines
         
 class RoutineCreate(LoginRequiredMixin, CreateView):
     model = WorkOutRoutine
@@ -133,6 +151,10 @@ class RoutineExerciseDelete(LoginRequiredMixin,DeleteView):
     
     def get_queryset(self):
         return RoutineExercise.objects.filter(routine__user = self.request.user)
+    
+    def form_valid(self, form):
+        logger.warning("Упражнение было удалено из рутины!")
+        return super().form_valid(form)
     
     
 
