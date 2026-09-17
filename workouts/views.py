@@ -12,7 +12,8 @@ from django.db import transaction
 from django.http import JsonResponse
 import logging
 from django.core.cache import cache
-
+from rest_framework import generics
+from .serializers import ExerciseSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -166,3 +167,8 @@ def update_exercise_order(request):
             RoutineExercise.objects.filter(id=item_id).update(order=index)
             
     return JsonResponse({"status": "ok"})
+
+
+class ExerciseListCreateAPI(generics.ListCreateAPIView):
+    queryset = Exercise.objects.all()
+    serializer_class = ExerciseSerializer

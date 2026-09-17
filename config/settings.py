@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     # Наши приложения
     'workouts',
     'debug_toolbar',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
