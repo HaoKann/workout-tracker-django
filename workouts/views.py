@@ -13,7 +13,7 @@ from django.http import JsonResponse
 import logging
 from django.core.cache import cache
 from rest_framework import generics
-from .serializers import ExerciseSerializer
+from .serializers import ExerciseSerializer, RoutineSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -172,3 +172,18 @@ def update_exercise_order(request):
 class ExerciseListCreateAPI(generics.ListCreateAPIView):
     queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
+    
+    
+class ExerciseDetailAPI(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Exercise.objects.all()
+    serializer_class = ExerciseSerializer
+    
+# 1. Дженерик для списка (GET) и создания (POST)
+class RoutineListCreateAPI(generics.ListCreateAPIView):
+    queryset = WorkOutRoutine.objects.all()
+    serializer_class = RoutineSerializer
+    
+# 2. Дженерик для просмотра одной рутины, обновления и удаления (GET, PUT, DELETE)
+class RoutineDetailAPI(generics.RetrieveUpdateDestroyAPIView):
+    queryset = WorkOutRoutine.objects.all()
+    serializer_class = RoutineSerializer
