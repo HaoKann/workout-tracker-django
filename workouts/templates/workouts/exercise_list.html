@@ -1,0 +1,159 @@
+{% extends 'workouts/base.html' %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <h2 class="wf-title" style="margin: 0; color: #F8FAFC;">База упражнений</h2>
+</div>
+
+<!-- Блок формы добавления кастомного упражнения -->
+<div class="wf-card" style="padding: 20px; border: 2px dashed #334155; margin-bottom: 24px; background-color: #1E293B; border-radius: 8px;">
+    <h3 style="margin: 0 0 16px 0; color: #E2E8F0; font-size: 16px;">➕ Создать свое упражнение</h3>
+    
+    <form id="create-exercise-form" style="display: flex; flex-direction: column; gap: 12px;">
+        {% csrf_token %}
+        <input type="text" id="exercise-name" placeholder="Название упражнения" required
+               style="padding: 10px; background-color: #0F172A; color: #E2E8F0; border: 1px solid #475569; border-radius: 6px; width: 100%;">
+               
+        <textarea id="exercise-desc" placeholder="Описание (необязательно)" rows="2"
+                  style="padding: 10px; background-color: #0F172A; color: #E2E8F0; border: 1px solid #475569; border-radius: 6px; width: 100%; resize: vertical;"></textarea>
+                  
+        <button type="submit" style="background-color: #10B981; color: white; padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; align-self: flex-start;">
+            Добавить в базу
+        </button>
+    </form>
+</div>
+
+<!-- Блок со списком упражнений -->
+<div class="wf-card" style="background-color: #1E293B; border-radius: 8px; border: 1px solid #334155; overflow: hidden;">
+    <div id="exercises-list">
+        {% for exercise in object_list %}
+            <div class="exercise-item" style="padding: 16px; border-bottom: 1px solid #334155;">
+                <h4 style="margin: 0 0 8px 0; color: #F8FAFC;">
+                    {{ exercise.name }}
+                    {% if exercise.is_custom %}
+                        <span style="background-color: #3B82F6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; margin-left: 8px;">Мое</span>
+                    {% endif %}
+                </h4>
+                {% if exercise.description %}
+                    <p style="margin: 0; color: #94A3B8; font-size: 14px;">{{ exercise.description }}</p>
+                {% endif %}
+            </div>
+        {% empty %}
+            <div id="empty-message" style="padding: 20px; color: #94A3B8; text-align: center;">Упражнений пока нет. Добавьте свое первое!</div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Всплывающее уведомление (Toast) -->
+<div id="toast-notification" class="toast-hidden">
+    ✅ Упражнение успешно добавлено!
+</div>
+
+<!-- Стили для уведомления и списка -->
+<style>
+    .exercise-item:last-child {
+        border-bottom: none !important;
+    }
+
+    #toast-notification {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #10B981;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        z-index: 1000;
+        font-weight: 500;
+    }
+
+    .toast-hidden {
+        opacity: 0;
+        transform: translateY(20px);
+        pointer-events: none;
+    }
+
+    .toast-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+</style>
+
+<!-- Скрипт для отправки данных (AJAX) -->
+<script>
+    document.getElementById('create-exercise-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Останавливаем перезагрузку страницы
+
+        const nameInput = document.getElementById('exercise-name');
+        const descInput = document.getElementById('exercise-desc');
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        const newExercise = {
+            name: nameInput.value,
+            description: descInput.value
+        };
+
+        // Отправляем данные на наш DRF API
+        fetch("/api/exercises/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken
+            },
+            body: JSON.stringify(newExercise)
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json(); // Ждем JSON ответ от сервера с данными созданного упражнения
+            } else {
+                throw new Error('Ошибка сервера');
+            }
+        })
+        .then(data => {
+            // 1. Показываем всплывающее уведомление
+            const toast = document.getElementById('toast-notification');
+            toast.classList.remove('toast-hidden');
+            toast.classList.add('toast-visible');
+
+            setTimeout(() => {
+                toast.classList.remove('toast-visible');
+                toast.classList.add('toast-hidden');
+            }, 3000);
+
+            // 2. Очищаем форму
+            nameInput.value = '';
+            descInput.value = '';
+
+            // 3. Динамически добавляем новое упражнение в начало списка
+            const list = document.getElementById('exercises-list');
+            const emptyMessage = document.getElementById('empty-message');
+            
+            // Если была надпись "Упражнений нет", удаляем её
+            if (emptyMessage) {
+                emptyMessage.remove();
+            }
+
+            // Формируем HTML нового упражнения (используем данные, которые вернул API)
+            const descHtml = data.description ? `<p style="margin: 0; color: #94A3B8; font-size: 14px;">${data.description}</p>` : '';
+            const newHtml = `
+                <div class="exercise-item" style="padding: 16px; border-bottom: 1px solid #334155;">
+                    <h4 style="margin: 0 0 8px 0; color: #F8FAFC;">
+                        ${data.name}
+                        <span style="background-color: #3B82F6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; margin-left: 8px;">Мое</span>
+                    </h4>
+                    ${descHtml}
+                </div>
+            `;
+            
+            // Вставляем новое упражнение в самый верх списка
+            list.insertAdjacentHTML('afterbegin', newHtml);
+        })
+        .catch(error => {
+            alert("Произошла ошибка при сохранении!");
+            console.error(error);
+        });
+    });
+</script>
+{% endblock %}

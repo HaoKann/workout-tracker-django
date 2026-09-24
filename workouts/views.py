@@ -6,14 +6,14 @@ from .forms import WorkOutForm
 from django.contrib import messages
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 import json
 from django.db import transaction
 from django.http import JsonResponse
 import logging
 from django.core.cache import cache
 from rest_framework import generics
-from .serializers import ExerciseSerializer, RoutineSerializer
+from .serializers import ExerciseSerializer, RoutineSerializer, ExerciseListSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -170,8 +170,15 @@ def update_exercise_order(request):
 
 
 class ExerciseListCreateAPI(generics.ListCreateAPIView):
-    queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
+    
+    def get_queryset(self):
+            return Exercise.objects.filter(Q(user = self.request.user) | Q (user=None))
+    
+    # Вклиниваемся в процесс сохранения
+    def perform_create(self, serializer):
+        # Сохраняем упражнение, принудительно добавляя текущего юзера и флаг is_custom
+        serializer.save(user=self.request.user, is_custom=True)
     
     
 class ExerciseDetailAPI(generics.RetrieveUpdateDestroyAPIView):
@@ -187,3 +194,12 @@ class RoutineListCreateAPI(generics.ListCreateAPIView):
 class RoutineDetailAPI(generics.RetrieveUpdateDestroyAPIView):
     queryset = WorkOutRoutine.objects.all()
     serializer_class = RoutineSerializer
+    
+    
+class ExerciseListAPI(generics.ListCreateAPIView):
+    queryset = Exercise.objects.all()
+    serializer_class = ExerciseListSerializer
+    
+    def perform_create(self, serializer):
+        # Принудительно ставим текущего пользователя и флаг кастомного упражнения
+        serializer.save(user=self.request.user, is_custom=True)

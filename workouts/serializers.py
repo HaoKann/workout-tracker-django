@@ -19,4 +19,9 @@ class RoutineSerializer(serializers.ModelSerializer):
         class Meta:
             model = WorkOutRoutine
             fields = ['id', 'user', 'title', 'notes', 'routine_exercises']
-        
+    
+class ExerciseListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Exercise
+        fields = ['id','name', 'description', 'user', 'is_custom']
+        read_only_fields = ['user', 'is_custom']
