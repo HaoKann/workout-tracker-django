@@ -30,6 +30,7 @@
             <div class="exercise-item" style="padding: 16px; border-bottom: 1px solid #334155;">
                 <h4 style="margin: 0 0 8px 0; color: #F8FAFC;">
                     {{ exercise.name }}
+                    <button data-id="{{ exercise.id }}">Удалить</button>
                     {% if exercise.is_custom %}
                         <span style="background-color: #3B82F6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; margin-left: 8px;">Мое</span>
                     {% endif %}
@@ -142,10 +143,12 @@
                     <h4 style="margin: 0 0 8px 0; color: #F8FAFC;">
                         ${data.name}
                         <span style="background-color: #3B82F6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; margin-left: 8px;">Мое</span>
-                    </h4>
-                    ${descHtml}
+                        </h4> 
+                        <button data-id="${data.id}">Удалить</button>
+                        ${descHtml}
                 </div>
             `;
+            
             
             // Вставляем новое упражнение в самый верх списка
             list.insertAdjacentHTML('afterbegin', newHtml);
@@ -155,5 +158,42 @@
             console.error(error);
         });
     });
+
+    // Находим контейнер, в котором лежат все упражнения
+const listContainer = document.getElementById('exercises-list'); 
+
+// Вешаем один общий слушатель кликов на весь контейнер
+listContainer.addEventListener('click', function(event) {
+    
+    // Проверяем, что клик был именно по кнопке с атрибутом data-id
+    if (event.target.tagName === 'BUTTON' && event.target.hasAttribute('data-id')) {
+        const button = event.target;
+        const exerciseId = button.getAttribute('data-id');
+        
+        // Находим родительский блок всего упражнения (чтобы удалить именно его)
+        const exerciseItem = button.closest('.exercise-item');
+
+        // Отправляем фоновый запрос на удаление
+        fetch(`/api/exercises/${exerciseId}/`, {
+            method: 'DELETE',
+            headers: {
+                // Не забываем передать CSRF токен для безопасности Django
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                // Если сервер успешно удалил запись из БД, убираем блок с экрана
+                exerciseItem.remove();
+            } else {
+                alert('Ошибка при удалении');
+            }
+        })
+        .catch(error => console.error('Ошибка:', error));
+    }
+});
+
+
 </script>
 {% endblock %}

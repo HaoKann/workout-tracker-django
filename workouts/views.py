@@ -203,3 +203,12 @@ class ExerciseListAPI(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         # Принудительно ставим текущего пользователя и флаг кастомного упражнения
         serializer.save(user=self.request.user, is_custom=True)
+        
+        
+class ExerciseList(LoginRequiredMixin, ListView):
+    model = Exercise
+    template_name='exercise_list.html'
+    
+    def get_queryset(self):
+        return Exercise.objects.filter(Q(user = self.request.user) | Q (user=None))
+        
