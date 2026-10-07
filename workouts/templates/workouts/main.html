@@ -3,7 +3,6 @@
 
 {% block content %}
 
-
 <!-- HERO HEADER -->
 <div class="wt-hero">
   <div class="wt-hero-left">
@@ -21,13 +20,21 @@
     </div>
   </div>
 
-  <div style="display: flex; gap: 15px; align-items: center;">
+<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end; max-width: 50%;">
     <a href="{% url 'profile' %}" class="wt-add-btn" style="background-color: #4a5568;">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; margin-right: 8px;">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
         <circle cx="12" cy="7" r="4"></circle>
       </svg>
       Мой профиль
+    </a>
+
+    <a href="{% url 'exercises' %}" class="wt-add-btn" style="background-color: #2b6cb0;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; margin-right: 8px;">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+      </svg>
+      База упражнений
     </a>
 
     <a href="{% url 'workout_create' %}" class="wt-add-btn">
@@ -43,19 +50,17 @@
       </svg>
       Рутины
     </a>
-
   </div>
-</div>
-</div>
 
 
+</div>
+</div>
 
 <!-- MAIN -->
 <div class="wt-main">
 
   {% if workouts %}
   
-
     <div class="wt-section-header">
       <span class="label">Последние тренировки</span>
       <span class="line"></span>
