@@ -21,6 +21,8 @@
 
         {{ form.as_p }}
 
+        {{ formset.as_p}}
+
         <button type="submit" class="wf-submit">
             <!-- Показываем иконку плюса только если это создание новой тренировки -->
             {% if not object %}

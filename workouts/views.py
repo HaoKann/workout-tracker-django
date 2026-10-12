@@ -14,6 +14,7 @@ import logging
 from django.core.cache import cache
 from rest_framework import generics
 from .serializers import ExerciseSerializer, RoutineSerializer, ExerciseListSerializer
+from .forms import WorkoutSetFormSet
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +45,9 @@ class WorkOutList(LoginRequiredMixin, ListView):
         
         return context
 
+class WorkOutDetail(LoginRequiredMixin, DetailView):
+    model=WorkOut
+    template_name='workouts/workout_detail.html'
 
 class WorkOutCreate(LoginRequiredMixin, CreateView):
     model = WorkOut
@@ -74,6 +78,34 @@ class WorkOutUpdate(LoginRequiredMixin, UpdateView):
     
     def get_queryset(self):
         return WorkOut.objects.filter(user = self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        # 1. Получаем базовый словарь со всеми стандартными данными
+        context = super().get_context_data(**kwargs)
+    
+        # 2. Создаем формсет, передаем ему текущую тренировку (self.object)
+        # и сохраняем всё это в словарь под ключом 'formset'
+        context['formset'] = WorkoutSetFormSet(instance=self.object)
+        
+        # 3. Возвращаем обновленный словарь
+        return context
+    
+    def form_valid(self, form):
+        # 1. Достаем наш формсет из контекста
+        context = self.get_context_data()
+        formset = context['formset']
+        
+        # 2. Проверка на ошибки в formset
+        if formset.is_valid():
+            # Сохраняем саму тренировку в базу данных
+            self.object = form.save() 
+            formset.instance = self.object
+            # 3. Сохраняем подходы
+            formset.save()
+            return super().form_valid(form)
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+            
     
 class WorkOutDelete(LoginRequiredMixin, DeleteView):
     model = WorkOut

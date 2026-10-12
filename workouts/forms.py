@@ -1,8 +1,8 @@
 from django import forms
-from .models import WorkOut
+from .models import WorkOut, WorkoutSet
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator
-
+from django.forms import inlineformset_factory
 
 class WorkOutForm(forms.ModelForm):
     # Явно описываем поле, чтобы повесить на него валидатор
@@ -26,5 +26,11 @@ class WorkOutForm(forms.ModelForm):
         # 3. Если всё ок, возвращаем данные
         return title
 
-
+WorkoutSetFormSet = inlineformset_factory(
+    parent_model=WorkOut,
+    model=WorkoutSet,
+    fields=('exercise', 'weight', 'reps'),
+    extra=1,
+    can_delete=True
+)
         
