@@ -73,7 +73,7 @@
         <div class="wt-card-body">
 
           <div class="wt-card-top">
-            <a href="{% url for '' %}">
+            <a href="{% url 'workout_detail' workout.pk %}">
               <div class="wt-card-title">{{ workout.title }}</div>
             </a>
             <div class="wt-card-date">{{ workout.date }}</div>

@@ -1,0 +1,79 @@
+{% extends 'workouts/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="wt-main">
+    <div class="wt-card">
+        <div class="wt-card-body">
+            
+            <!-- Шапка тренировки -->
+            <div class="wt-card-top">
+                <h2 class="wt-card-title">{{ object.title }}</h2>
+                <div class="wt-card-date">{{ object.date|date:"d M Y" }}</div>
+            </div>
+
+            <!-- Заметки -->
+            {% if object.notes %}
+            <div class="wt-card-note" style="margin-top: 15px;">
+                <strong>Заметки:</strong> {{ object.notes }}
+            </div>
+            {% endif %}
+
+            <!-- Фотография -->
+            {% if object.photo %}
+            <div style="margin-top: 15px;">
+                <img src="{{ object.photo.url }}" alt="Фото тренировки" class="wt-card-photo" style="max-width: 100%; border-radius: 8px;">
+            </div>
+            {% endif %}
+
+            <!-- Разделитель -->
+            <div class="wt-section-header" style="margin-top: 30px;">
+                <span class="label">Выполненные подходы</span>
+                <span class="line"></span>
+            </div>
+
+            <!-- Таблица подходов -->
+            {% if object.sets.all %}
+                <table class="wt-sets-table">
+                    <thead>
+                        <tr>
+                            <th>Упражнение</th>
+                            <th>Вес</th>
+                            <th style="text-align:right;">Повторения</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for set in object.sets.all %}
+                        <tr>
+                            <td>{{ set.exercise.name }}</td>
+                            <td>
+                                <span class="wt-weight-badge">{{ set.weight }}</span>
+                                <span class="wt-weight-unit">кг</span>
+                            </td>
+                            <td>
+                                <span class="wt-reps-badge">
+                                    <span>{{ set.reps }}</span> повт.
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="wt-no-sets">Подходов пока нет. Нажмите «Редактировать», чтобы добавить их.</p>
+            {% endif %}
+
+            <!-- Кнопки управления -->
+            <div style="margin-top: 30px; display: flex; gap: 15px; align-items: center;">
+                <a href="{% url 'workout_update' object.pk %}" class="wt-add-btn" style="background-color: #63b3ed; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 500;">
+                    Редактировать
+                </a>
+                <a href="{% url 'workout_list' %}" style="color: #64748B; text-decoration: none; font-size: 14px;">
+                    ← Назад к списку
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

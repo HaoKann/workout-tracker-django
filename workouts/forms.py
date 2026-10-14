@@ -1,5 +1,5 @@
 from django import forms
-from .models import WorkOut, WorkoutSet
+from .models import WorkOut, WorkOutSet, WorkOutExercise
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator
 from django.forms import inlineformset_factory
@@ -27,9 +27,9 @@ class WorkOutForm(forms.ModelForm):
         return title
 
 WorkoutSetFormSet = inlineformset_factory(
-    parent_model=WorkOut,
-    model=WorkoutSet,
-    fields=('exercise', 'weight', 'reps'),
+    parent_model=WorkOutExercise,
+    model=WorkOutSet,
+    fields=('weight', 'reps'),
     extra=1,
     can_delete=True
 )

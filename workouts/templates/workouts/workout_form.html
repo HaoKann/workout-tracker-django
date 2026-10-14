@@ -23,6 +23,15 @@
 
         {{ formset.as_p}}
 
+        <div id="empty-form-template" style="display: none;">
+            {{ formset.empty_form.as_p }}
+        </div>
+        
+        <button type="button" id="add-set-btn" style="margin-top: 10px; margin-bottom: 20px;" >
+            + Добавить подход
+        </button>
+
+
         <button type="submit" class="wf-submit">
             <!-- Показываем иконку плюса только если это создание новой тренировки -->
             {% if not object %}
@@ -40,5 +49,26 @@
         <a href="{% url 'workout_list' %}" style="color: #64748B; text-decoration: none; font-size: 14px;">← Назад к списку</a>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const addBtn = document.getElementById('add-set-btn')
+        const totalFormsInput = document.getElementById('id_sets-TOTAL_FORMS')
+        const emptyFormTemplate = document.getElementById('empty-form-template')
+
+        addBtn.addEventListener('click', function() {
+            const currentFormCout = parseInt(totalFormsInput.value)
+
+            const newFormHtml = emptyFormTemplate.innerHTML.replace(/__prefix__/g, currentFormCout)
+
+            const newFormContainer = document.createElement('div')
+            newFormContainer.innerHTML = newFormHtml
+
+            emptyFormTemplate.parentNode.insertBefore(newFormContainer, emptyFormTemplate)
+
+            totalFormsInput.value = currentFormCout + 1
+        })
+    })
+</script>
 
 {% endblock %}

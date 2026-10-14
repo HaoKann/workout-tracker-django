@@ -1,6 +1,6 @@
 from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
-from .models import WorkOut, WorkoutSet, RoutineExercise, WorkOutRoutine, Exercise
+from .models import WorkOut, WorkOutSet, RoutineExercise, WorkOutRoutine, Exercise
 from django.contrib.auth import get_user_model
 from .forms import WorkOutForm
 from django.contrib import messages
@@ -32,7 +32,7 @@ class WorkOutList(LoginRequiredMixin, ListView):
             WorkOut.objects.filter(user = self.request.user)
             .select_related('user')
             .prefetch_related(
-                Prefetch('sets', queryset=WorkoutSet.objects.filter(weight__gt=0).select_related('exercise'), to_attr='heavy_sets')
+                Prefetch('sets', queryset=WorkOutSet.objects.filter(weight__gt=0).select_related('exercise'), to_attr='heavy_sets')
             )
         )
     
@@ -41,7 +41,7 @@ class WorkOutList(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         
         # Делаем один быстрый запрос в базу: считаем все подходы этого пользователя
-        context['total_sets'] = WorkoutSet.objects.filter(workout__user=self.request.user).count()
+        context['total_sets'] = WorkOutSet.objects.filter(workout__user=self.request.user).count()
         
         return context
 
@@ -59,15 +59,47 @@ class WorkOutCreate(LoginRequiredMixin, CreateView):
 
     # Тот самый перехватчик конвейера
     def form_valid(self, form):
-        # form.instance — это наша тренировка. Аналог commit=False
-        form.instance.user = self.request.user
-
-        # Создаем зеленое уведомление
-        messages.success(self.request, 'Тренировка успешно добавлена! ')
+        # 1. Достаем пустой (или заполненный с ошибками) формсет
+        context = self.get_context_data()
+        formset = context['formset']
+        
+        # 2. Если в подходах всё заполнено верно:
+        if formset.is_valid():
+            # form.instance — это наша тренировка и привязываем её к юзеру
+            form.instance.user = self.request.user
+            
+            # super().form_valid(form) физически создаст запись в БД
+            # и сохранит новую тренировку внутри self.object
+            response = super().form_valid(form)
+            
+            # 3. Привязываем подходы к свежесозданной тренировке
+            formset.instance = self.object
+            
+            # 4. Сохраняем подходы
+            formset.save()
+            
+            # Создаем зеленое уведомление
+            messages.success(self.request, 'Тренировка успешно добавлена! ')
+            
+            return response
+        else:
+            # Если в формсете ошибка (например, вес буквами), 
+            # возвращаем страницу обратно, чтобы показать эти ошибки
+            return self.render_to_response(self.get_context_data(form=form))
         
         # Возвращаем форму на конвейер для финального сохранения в базу
-        return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Если пользователь нажал "Сохранить", передаем введенные данные 
+        if self.request.POST:
+            context['formset'] = WorkoutSetFormSet(self.request.POST)
+        else:
+            context['formset'] = WorkoutSetFormSet()
+            
+        return context
+        
+        
     
 class WorkOutUpdate(LoginRequiredMixin, UpdateView):
     model = WorkOut

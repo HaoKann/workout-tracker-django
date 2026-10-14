@@ -15,6 +15,7 @@ class WorkOut(models.Model):
     
     exercises = models.ManyToManyField('Exercise', related_name='workouts')
 
+    
 
     def __str__(self):
         return f"{self.title} - {self.date} ({self.user.username})"
@@ -37,19 +38,23 @@ class Exercise(models.Model):
     
 
 # Конкретный подход
-class WorkoutSet(models.Model):
-    # Привязываем подход к конкретной тренировке
-    workout = models.ForeignKey(WorkOut, on_delete=models.CASCADE, related_name='sets')
-    # Привязываем подход к конкретному упражнению из справочника
+class WorkOutExercise(models.Model):
+    workout = models.ForeignKey(WorkOut, on_delete=models.CASCADE, related_name='workout_exercises')
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"{self.workout.title} - {self.exercise.name}"
 
+
+class WorkOutSet(models.Model):
     weight = models.DecimalField(max_digits=5, decimal_places=1, help_text='Вес в кг')
     reps = models.IntegerField(help_text='Количество повторений')
-
-    def __str__(self):
-        return f"{self.exercise.name}: {self.weight} кг x {self.reps}"
+    workout_exercise = models.ForeignKey(WorkOutExercise, on_delete=models.CASCADE, related_name='sets', null=True)
     
-
+    def __str__(self):
+        return f"{self.workout_exercise.exercise.name}: {self.weight} кг x {self.reps}"
+    
+    
 class WorkOutRoutine(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
