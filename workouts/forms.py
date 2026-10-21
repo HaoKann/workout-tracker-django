@@ -26,6 +26,16 @@ class WorkOutForm(forms.ModelForm):
         # 3. Если всё ок, возвращаем данные
         return title
 
+# Формсет верхнего уровня
+WorkoutExerciseFormSet = inlineformset_factory(
+    parent_model=WorkOut,
+    model=WorkOutExercise,
+    fields=('exercise',),
+    extra=1,
+    can_delete=True
+)
+
+# Формсет для подходов (нижний уровень иерархии)
 WorkoutSetFormSet = inlineformset_factory(
     parent_model=WorkOutExercise,
     model=WorkOutSet,

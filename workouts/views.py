@@ -14,7 +14,7 @@ import logging
 from django.core.cache import cache
 from rest_framework import generics
 from .serializers import ExerciseSerializer, RoutineSerializer, ExerciseListSerializer
-from .forms import WorkoutSetFormSet
+from .forms import WorkoutExerciseFormSet
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +32,10 @@ class WorkOutList(LoginRequiredMixin, ListView):
             WorkOut.objects.filter(user = self.request.user)
             .select_related('user')
             .prefetch_related(
-                Prefetch('sets', queryset=WorkOutSet.objects.filter(weight__gt=0).select_related('exercise'), to_attr='heavy_sets')
+                Prefetch('workout_exercises__sets', 
+                         queryset=WorkOutSet.objects.filter(weight__gt=0).select_related('workout_exercise__exercise'), 
+                         to_attr='heavy_sets'
+                )
             )
         )
     
@@ -41,7 +44,7 @@ class WorkOutList(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         
         # Делаем один быстрый запрос в базу: считаем все подходы этого пользователя
-        context['total_sets'] = WorkOutSet.objects.filter(workout__user=self.request.user).count()
+        context['total_sets'] = WorkOutSet.objects.filter(workout_exercise__workout__user=self.request.user).count()
         
         return context
 
@@ -93,9 +96,9 @@ class WorkOutCreate(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         # Если пользователь нажал "Сохранить", передаем введенные данные 
         if self.request.POST:
-            context['formset'] = WorkoutSetFormSet(self.request.POST)
+            context['formset'] = WorkoutExerciseFormSet(instance=self.request.POST)
         else:
-            context['formset'] = WorkoutSetFormSet()
+            context['formset'] = WorkoutExerciseFormSet()
             
         return context
         
@@ -117,7 +120,10 @@ class WorkOutUpdate(LoginRequiredMixin, UpdateView):
     
         # 2. Создаем формсет, передаем ему текущую тренировку (self.object)
         # и сохраняем всё это в словарь под ключом 'formset'
-        context['formset'] = WorkoutSetFormSet(instance=self.object)
+        if self.request.POST:
+            context['formset'] = WorkoutExerciseFormSet(self.request.POST, instance=self.object)
+        else:
+            context['formset'] = WorkoutExerciseFormSet(instance=self.object)
         
         # 3. Возвращаем обновленный словарь
         return context
