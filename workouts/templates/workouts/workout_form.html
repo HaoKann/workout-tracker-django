@@ -21,7 +21,23 @@
 
         {{ form.as_p }}
 
-        {{ formset.as_p}}
+        {{ formset.management_form}}
+
+        {% for exercise_form in formset.forms %}
+        <div class="exercise-block" style="border: 1px solid #334155; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
+            <!-- 1. Выводим поля самого упражнения -->
+            {{ exercise_form.as_p }}
+
+            <!-- 2. Выводим прикреплённый формсет подходов (вес и повторения) -->
+            {{ exercise_form.nested.management_form }}
+
+            {% for set_form in exercise_form.nested.forms %}
+            <div class="sets-block" style="margin-left: 20px;">
+                {{ set_form.as_p }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
 
         <div id="empty-form-template" style="display: none;">
             {{ formset.empty_form.as_p }}

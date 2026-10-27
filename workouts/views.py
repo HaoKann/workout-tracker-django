@@ -14,7 +14,7 @@ import logging
 from django.core.cache import cache
 from rest_framework import generics
 from .serializers import ExerciseSerializer, RoutineSerializer, ExerciseListSerializer
-from .forms import WorkoutExerciseFormSet
+from .forms import WorkoutExerciseFormSet, WorkoutSetFormSet
 
 logger = logging.getLogger(__name__)
 
@@ -96,10 +96,23 @@ class WorkOutCreate(LoginRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         # Если пользователь нажал "Сохранить", передаем введенные данные 
         if self.request.POST:
-            context['formset'] = WorkoutExerciseFormSet(instance=self.request.POST)
+            context['formset'] = WorkoutExerciseFormSet(self.request.POST)
         else:
             context['formset'] = WorkoutExerciseFormSet()
             
+        # Прикрепляем к каждому упражнению его собственный формсет подходов
+        for exercise_form in context['formset'].forms:
+            if self.request.POST:
+                exercise_form.nested = WorkoutSetFormSet(
+                    self.request.POST,
+                    instance=exercise_form.instance,
+                    prefix=f'sets-{exercise_form.prefix}'
+                )
+            else:
+                exercise_form.nested = WorkoutSetFormSet(
+                    instance=exercise_form.instance,
+                    prefix={f'sets-{exercise_form.prefix}'}
+                )
         return context
         
         
@@ -124,6 +137,20 @@ class WorkOutUpdate(LoginRequiredMixin, UpdateView):
             context['formset'] = WorkoutExerciseFormSet(self.request.POST, instance=self.object)
         else:
             context['formset'] = WorkoutExerciseFormSet(instance=self.object)
+            
+        # Прикрепляем формсет подходов к каждому упражнению при редактировании
+        for exercise_form in context['formset'].forms:
+            if self.request.POST:
+                exercise_form.nested = WorkoutSetFormSet(
+                    self.request.POST,
+                    instance=exercise_form.instance,
+                    prefix=f"sets-{exercise_form.prefix}"
+                )
+            else:
+                exercise_form.nested = WorkoutSetFormSet(
+                    instance=exercise_form.instance,
+                    prefix=f'sets-{exercise_form.prefix}'
+                )
         
         # 3. Возвращаем обновленный словарь
         return context
