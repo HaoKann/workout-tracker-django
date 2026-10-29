@@ -2,74 +2,130 @@
 {% load static %}
 
 {% block content %}
-<div class="wt-main">
+<style>
+    /* Стили для выразительной кнопки возврата */
+    .rt-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        background-color: #1E293B;
+        border: 1px solid #334155;
+        color: #E2E8F0;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 16px;
+        transition: all 0.2s ease;
+    }
+
+    .rt-back-btn:hover {
+        background-color: #334155;
+        color: #FFFFFF;
+        border-color: #475569;
+    }
+</style>
+
+<div class="wt-main" style="max-width: 640px; margin: 0 auto;">
     <div class="wt-card">
-        <div class="wt-card-body">
+        <div class="wt-card-body" style="padding: 28px;">
             
+            <!-- Кнопка возврата на главную сверху -->
+            <a href="{% url 'workout_list' %}" class="rt-back-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                На главную
+            </a>
+
             <!-- Шапка тренировки -->
-            <div class="wt-card-top">
-                <h2 class="wt-card-title">{{ object.title }}</h2>
-                <div class="wt-card-date">{{ object.date|date:"d M Y" }}</div>
+            <div class="wt-card-top" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                <h2 class="wt-card-title" style="font-size: 22px; color: #F8FAFC; margin: 0;">{{ object.title }}</h2>
+                <div class="wt-card-date" style="color: #94A3B8; font-size: 14px;">{{ object.date|date:"d M Y" }}</div>
             </div>
 
             <!-- Заметки -->
             {% if object.notes %}
-            <div class="wt-card-note" style="margin-top: 15px;">
-                <strong>Заметки:</strong> {{ object.notes }}
+            <div class="wt-card-note" style="margin-top: 16px; padding: 12px 16px; background: rgba(30, 41, 59, 0.5); border-radius: 8px; border: 1px solid #334155;">
+                <span style="color: #94A3B8; font-size: 13px; display: block; margin-bottom: 4px;">Заметки</span>
+                <span style="color: #E2E8F0; font-size: 14px;">{{ object.notes }}</span>
             </div>
             {% endif %}
 
             <!-- Фотография -->
             {% if object.photo %}
-            <div style="margin-top: 15px;">
-                <img src="{{ object.photo.url }}" alt="Фото тренировки" class="wt-card-photo" style="max-width: 100%; border-radius: 8px;">
+            <div style="margin-top: 16px;">
+                <img src="{{ object.photo.url }}" alt="Фото тренировки" class="wt-card-photo" style="max-width: 100%; border-radius: 8px; border: 1px solid #334155;">
             </div>
             {% endif %}
 
             <!-- Разделитель -->
-            <div class="wt-section-header" style="margin-top: 30px;">
+            <div class="wt-section-header" style="margin-top: 24px;">
                 <span class="label">Выполненные подходы</span>
                 <span class="line"></span>
             </div>
 
             <!-- Таблица подходов -->
-            {% if object.sets.all %}
-                <table class="wt-sets-table">
+            {% if object.workout_exercises.all %}
+                <table class="wt-sets-table" style="width: 100%; margin-top: 12px;">
                     <thead>
                         <tr>
-                            <th>Упражнение</th>
-                            <th>Вес</th>
-                            <th style="text-align:right;">Повторения</th>
+                            <th style="color: #94A3B8; font-size: 13px; text-align: left; padding-bottom: 8px;">Упражнение</th>
+                            <th style="color: #94A3B8; font-size: 13px; text-align: left; padding-bottom: 8px;">Вес</th>
+                            <th style="color: #94A3B8; font-size: 13px; text-align: right; padding-bottom: 8px;">Повторения</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {% for set in object.sets.all %}
+                <tbody style="border-bottom: 1px solid #334155;">
+                    {% for exercise in object.workout_exercises.all %}
+                        {% for set in exercise.sets.all %}
                         <tr>
-                            <td>{{ set.exercise.name }}</td>
-                            <td>
+                            <td style="padding: 8px 0; color: #E2E8F0;">{{ exercise.exercise.name }}</td>
+                            <td style="padding: 8px 0;">
                                 <span class="wt-weight-badge">{{ set.weight }}</span>
                                 <span class="wt-weight-unit">кг</span>
                             </td>
-                            <td>
+                            <td style="padding: 8px 0; text-align:right;">
                                 <span class="wt-reps-badge">
                                     <span>{{ set.reps }}</span> повт.
                                 </span>
                             </td>
                         </tr>
+                        {% empty %}
+                        <tr>
+                            <td style="padding: 12px 0; color: #E2E8F0; font-weight: 500;">
+                                {{ exercise.exercise.name }}
+                            </td>
+                            <td colspan="2" style="padding: 12px 0;">
+                                <form method="POST" action="" style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="workout_exercise_id" value="{{ exercise.id }}">
+                                    
+                                    <input type="number" step="0.5" name="weight" placeholder="Вес (кг)" required 
+                                        style="width: 85px; padding: 6px 10px; background: #0F172A; border: 1px solid #334155; color: #E2E8F0; border-radius: 6px; font-size: 13px;">
+                                    
+                                    <input type="number" name="reps" placeholder="Повт." required 
+                                        style="width: 70px; padding: 6px 10px; background: #0F172A; border: 1px solid #334155; color: #E2E8F0; border-radius: 6px; font-size: 13px;">
+                                    
+                                    <button type="submit" name="add_set" 
+                                            style="background: #10B981; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer;">
+                                        + Добавить
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
                         {% endfor %}
+                    {% endfor %}
                     </tbody>
                 </table>
             {% else %}
-                <p class="wt-no-sets">Подходов пока нет. Нажмите «Редактировать», чтобы добавить их.</p>
+                <p class="wt-no-sets" style="color: #64748B; font-size: 14px; margin-top: 12px; font-style: italic;">Подходов пока нет. Нажмите «Редактировать», чтобы добавить их.</p>
             {% endif %}
 
-            <!-- Кнопки управления -->
-            <div style="margin-top: 30px; display: flex; gap: 15px; align-items: center;">
-                <a href="{% url 'workout_update' object.pk %}" class="wt-add-btn" style="background-color: #63b3ed; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 500;">
+            <!-- Кнопки управления внизу -->
+            <div style="margin-top: 28px; display: flex; gap: 12px; align-items: center;">
+                <a href="{% url 'workout_update' object.pk %}" style="background-color: #3B82F6; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 14px; transition: background-color 0.2s;">
                     Редактировать
-                </a>
-                <a href="{% url 'workout_list' %}" style="color: #64748B; text-decoration: none; font-size: 14px;">
-                    ← Назад к списку
                 </a>
             </div>
 

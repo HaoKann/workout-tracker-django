@@ -1,54 +1,266 @@
 {% extends 'workouts/base.html' %}
 
 {% block content %}
-<!-- Шапка рутины -->
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-    <h2 class="wf-title" style="margin: 0;">{{ object.title }}</h2>
-    <a href="{% url 'workout_routines' %}" style="color: #64748B; text-decoration: none; font-size: 14px;">← К списку</a>
-</div>
+<style>
+    .rd-container {
+        max-width: 580px;
+        margin: 0 auto;
+    }
 
-<!-- Заметки (если есть) -->
-{% if object.notes %}
-<div class="wf-card" style="padding: 16px; margin-bottom: 24px; border-left: 4px solid #10B981;">
-    <p style="margin: 0; color: #94A3B8; font-size: 14px;">📝 {{ object.notes }}</p>
-</div>
-{% endif %}
+    /* Выразительная кнопка возврата */
+    .rt-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        background-color: #1E293B;
+        border: 1px solid #334155;
+        color: #E2E8F0;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 16px;
+        transition: all 0.2s ease;
+    }
 
+    .rt-back-btn:hover {
+        background-color: #334155;
+        color: #FFFFFF;
+        border-color: #475569;
+    }
 
-<!-- Блок формы добавления -->
-<div class="wf-card" style="padding: 20px; border: 2px dashed #334155; margin-bottom: 24px;">
-    <h3 style="margin: 0 0 16px 0; color: #E2E8F0; font-size: 16px;">➕ Добавить упражнение</h3>
-    
-    <form method="POST" style="display: flex; gap: 12px; align-items: center;">
-        {% csrf_token %}
-        <select name="exercise" style="padding: 8px; border-radius: 4px; flex-grow: 1; background-color: #1E293B; color: #E2E8F0; border: 1px solid #475569;">
-            {% for ex in exercises %}
-                <option value="{{ ex.id }}">{{ex.name}}</option>
+    .rd-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    /* Заметки */
+    .rd-notes-card {
+        padding: 16px 20px;
+        margin-bottom: 20px;
+        border-left: 4px solid #10B981;
+        background: rgba(30, 41, 59, 0.7);
+    }
+
+    /* Карточка добавления */
+    .rd-add-card {
+        padding: 20px;
+        border: 1px dashed #475569;
+        background: rgba(30, 41, 59, 0.5);
+        margin-bottom: 20px;
+    }
+
+    .rd-section-title {
+        margin: 0 0 14px 0;
+        color: #F8FAFC;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .rd-add-form {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .rd-select {
+        flex-grow: 1;
+        height: 42px;
+        padding: 0 14px;
+        border-radius: 8px;
+        background-color: #0F172A;
+        color: #E2E8F0;
+        border: 1px solid #334155;
+        font-size: 14px;
+        outline: none;
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+    }
+
+    .rd-select:focus {
+        border-color: #3B82F6;
+    }
+
+    .rd-add-btn {
+        height: 42px;
+        background-color: #3B82F6;
+        color: #FFFFFF;
+        padding: 0 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .rd-add-btn:hover {
+        background-color: #2563EB;
+    }
+
+    /* Список упражнений */
+    .rd-list-card {
+        padding: 20px;
+        margin-bottom: 24px;
+    }
+
+    #exercise-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .rd-exercise-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        background-color: #0F172A;
+        border-radius: 10px;
+        border: 1px solid #334155;
+        cursor: grab;
+        transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .rd-exercise-item:hover {
+        border-color: #475569;
+    }
+
+    .rd-exercise-item:active {
+        cursor: grabbing;
+    }
+
+    /* Полупрозрачный след при перетаскивании SortableJS */
+    .sortable-ghost {
+        opacity: 0.4;
+        border: 1px dashed #3B82F6;
+        background-color: rgba(59, 130, 246, 0.1);
+    }
+
+    .rd-item-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0;
+        color: #F8FAFC;
+        font-weight: 500;
+        font-size: 15px;
+    }
+
+    .rd-drag-handle {
+        color: #64748B;
+        font-size: 16px;
+        user-select: none;
+    }
+
+    /* Кнопка удаления ✕ */
+    .rd-delete-btn {
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        color: #F87171;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .rd-delete-btn:hover {
+        background: #EF4444;
+        border-color: #EF4444;
+        color: #FFFFFF;
+    }
+
+    /* Уведомление */
+    #toast-notification {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #10B981;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        z-index: 1000;
+        font-weight: 500;
+    }
+
+    .toast-hidden {
+        opacity: 0;
+        transform: translateY(20px);
+        pointer-events: none;
+    }
+
+    .toast-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+</style>
+
+<div class="rd-container">
+    <!-- Кнопка возврата на главную сверху -->
+    <a href="{% url 'workout_list' %}" class="rt-back-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        На главную
+    </a>
+
+    <!-- Шапка рутины -->
+    <div class="rd-header">
+        <h2 class="wf-title" style="margin: 0;">{{ object.title }}</h2>
+    </div>
+
+    <!-- Заметки (если есть) -->
+    {% if object.notes %}
+    <div class="wf-card rd-notes-card">
+        <p style="margin: 0; color: #CBD5E1; font-size: 14px;">📝 {{ object.notes }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Блок формы добавления -->
+    <div class="wf-card rd-add-card">
+        <h3 class="rd-section-title">➕ Добавить упражнение</h3>
+        
+        <form method="POST" class="rd-add-form">
+            {% csrf_token %}
+            <select name="exercise" class="rd-select">
+                {% for ex in exercises %}
+                    <option value="{{ ex.id }}">{{ ex.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="rd-add-btn">Добавить</button>
+        </form>
+    </div>
+
+    <!-- Блок со списком упражнений -->
+    <div class="wf-card rd-list-card">
+        <h3 class="rd-section-title">🏋️‍♂️ Упражнения</h3>
+        
+        <div id="exercise-list">
+            {% for ex in object.routine_exercises.all %}
+                <div data-id="{{ ex.id }}" class="rd-exercise-item">
+                    <p class="rd-item-left">
+                        <span class="rd-drag-handle">☰</span>
+                        {{ ex.exercise.name }}
+                    </p>
+                    <a href="{% url 'routine_delete_exercise' ex.id %}" class="rd-delete-btn" title="Удалить из рутины">✕</a>
+                </div>
+            {% empty %}
+                <p style="color: #94A3B8; margin: 0; text-align: center; padding: 12px 0; font-size: 14px;">
+                    Упражнений пока нет. Выберите упражнение выше и нажмите «Добавить».
+                </p> 
             {% endfor %}
-        </select>
-        <button type="submit" style="background-color: #3B82F6; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;">Добавить</button>
-    </form>
-</div>
-
-
-<!-- Блок со списком упражнений -->
-<div class="wf-card" style="padding: 20px; margin-bottom: 24px;">
-    <h3 style="margin: 0 0 16px 0; color: #E2E8F0; font-size: 18px;">🏋️‍♂️ Упражнения</h3>
-    
-    <!-- Добавили id="exercise-list" -->
-    <div id="exercise-list" style="display: flex; flex-direction: column; gap: 12px;">
-        {% for ex in object.routine_exercises.all %}
-            <!-- Добавили data-id и cursor: grab -->
-            <div data-id="{{ ex.id }}" style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background-color: #1E293B; border-radius: 6px; border: 1px solid #334155; cursor: grab;">
-                <p style="margin: 0; color: #E2E8F0; font-weight: 500;">
-                    <span style="color: #64748B; margin-right: 12px; cursor: grab;">☰</span>
-                    {{ ex.exercise.name }}
-                </p>
-                <a href="{% url 'routine_delete_exercise' ex.id %}" style="background-color: #EF4444; color: white; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 14px; transition: background-color 0.2s;">Удалить</a>
-            </div>
-        {% empty %}
-            <p style="color: #94A3B8; margin: 0;">Упражнений пока нет</p> 
-        {% endfor %}
+        </div>
     </div>
 </div>
 
@@ -56,35 +268,6 @@
     ✅ Порядок сохранен
 </div>
 
-<style>
-    #toast-notification {
-    position: fixed; /* Фиксируем поверх других элементов */
-    bottom: 20px;
-    right: 20px;
-    background-color: #4caf50; /* Приятный зеленый цвет */
-    color: white;
-    padding: 12px 24px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: opacity 0.3s ease, transform 0.3s ease; /* Плавная анимация */
-    z-index: 1000;
-}
-
-    /* Состояние, когда уведомление спрятано */
-    .toast-hidden {
-        opacity: 0;
-        transform: translateY(20px); /* Слегка сдвинуто вниз */
-        pointer-events: none; /* Чтобы не мешало кликать по тому, что под ним */
-    }
-
-    /* Состояние, когда уведомление показано */
-    .toast-visible {
-        opacity: 1;
-        transform: translateY(0); /* Возвращается на место */
-    }
-</style>
-
-<!-- Подключаем библиотеку SortableJS -->
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
 <script>
@@ -94,6 +277,7 @@
         if (list) {
             Sortable.create(list, {
                 animation: 150,
+                ghostClass: 'sortable-ghost',
 
                 onEnd: function() {
                     let newOrder = [];
@@ -101,10 +285,8 @@
                         newOrder.push(item.getAttribute('data-id'));
                     });
                     
-                    // Находим CSRF-токен на странице
                     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-                    // Отправляем данные на сервер
                     fetch("{% url 'update_exercise_order' %}", {
                         method: 'POST',
                         headers: {
@@ -115,14 +297,10 @@
                     })
                     .then(response => {
                         if (response.ok) {
-                            console.log("Порядок успешно сохранен!");
-                            
                             const toast = document.getElementById('toast-notification');
-                            // Показываем тост
                             toast.classList.remove('toast-hidden');
                             toast.classList.add('toast-visible');
 
-                            // Прячем тост через 3 секунды (3000 миллисекунд)
                             setTimeout(() => {
                                 toast.classList.remove('toast-visible');
                                 toast.classList.add('toast-hidden');
@@ -136,5 +314,4 @@
         }
     });
 </script>
-
 {% endblock %}

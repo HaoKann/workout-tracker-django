@@ -1,7 +1,7 @@
 {% extends 'workouts/base.html' %}
 {% load static %}
 
-{% block content %}
+{% block content %} 
 
 <!-- HERO HEADER -->
 <div class="wt-hero">
@@ -20,40 +20,44 @@
     </div>
   </div>
 
-<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end; max-width: 50%;">
-    <a href="{% url 'profile' %}" class="wt-add-btn" style="background-color: #4a5568;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; margin-right: 8px;">
+<!-- Блок кнопок справа с фиксированной сеткой -->
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(140px, 1fr)); gap: 10px; width: 100%; max-width: 380px;">
+    
+    <a href="{% url 'profile' %}" class="wt-add-btn" style="background-color: #334155; justify-content: center; margin: 0;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; margin-right: 6px;">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
         <circle cx="12" cy="7" r="4"></circle>
       </svg>
-      Мой профиль
+      Профиль
+    </a>
+    
+    <a href="{% url 'workout_routines' %}" class="wt-add-btn" style="background-color: #1E293B; border: 1px solid #334155; justify-content: center; margin: 0;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Рутины
     </a>
 
-    <a href="{% url 'exercises' %}" class="wt-add-btn" style="background-color: #2b6cb0;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; margin-right: 8px;">
+    <a href="{% url 'exercises' %}" class="wt-add-btn" style="background-color: #1E293B; border: 1px solid #334155; justify-content: center; margin: 0; grid-column: span 2;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; margin-right: 6px;">
         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
       </svg>
       База упражнений
     </a>
 
-    <a href="{% url 'workout_create' %}" class="wt-add-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <a href="{% url 'workout_create' %}" class="wt-add-btn" style="justify-content: center; margin: 0; grid-column: span 2;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
         <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
       </svg>
       Добавить тренировку
     </a>
 
-    <a href="{% url 'workout_routines' %}" class="wt-add-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-      </svg>
-      Рутины
-    </a>
   </div>
-
-
 </div>
+
+
+  </div>
 </div>
 
 <!-- MAIN -->
@@ -72,25 +76,23 @@
         <div class="wt-card-stripe"></div>
         <div class="wt-card-body">
 
-          <div class="wt-card-top">
-            <a href="{% url 'workout_detail' workout.pk %}">
-              <div class="wt-card-title">{{ workout.title }}</div>
-            </a>
-            <div class="wt-card-date">{{ workout.date }}</div>
-          </div>
-          <!-- Контейнер для кнопок управления внутри wt-card-body -->
-          <div class="wt-card-actions" style="margin-top: 10px; display: flex; gap: 10px;">
-            
-            <!-- Кнопка редактирования -->
-            <a href="{% url 'workout_update' workout.pk %}" style="color: #63b3ed; text-decoration: none; font-size: 0.9em;">
-              Редактировать
-            </a>
-            
-            <!-- Кнопка удаления -->
-            <a href="{% url 'workout_delete' workout.pk %}" style="color: #fc8181; text-decoration: none; font-size: 0.9em;">
-              Удалить
-            </a>
+          <div class="wt-card-top" style="align-items: flex-start;">
+            <div>
+              <a href="{% url 'workout_detail' workout.pk %}" style="text-decoration: none;">
+                <div class="wt-card-title">{{ workout.title }}</div>
+              </a>
+              <div class="wt-card-date" style="margin-top: 4px;">{{ workout.date }}</div>
+            </div>
 
+            <!-- Аккуратные кнопки действий в шапке карточки -->
+            <div style="display: flex; gap: 6px;">
+              <a href="{% url 'workout_update' workout.pk %}" style="padding: 5px 10px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); color: #60A5FA; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 500;">
+                Изменить
+              </a>
+              <a href="{% url 'workout_delete' workout.pk %}" style="padding: 5px 10px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); color: #F87171; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 500;">
+                Удалить
+              </a>
+            </div>
           </div>
 
           {% if workout.notes %}

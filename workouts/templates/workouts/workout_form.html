@@ -3,14 +3,181 @@
 
 {% block content %}
 
+<style>
+    /* Карточка отдельного упражнения */
+    .exercise-block {
+        background: rgba(15, 23, 42, 0.45);
+        border: 1px solid #334155;
+        padding: 18px;
+        margin-bottom: 18px;
+        border-radius: 12px;
+    }
+
+    /* Шапка упражнения: выбор упражнения слева, Delete справа */
+    .exercise-header {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 16px;
+        align-items: center;
+        padding-bottom: 14px;
+        margin-bottom: 14px;
+        border-bottom: 1px solid #1E293B;
+    }
+
+    .exercise-header p {
+        margin: 0;
+    }
+
+    /* Заголовок секции подходов */
+    .sets-title {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #94A3B8;
+        margin: 0 0 10px 0;
+        font-weight: 600;
+    }
+
+    /* Строка одного подхода: Вес | Повторения | Удалить в один ряд */
+    .sets-block {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 12px;
+        align-items: start;
+        background: rgba(30, 41, 59, 0.4);
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+
+    .sets-block p {
+        margin: 0;
+    }
+
+    /* Подсказки ("Вес в кг", "Количество повторений") делаем компактнее */
+    .sets-block .helptext,
+    .exercise-header .helptext {
+        display: block;
+        font-size: 11px;
+        color: #64748B;
+        margin-top: 4px;
+    }
+
+         /* Квадратная кнопка удаления на уровне полей ввода */
+    .exercise-header p:last-of-type,
+    .sets-block p:last-of-type {
+        position: relative;
+        width: 38px;
+        height: 38px;
+        margin-top: 23px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    /* Скрываем надпись "Delete:" */
+    .exercise-header p:last-of-type label,
+    .sets-block p:last-of-type label {
+        display: none;
+    }
+
+    /* Рисуем крестик по центру кнопки */
+    .exercise-header p:last-of-type::after,
+    .sets-block p:last-of-type::after {
+        content: "✕";
+        font-size: 15px;
+        font-weight: 600;
+        color: #F87171;
+        pointer-events: none;
+    }
+
+    /* Прозрачный чекбокс поверх всей кнопки для обработки клика */
+    .exercise-header p:last-of-type input[type="checkbox"],
+    .sets-block p:last-of-type input[type="checkbox"] {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        margin: 0;
+        cursor: pointer;
+    }
+
+    /* Активное состояние: когда нажали на крестик */
+    .exercise-header p:last-of-type:has(input[type="checkbox"]:checked),
+    .sets-block p:last-of-type:has(input[type="checkbox"]:checked) {
+        background: #EF4444;
+        border-color: #EF4444;
+    }
+
+    .exercise-header p:last-of-type:has(input[type="checkbox"]:checked)::after,
+    .sets-block p:last-of-type:has(input[type="checkbox"]:checked)::after {
+        color: #FFFFFF;
+    }
+
+
+
+    /* Кнопка "+ Добавить упражнение" в стиле тёмной темы */
+    .add-exercise-btn {
+        width: 100%;
+        padding: 12px;
+        margin: 6px 0 22px;
+        background: transparent;
+        border: 1px dashed #475569;
+        color: #94A3B8;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .add-exercise-btn:hover {
+        border-color: #3B82F6;
+        color: #60A5FA;
+        background: rgba(59, 130, 246, 0.08);
+    }
+
+    .rt-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 16px;
+        background-color: #1E293B;
+        border: 1px solid #334155;
+        color: #E2E8F0;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 16px; /* Добавили отступ снизу */
+        transition: all 0.2s ease;
+    }
+
+
+    .rt-back-btn:hover {
+        background-color: #334155;
+        color: #FFFFFF;
+        border-color: #475569;
+    }
+
+</style>
+
 <div class="wf-card">
     <div class="wf-header">
-        <!-- Умный надзаголовок -->
+        <a href="{% url 'workout_list' %}" class="rt-back-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            На главную
+        </a>
         <p class="wf-eyebrow">
             {% if object %}Редактирование{% else %}Добавление{% endif %}
         </p>
-        
-        <!-- Умный заголовок -->
         <h2 class="wf-title">
             {% if object %}Изменить <span>запись</span>{% else %}Новая <span>тренировка</span>{% endif %}
         </h2>
@@ -21,18 +188,21 @@
 
         {{ form.as_p }}
 
-        {{ formset.management_form}}
+        {{ formset.management_form }}
 
         {% for exercise_form in formset.forms %}
-        <div class="exercise-block" style="border: 1px solid #334155; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
-            <!-- 1. Выводим поля самого упражнения -->
-            {{ exercise_form.as_p }}
+        <div class="exercise-block">
+            <!-- 1. Шапка упражнения -->
+            <div class="exercise-header">
+                {{ exercise_form.as_p }}
+            </div>
 
-            <!-- 2. Выводим прикреплённый формсет подходов (вес и повторения) -->
+            <!-- 2. Прикреплённый формсет подходов (вес и повторения) -->
             {{ exercise_form.nested.management_form }}
+            <p class="sets-title">Подходы</p>
 
             {% for set_form in exercise_form.nested.forms %}
-            <div class="sets-block" style="margin-left: 20px;">
+            <div class="sets-block">
                 {{ set_form.as_p }}
             </div>
             {% endfor %}
@@ -40,30 +210,27 @@
         {% endfor %}
 
         <div id="empty-form-template" style="display: none;">
-            {{ formset.empty_form.as_p }}
+            <div class="exercise-block">
+                <div class="exercise-header">
+                    {{ formset.empty_form.as_p }}
+                </div>
+            </div>
         </div>
         
-        <button type="button" id="add-set-btn" style="margin-top: 10px; margin-bottom: 20px;" >
+        <button type="button" id="add-set-btn" class="add-exercise-btn">
             + Добавить упражнение
         </button>
 
-
         <button type="submit" class="wf-submit">
-            <!-- Показываем иконку плюса только если это создание новой тренировки -->
             {% if not object %}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
             {% endif %}
-            
-            <!-- Меняем текст кнопки -->
             {% if object %}Сохранить изменения{% else %}Сохранить тренировку{% endif %}
         </button>
     </form>
-
-    <div style="padding: 0 36px 32px;">
-        <a href="{% url 'workout_list' %}" style="color: #64748B; text-decoration: none; font-size: 14px;">← Назад к списку</a>
-    </div>
+        
 </div>
 
 <script>
@@ -73,16 +240,14 @@
         const emptyFormTemplate = document.getElementById('empty-form-template')
 
         addBtn.addEventListener('click', function() {
-            const currentFormCout = parseInt(totalFormsInput.value)
-
-            const newFormHtml = emptyFormTemplate.innerHTML.replace(/__prefix__/g, currentFormCout)
+            const currentFormCount = parseInt(totalFormsInput.value)
+            const newFormHtml = emptyFormTemplate.innerHTML.replace(/__prefix__/g, currentFormCount)
 
             const newFormContainer = document.createElement('div')
             newFormContainer.innerHTML = newFormHtml
 
-            emptyFormTemplate.parentNode.insertBefore(newFormContainer, emptyFormTemplate)
-
-            totalFormsInput.value = currentFormCout + 1
+            emptyFormTemplate.parentNode.insertBefore(newFormContainer.firstElementChild, emptyFormTemplate)
+            totalFormsInput.value = currentFormCount + 1
         })
     })
 </script>

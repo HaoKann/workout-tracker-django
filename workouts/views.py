@@ -1,6 +1,6 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
-from .models import WorkOut, WorkOutSet, RoutineExercise, WorkOutRoutine, Exercise
+from .models import WorkOut, WorkOutSet, RoutineExercise, WorkOutRoutine, Exercise, WorkOutExercise
 from django.contrib.auth import get_user_model
 from .forms import WorkOutForm
 from django.contrib import messages
@@ -51,6 +51,23 @@ class WorkOutList(LoginRequiredMixin, ListView):
 class WorkOutDetail(LoginRequiredMixin, DetailView):
     model=WorkOut
     template_name='workouts/workout_detail.html'
+    
+    def post(self, request, *path, **kwargs):
+        self.object = self.get_object()
+        # Проверяем, что отправлена именно форма добавления подхода
+        if 'add_set' in request.POST:
+            workout_exercise_id = request.POST.get('workout_exercise_id')
+            weight = request.POST.get('weight')
+            reps = request.POST.get('reps')
+            
+            if workout_exercise_id and weight and reps:
+                workout_exercise = get_object_or_404(WorkOutExercise, id=workout_exercise_id)
+                WorkOutSet.objects.create(
+                    workout_exercise=workout_exercise,
+                    weight=weight,
+                    reps=reps
+                )
+        return redirect('workout_detail', pk=self.object.pk)
 
 class WorkOutCreate(LoginRequiredMixin, CreateView):
     model = WorkOut

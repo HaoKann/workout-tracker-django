@@ -1,23 +1,44 @@
 {% extends 'workouts/base.html' %} 
 
 {% block content %}
+<style>
+    /* Стили для нижней ссылки авторизации */
+    .wf-auth-footer {
+        text-align: center;
+        margin-top: 18px;
+        font-size: 14px;
+        color: #94A3B8;
+    }
+
+    .wf-auth-footer a {
+        color: #60A5FA;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+    }
+
+    .wf-auth-footer a:hover {
+        color: #93C5FD;
+        text-decoration: underline;
+    }
+</style>
+
 <div class="wf-wrapper">
     <div class="wf-card">
         
-        <!-- Красивая шапка, как в твоем дизайне -->
+        <!-- Шапка страницы -->
         <div class="wf-header">
             <div class="wf-eyebrow">Workout Tracker</div>
             <h2 class="wf-title"><span>Регистрация</span></h2>
         </div>
         
-        <!-- Сама форма с твоим классом wf-form -->
+        <!-- Форма регистрации -->
         <form method="POST" class="wf-form">
             {% csrf_token %}
             
             {% for field in form %}
-                <!-- Если есть ошибка, добавляем класс wf-field--error -->
                 <div class="wf-field {% if field.errors %}wf-field--error{% endif %}">
-                    <label class="wf-label">{{ field.label }}</label>
+                    <label class="wf-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                     
                     {{ field }}
                     
@@ -27,11 +48,11 @@
                 </div>
             {% endfor %}
             
-            <button type="submit" class="wf-submit">
+            <button type="submit" class="wf-submit" style="margin-top: 8px;">
                 Зарегистрироваться
             </button>
             
-            <!-- Тот самый новый футер для ссылок -->
+            <!-- Аккуратный футер для перехода на вход -->
             <div class="wf-auth-footer">
                 Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a>
             </div>

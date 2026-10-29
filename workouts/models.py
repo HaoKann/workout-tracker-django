@@ -37,7 +37,7 @@ class Exercise(models.Model):
         return self.name
     
 
-# Конкретный подход
+# Упражнения в тренировке 
 class WorkOutExercise(models.Model):
     workout = models.ForeignKey(WorkOut, on_delete=models.CASCADE, related_name='workout_exercises')
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
@@ -45,7 +45,7 @@ class WorkOutExercise(models.Model):
     def __str__(self):
         return f"{self.workout.title} - {self.exercise.name}"
 
-
+# Конкретный подход
 class WorkOutSet(models.Model):
     weight = models.DecimalField(max_digits=5, decimal_places=1, help_text='Вес в кг')
     reps = models.IntegerField(help_text='Количество повторений')

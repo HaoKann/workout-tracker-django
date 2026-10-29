@@ -1,61 +1,151 @@
 {% extends 'workouts/base.html' %}
 
 {% block content %}
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-    <h2 class="wf-title" style="margin: 0; color: #F8FAFC;">База упражнений</h2>
-</div>
-
-<!-- Блок формы добавления кастомного упражнения -->
-<div class="wf-card" style="padding: 20px; border: 2px dashed #334155; margin-bottom: 24px; background-color: #1E293B; border-radius: 8px;">
-    <h3 style="margin: 0 0 16px 0; color: #E2E8F0; font-size: 16px;">➕ Создать свое упражнение</h3>
-    
-    <form id="create-exercise-form" style="display: flex; flex-direction: column; gap: 12px;">
-        {% csrf_token %}
-        <input type="text" id="exercise-name" placeholder="Название упражнения" required
-               style="padding: 10px; background-color: #0F172A; color: #E2E8F0; border: 1px solid #475569; border-radius: 6px; width: 100%;">
-               
-        <textarea id="exercise-desc" placeholder="Описание (необязательно)" rows="2"
-                  style="padding: 10px; background-color: #0F172A; color: #E2E8F0; border: 1px solid #475569; border-radius: 6px; width: 100%; resize: vertical;"></textarea>
-                  
-        <button type="submit" style="background-color: #10B981; color: white; padding: 10px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; align-self: flex-start;">
-            Добавить в базу
-        </button>
-    </form>
-</div>
-
-<!-- Блок со списком упражнений -->
-<div class="wf-card" style="background-color: #1E293B; border-radius: 8px; border: 1px solid #334155; overflow: hidden;">
-    <div id="exercises-list">
-        {% for exercise in object_list %}
-            <div class="exercise-item" style="padding: 16px; border-bottom: 1px solid #334155;">
-                <h4 style="margin: 0 0 8px 0; color: #F8FAFC;">
-                    {{ exercise.name }}
-                    <button data-id="{{ exercise.id }}">Удалить</button>
-                    {% if exercise.is_custom %}
-                        <span style="background-color: #3B82F6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; margin-left: 8px;">Мое</span>
-                    {% endif %}
-                </h4>
-                {% if exercise.description %}
-                    <p style="margin: 0; color: #94A3B8; font-size: 14px;">{{ exercise.description }}</p>
-                {% endif %}
-            </div>
-        {% empty %}
-            <div id="empty-message" style="padding: 20px; color: #94A3B8; text-align: center;">Упражнений пока нет. Добавьте свое первое!</div>
-        {% endfor %}
-    </div>
-</div>
-
-<!-- Всплывающее уведомление (Toast) -->
-<div id="toast-notification" class="toast-hidden">
-    ✅ Упражнение успешно добавлено!
-</div>
-
-<!-- Стили для уведомления и списка -->
 <style>
-    .exercise-item:last-child {
-        border-bottom: none !important;
+    .eb-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
     }
 
+    /* Карточка создания упражнения */
+    .eb-create-card {
+        padding: 22px;
+        border: 1px dashed #475569;
+        margin-bottom: 24px;
+        background: rgba(30, 41, 59, 0.6);
+        border-radius: 12px;
+    }
+
+    .eb-create-title {
+        margin: 0 0 16px 0;
+        color: #F8FAFC;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .eb-form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .eb-input {
+        padding: 11px 14px;
+        background-color: #0F172A;
+        color: #E2E8F0;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        width: 100%;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: border-color 0.2s ease;
+    }
+
+    .eb-input:focus {
+        outline: none;
+        border-color: #3B82F6;
+    }
+
+    .eb-submit-btn {
+        background-color: #10B981;
+        color: #FFFFFF;
+        padding: 10px 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        align-self: flex-start;
+        transition: background-color 0.2s ease;
+    }
+
+    .eb-submit-btn:hover {
+        background-color: #059669;
+    }
+
+    /* Список упражнений */
+    .eb-list-card {
+        background-color: #1E293B;
+        border-radius: 12px;
+        border: 1px solid #334155;
+        overflow: hidden;
+    }
+
+    .exercise-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 20px;
+        border-bottom: 1px solid #334155;
+        transition: background-color 0.15s ease;
+    }
+
+    .exercise-item:hover {
+        background-color: rgba(15, 23, 42, 0.35);
+    }
+
+    .exercise-item:last-child {
+        border-bottom: none;
+    }
+
+    .exercise-title-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 0 4px 0;
+    }
+
+    .exercise-name {
+        margin: 0;
+        color: #F8FAFC;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .badge-custom {
+        background: rgba(59, 130, 246, 0.15);
+        color: #60A5FA;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .exercise-desc {
+        margin: 0;
+        color: #94A3B8;
+        font-size: 13px;
+    }
+
+    /* Кнопка удаления с крестиком */
+    .delete-exercise-btn {
+        width: 34px;
+        height: 34px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        color: #F87171;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .delete-exercise-btn:hover {
+        background: #EF4444;
+        border-color: #EF4444;
+        color: #FFFFFF;
+    }
+
+    /* Всплывающее уведомление (Toast) */
     #toast-notification {
         position: fixed;
         bottom: 20px;
@@ -64,7 +154,7 @@
         color: white;
         padding: 12px 24px;
         border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
         transition: opacity 0.3s ease, transform 0.3s ease;
         z-index: 1000;
         font-weight: 500;
@@ -80,12 +170,88 @@
         opacity: 1;
         transform: translateY(0);
     }
+
+        .rt-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        background-color: #1E293B;
+        border: 1px solid #334155;
+        color: #E2E8F0;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 12px;
+        transition: all 0.2s ease;
+    }
+
+    .rt-back-btn:hover {
+        background-color: #334155;
+        color: #FFFFFF;
+        border-color: #475569;
+    }
+
 </style>
 
-<!-- Скрипт для отправки данных (AJAX) -->
+<div class="eb-header" style="display: flex; flex-direction: column; align-items: flex-start;">
+    <a href="{% url 'workout_list' %}" class="rt-back-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        На главную
+    </a>
+    <h2 class="wf-title" style="margin: 0; color: #F8FAFC;">База <span>упражнений</span></h2>
+</div>
+
+
+<!-- Блок формы добавления кастомного упражнения -->
+<div class="wf-card eb-create-card">
+    <h3 class="eb-create-title">➕ Создать своё упражнение</h3>
+    
+    <form id="create-exercise-form" class="eb-form">
+        {% csrf_token %}
+        <input type="text" id="exercise-name" class="eb-input" placeholder="Название упражнения (например, Тяга верхнего блока)" required>
+        <textarea id="exercise-desc" class="eb-input" placeholder="Описание или заметки по технике (необязательно)" rows="2" style="resize: vertical;"></textarea>
+        <button type="submit" class="eb-submit-btn">+ Добавить в базу</button>
+    </form>
+</div>
+
+<!-- Блок со списком упражнений -->
+<div class="wf-card eb-list-card">
+    <div id="exercises-list">
+        {% for exercise in object_list %}
+            <div class="exercise-item">
+                <div>
+                    <div class="exercise-title-row">
+                        <h4 class="exercise-name">{{ exercise.name }}</h4>
+                        {% if exercise.is_custom %}
+                            <span class="badge-custom">Моё</span>
+                        {% endif %}
+                    </div>
+                    {% if exercise.description %}
+                        <p class="exercise-desc">{{ exercise.description }}</p>
+                    {% endif %}
+                </div>
+                <button class="delete-exercise-btn" data-id="{{ exercise.id }}" title="Удалить упражнение">✕</button>
+            </div>
+        {% empty %}
+            <div id="empty-message" style="padding: 24px; color: #94A3B8; text-align: center;">
+                Упражнений пока нет. Добавьте своё первое!
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Всплывающее уведомление (Toast) -->
+<div id="toast-notification" class="toast-hidden">
+    ✅ Упражнение успешно добавлено!
+</div>
+
 <script>
     document.getElementById('create-exercise-form').addEventListener('submit', function(event) {
-        event.preventDefault(); // Останавливаем перезагрузку страницы
+        event.preventDefault();
 
         const nameInput = document.getElementById('exercise-name');
         const descInput = document.getElementById('exercise-desc');
@@ -96,7 +262,6 @@
             description: descInput.value
         };
 
-        // Отправляем данные на наш DRF API
         fetch("/api/exercises/", {
             method: "POST",
             headers: {
@@ -106,14 +271,10 @@
             body: JSON.stringify(newExercise)
         })
         .then(response => {
-            if (response.ok) {
-                return response.json(); // Ждем JSON ответ от сервера с данными созданного упражнения
-            } else {
-                throw new Error('Ошибка сервера');
-            }
+            if (response.ok) return response.json();
+            throw new Error('Ошибка сервера');
         })
         .then(data => {
-            // 1. Показываем всплывающее уведомление
             const toast = document.getElementById('toast-notification');
             toast.classList.remove('toast-hidden');
             toast.classList.add('toast-visible');
@@ -123,34 +284,27 @@
                 toast.classList.add('toast-hidden');
             }, 3000);
 
-            // 2. Очищаем форму
             nameInput.value = '';
             descInput.value = '';
 
-            // 3. Динамически добавляем новое упражнение в начало списка
             const list = document.getElementById('exercises-list');
             const emptyMessage = document.getElementById('empty-message');
-            
-            // Если была надпись "Упражнений нет", удаляем её
-            if (emptyMessage) {
-                emptyMessage.remove();
-            }
+            if (emptyMessage) emptyMessage.remove();
 
-            // Формируем HTML нового упражнения (используем данные, которые вернул API)
-            const descHtml = data.description ? `<p style="margin: 0; color: #94A3B8; font-size: 14px;">${data.description}</p>` : '';
+            const descHtml = data.description ? `<p class="exercise-desc">${data.description}</p>` : '';
             const newHtml = `
-                <div class="exercise-item" style="padding: 16px; border-bottom: 1px solid #334155;">
-                    <h4 style="margin: 0 0 8px 0; color: #F8FAFC;">
-                        ${data.name}
-                        <span style="background-color: #3B82F6; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; margin-left: 8px;">Мое</span>
-                        </h4> 
-                        <button data-id="${data.id}">Удалить</button>
+                <div class="exercise-item">
+                    <div>
+                        <div class="exercise-title-row">
+                            <h4 class="exercise-name">${data.name}</h4>
+                            <span class="badge-custom">Моё</span>
+                        </div>
                         ${descHtml}
+                    </div>
+                    <button class="delete-exercise-btn" data-id="${data.id}" title="Удалить упражнение">✕</button>
                 </div>
             `;
-            
-            
-            // Вставляем новое упражнение в самый верх списка
+
             list.insertAdjacentHTML('afterbegin', newHtml);
         })
         .catch(error => {
@@ -159,41 +313,30 @@
         });
     });
 
-    // Находим контейнер, в котором лежат все упражнения
-const listContainer = document.getElementById('exercises-list'); 
+    const listContainer = document.getElementById('exercises-list');
 
-// Вешаем один общий слушатель кликов на весь контейнер
-listContainer.addEventListener('click', function(event) {
-    
-    // Проверяем, что клик был именно по кнопке с атрибутом data-id
-    if (event.target.tagName === 'BUTTON' && event.target.hasAttribute('data-id')) {
-        const button = event.target;
-        const exerciseId = button.getAttribute('data-id');
-        
-        // Находим родительский блок всего упражнения (чтобы удалить именно его)
-        const exerciseItem = button.closest('.exercise-item');
+    listContainer.addEventListener('click', function(event) {
+        if (event.target.tagName === 'BUTTON' && event.target.hasAttribute('data-id')) {
+            const button = event.target;
+            const exerciseId = button.getAttribute('data-id');
+            const exerciseItem = button.closest('.exercise-item');
 
-        // Отправляем фоновый запрос на удаление
-        fetch(`/api/exercises/${exerciseId}/`, {
-            method: 'DELETE',
-            headers: {
-                // Не забываем передать CSRF токен для безопасности Django
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                // Если сервер успешно удалил запись из БД, убираем блок с экрана
-                exerciseItem.remove();
-            } else {
-                alert('Ошибка при удалении');
-            }
-        })
-        .catch(error => console.error('Ошибка:', error));
-    }
-});
-
-
+            fetch(`/api/exercises/${exerciseId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    exerciseItem.remove();
+                } else {
+                    alert('Ошибка при удалении');
+                }
+            })
+            .catch(error => console.error('Ошибка:', error));
+        }
+    });
 </script>
 {% endblock %}
