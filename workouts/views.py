@@ -52,9 +52,27 @@ class WorkOutDetail(LoginRequiredMixin, DetailView):
     model=WorkOut
     template_name='workouts/workout_detail.html'
     
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Передаем всю базу упражнений в шаблон
+        context['exercises'] = Exercise.objects.all()
+        return context
+    
     def post(self, request, *path, **kwargs):
         self.object = self.get_object()
-        # Проверяем, что отправлена именно форма добавления подхода
+        # 1. Проверяем, добавляем ли мы новое упражнение к тренировке
+        if 'add_exercise' in request.POST:
+            exercise_id = request.POST.get('exercise_id')
+            if exercise_id:
+                WorkOutExercise.objects.create(
+                    workout=self.object,
+                    exercise_id=exercise_id
+                )
+            return redirect('workout_detail', pk=self.object.pk)
+        
+        # 2. Проверяем, добавляем ли мы подход
         if 'add_set' in request.POST:
             workout_exercise_id = request.POST.get('workout_exercise_id')
             weight = request.POST.get('weight')
@@ -67,8 +85,11 @@ class WorkOutDetail(LoginRequiredMixin, DetailView):
                     weight=weight,
                     reps=reps
                 )
+            return redirect('workout_detail', pk=self.object.pk)
+    
         return redirect('workout_detail', pk=self.object.pk)
-
+    
+    
 class WorkOutCreate(LoginRequiredMixin, CreateView):
     model = WorkOut
     form_class = WorkOutForm 

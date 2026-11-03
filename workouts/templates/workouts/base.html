@@ -1,21 +1,75 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workout Tracker</title>
     <link rel="stylesheet" href="{% static 'workouts/css/style.css' %}">
+    <style>
+        .wt-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 18px;
+            margin: 20px 0 24px 0;
+            background: rgba(30, 41, 59, 0.75);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            backdrop-filter: blur(8px);
+        }
+        .wt-nav-links {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .wt-nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            color: #CBD5E1;
+            background: #0F172A;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .wt-nav-link:hover {
+            color: #F8FAFC;
+            border-color: #3B82F6;
+            background: #1E293B;
+        }
+    </style>
 </head>
 <body>
 
-
-
     <div style="max-width: 800px; margin: 0 auto;">
+        {% if user.is_authenticated %}
+        <nav class="wt-navbar">
+            <div class="wt-nav-links">
+                <a href="{% url 'workout_list' %}" class="wt-nav-link">
+                    🏠 Главная
+                </a>
+                <a href="{% url 'workout_routines' %}" class="wt-nav-link">
+                    📋 Рутины
+                </a>
+                <a href="{% url 'exercises' %}" class="wt-nav-link">
+                    🏋️‍♂️ База упражнений
+                </a>
+            </div>
+            <a href="{% url 'profile' %}" class="wt-nav-link">
+                👤 Профиль
+            </a>
+        </nav>
+        {% endif %}
+
         {% if messages %}
-            <ul style="list-style: none; margin: 0 auto;">
+            <ul style="list-style: none; padding: 0; margin: 0 0 16px 0;">
                 {% for message in messages %}
-                    <li style="padding: 10px; margin-bottom: 15px; border-radius: 4px; background-color: #dffece; color: #2e6615; border: 1px solid #b8dfa3;">
+                    <li style="padding: 12px 16px; margin-bottom: 10px; border-radius: 8px; background-color: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3);">
                        {{ message }}  
                     </li>
                 {% endfor %}
@@ -23,10 +77,8 @@
         {% endif %}
 
         {% block content %}
-        <!-- Сюда попадает уникальный контент каждой страницы -->
         {% endblock %}
     </div>
-
 
 </body>
 </html>
