@@ -16,6 +16,7 @@ from rest_framework import generics
 from .serializers import ExerciseSerializer, RoutineSerializer, ExerciseListSerializer
 from .forms import WorkoutExerciseFormSet, WorkoutSetFormSet
 
+
 logger = logging.getLogger(__name__)
 
 User = get_user_model()
@@ -80,12 +81,26 @@ class WorkOutDetail(LoginRequiredMixin, DetailView):
             
             if workout_exercise_id and weight and reps:
                 workout_exercise = get_object_or_404(WorkOutExercise, id=workout_exercise_id)
-                WorkOutSet.objects.create(
+                workout_set = WorkOutSet.objects.create(
                     workout_exercise=workout_exercise,
                     weight=weight,
                     reps=reps
                 )
-            return redirect('workout_detail', pk=self.object.pk)
+                return JsonResponse({
+                    'status':'ok',
+                    'workout_exercise_id': workout_exercise_id,
+                    'weight': weight,
+                    'reps': reps,
+                    'set_id': workout_set.id,
+                    'set_number': workout_exercise.sets.count()
+                })
+                
+        
+        if 'delete_set' in request.POST:
+            set_id = request.POST.get('set_id')
+            exercise_set = get_object_or_404(WorkOutSet, id=set_id)
+            exercise_set.delete()            
+            return JsonResponse({'status': 'ok', 'set_id': set_id})
     
         return redirect('workout_detail', pk=self.object.pk)
     
