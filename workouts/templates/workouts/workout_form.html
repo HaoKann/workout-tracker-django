@@ -165,6 +165,45 @@
         border-color: #475569;
     }
 
+.delete-btn-container {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    margin-top: 23px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    border-radius: 8px;
+}
+
+.delete-btn-container label { display: none; }
+
+.delete-btn-container::after {
+    content: "✕";
+    font-size: 15px;
+    font-weight: 600;
+    color: #F87171;
+}
+
+.delete-btn-container input[type="checkbox"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.delete-btn-container:has(input[type="checkbox"]:checked) {
+    background: #EF4444;
+}
+
+.delete-btn-container:has(input[type="checkbox"]:checked)::after {
+    color: #FFFFFF;
+}
+
 </style>
 
 <div class="wf-card">
@@ -186,20 +225,35 @@
 
         {% for exercise_form in formset.forms %}
         <div class="exercise-block">
-            <!-- 1. Шапка упражнения -->
+            {{ exercise_form.id }}
+
             <div class="exercise-header">
-                {{ exercise_form.as_p }}
+                <div>
+                    {{ exercise_form.exercise.label_tag }}
+                    {{ exercise_form.exercise }}
+                </div>
+                <div class="delete-btn-container">
+                    {{ exercise_form.DELETE }}
+                </div>
             </div>
 
-            <!-- 2. Прикреплённый формсет подходов (вес и повторения) -->
+            <!-- ВАЖНО: Обязательный вызов management_form для вложенного формсета подходов -->
             {{ exercise_form.nested.management_form }}
+            
             <p class="sets-title">Подходы</p>
 
             {% for set_form in exercise_form.nested.forms %}
             <div class="sets-block">
-                {{ set_form.as_p }}
+                {{ set_form.id }}
+                
+                <div>{{ set_form.weight.label_tag }} {{ set_form.weight }}</div>
+                <div>{{ set_form.reps.label_tag }} {{ set_form.reps }}</div>
+                
+                <div class="delete-btn-container">
+                    {{ set_form.DELETE }}
+                </div>
             </div>
-            {% endfor %}
+            {% endfor %} 
         </div>
         {% endfor %}
 

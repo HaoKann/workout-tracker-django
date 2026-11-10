@@ -24,6 +24,54 @@
         color: #FFFFFF;
         border-color: #475569;
     }
+
+    .wt-section-header {
+    margin-top: 24px;
+}
+
+.add-exercise-card {
+    margin: 20px 0;
+    padding: 16px;
+    background: #1E293B;
+    border: 1px solid #334155;
+    border-radius: 12px;
+}
+
+.add-exercise-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.add-exercise-select {
+    flex: 1;
+    padding: 8px 12px;
+    background: #0F172A;
+    border: 1px solid #334155;
+    color: #F8FAFC;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.add-exercise-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #3B82F6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.add-exercise-btn:hover {
+    background: #2563EB;
+}
 </style>
 
 <div class="wt-main" style="max-width: 640px; margin: 0 auto;">
@@ -50,23 +98,24 @@
             </div>
             {% endif %}
 
-            <!-- Форма добавления упражнения из базы -->
-            <div class="wt-section-header" style="margin-top: 24px;">
-                <div style="margin: 20px 0; padding: 16px; background: #1E293B; border: 1px solid #334155; border-radius: 12px;">
-                    <form method="POST" style="display: flex; gap: 10px; align-items: center;">
-                        {% csrf_token %}
-                        <select name="exercise_id" style="flex: 1; padding: 8px 12px; background: #0F172A; border: 1px solid #334155; color: #F8FAFC; border-radius: 8px; font-size: 13px;" required>
-                            <option value="" disabled selected>Упражнение из базы</option>
-                            {% for ex in exercises %}
-                            <option value="{{ ex.id }}">{{ ex.name }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="submit" name="add_exercise" style="padding: 8px 16px; background: #3B82F6; color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer;">
-                            + Добавить упражнение
-                        </button>
-                    </form>
-                </div>
+        <!-- Форма добавления упражнения из базы -->
+        <div class="wt-section-header">
+            <div class="add-exercise-card">
+                <form method="POST" class="add-exercise-form">
+                    {% csrf_token %}
+                    <select name="exercise_id" class="add-exercise-select" required>
+                        <option value="" disabled selected>Упражнение из базы</option>
+                        {% for ex in exercises %}
+                        <option value="{{ ex.id }}">{{ ex.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" name="add_exercise" class="add-exercise-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Добавить
+                    </button>
+                </form>
             </div>
+        </div>
 
             <!-- Разделитель -->
             <span class="label">Выполненные подходы</span>
@@ -100,12 +149,11 @@
                                             <span class="wt-weight-badge">{{ set.weight }}</span>
                                             <span class="wt-weight-unit">кг</span>
                                         </td>
-                                        <td style="padding: 8px 0; text-align:right;">
+                                        <td style="padding: 8px 0; display: flex; justify-content: flex-end; align-items: center; gap: 12px;">
                                             <span class="wt-reps-badge">
                                                 <span>{{ set.reps }}</span> повт.
                                             </span>
-                                            <button type="button" class="delete-set-btn" data-set-id="{{ set.id }}" style="background: none; border: none; color: #EF4444; cursor: pointer; margin-left: 8px; font-weight: bold;">✕</button>
-                                        </td>
+                                        <button type="button" class="delete-set-btn" data-set-id="{{ set.id }}" style="background: rgba(239, 68, 68, 0.15); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.3); width: 26px; height: 26px; border-radius: 6px; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">✕</button>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -124,7 +172,7 @@
                                 style="width: 70px; padding: 6px 10px; background: #0F172A; border: 1px solid #334155; color: #E2E8F0; border-radius: 6px; font-size: 13px;">
                             
                             <button type="submit" style="background: #10B981; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer;">
-                                + Добавить
+                                + 
                             </button>
                         </form>
 
@@ -137,16 +185,22 @@
 
             <!-- Кнопки управления внизу -->
             <div style="margin-top: 28px; display: flex; gap: 12px; align-items: center;">
-                <a href="{% url 'workout_update' object.pk %}" style="background-color: #3B82F6; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 14px; transition: background-color 0.2s;">
-                    Редактировать
-                </a>
-            </div>
+    <a href="{% url 'workout_update' object.pk %}" style="display: inline-flex; align-items: center; gap: 8px; background-color: #3B82F6; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 14px; transition: background-color 0.2s;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+        </svg>
+        Редактировать
+    </a>
+</div>
+
+
 
         </div>
     </div>
 </div>
 
 <script>
+// 1. Добавление нового подхода
 document.querySelectorAll('.add-set-form').forEach(form => {
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -171,15 +225,14 @@ document.querySelectorAll('.add-set-form').forEach(form => {
                             <span class="wt-weight-badge">${data.weight}</span>
                             <span class="wt-weight-unit">кг</span>
                         </td>
-                        <td style="padding: 8px 0; text-align:right;">
+                        <td style="padding: 8px 0; display: flex; justify-content: flex-end; align-items: center; gap: 12px;">
                             <span class="wt-reps-badge">
                                 <span>${data.reps}</span> повт.
                             </span>
-                            <button type="button" class="delete-set-btn" data-set-id="${data.set_id}" style="background: none; border: none; color: #EF4444; cursor: pointer; margin-left: 8px; font-weight: bold;">✕</button>
+                            <button type="button" class="delete-set-btn" data-set-id="${data.set_id}" style="background: rgba(239, 68, 68, 0.15); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.3); width: 26px; height: 26px; border-radius: 6px; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">✕</button>
                         </td>
                     </tr>
                 `;
-
                 tbody.insertAdjacentHTML('beforeend', newRow);
                 this.reset();
             }
@@ -187,32 +240,41 @@ document.querySelectorAll('.add-set-form').forEach(form => {
     });
 });
 
-document.querySelectorAll('.delete-set-btn').forEach(btn => {
-    btn.addEventListener('click', async function() {
-        const setId = this.getAttribute('data-set-id')
-        const formData = new FormData()
-        formData.append('delete_set', '1')
-        formData.append('set_id', setId)
-        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+// 2. Удаление подхода (работает и для старых, и для новых строк)
+document.addEventListener('click', async function(e) {
+    const btn = e.target.closest('.delete-set-btn');
+    if (!btn) return;
 
-        const response = await fetch(window.location.href, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
+    const setId = btn.getAttribute('data-set-id');
+    const formData = new FormData();
+    formData.append('delete_set', '1');
+    formData.append('set_id', setId);
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
 
-        if (response.ok) {
-            const data = await response.json()
-            if (data.status == 'ok') {
-                const row = document.getElementById(`set-row-${data.set_id}`)
-                if (row) {
-                    row.remove()
-                }
+    const response = await fetch(window.location.href, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        if (data.status === 'ok') {
+            const row = document.getElementById(`set-row-${data.set_id}`);
+            if (row) {
+                const  tbody = row.parentElement // 1. Grab the parent <tbody>
+                row.remove(); // 2. Remove the deleted row
+
+                // 3. Loop through remaining rows and update the first <td>
+                tbody.querySelectorAll('tr').forEach((tr, index) => {
+                    tr.querySelector('td').textContent = `#${index + 1}`
+                })
             }
         }
-    })
-})
+    }
+});
 </script>
+
 {% endblock %}

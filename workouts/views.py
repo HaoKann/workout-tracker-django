@@ -21,6 +21,15 @@ logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
+def _attach_nested_formsets(self, context):
+    data = self.request.POST if self.request.POST else None
+    for exercise_form in context['formset'].forms:
+        exercise_form.nested = WorkoutSetFormSet(
+            data,
+            instance=exercise_form.instance,
+            prefix=f'sets-{exercise_form.prefix}'
+        )
+
 class WorkOutList(LoginRequiredMixin, ListView):
     # Указываем, с какой моделью (таблицей) работаем
     model = WorkOut
@@ -154,18 +163,8 @@ class WorkOutCreate(LoginRequiredMixin, CreateView):
             context['formset'] = WorkoutExerciseFormSet()
             
         # Прикрепляем к каждому упражнению его собственный формсет подходов
-        for exercise_form in context['formset'].forms:
-            if self.request.POST:
-                exercise_form.nested = WorkoutSetFormSet(
-                    self.request.POST,
-                    instance=exercise_form.instance,
-                    prefix=f'sets-{exercise_form.prefix}'
-                )
-            else:
-                exercise_form.nested = WorkoutSetFormSet(
-                    instance=exercise_form.instance,
-                    prefix={f'sets-{exercise_form.prefix}'}
-                )
+        _attach_nested_formsets(self, context)
+        
         return context
         
         
@@ -192,36 +191,60 @@ class WorkOutUpdate(LoginRequiredMixin, UpdateView):
             context['formset'] = WorkoutExerciseFormSet(instance=self.object)
             
         # Прикрепляем формсет подходов к каждому упражнению при редактировании
-        for exercise_form in context['formset'].forms:
-            if self.request.POST:
-                exercise_form.nested = WorkoutSetFormSet(
-                    self.request.POST,
-                    instance=exercise_form.instance,
-                    prefix=f"sets-{exercise_form.prefix}"
-                )
-            else:
-                exercise_form.nested = WorkoutSetFormSet(
-                    instance=exercise_form.instance,
-                    prefix=f'sets-{exercise_form.prefix}'
-                )
+        _attach_nested_formsets(self, context)
         
         # 3. Возвращаем обновленный словарь
         return context
     
     def form_valid(self, form):
-        # 1. Достаем наш формсет из контекста
+        # Достаем наш формсет из контекста
         context = self.get_context_data()
         formset = context['formset']
         
-        # 2. Проверка на ошибки в formset
+        # ОТЛАДКА: Посмотрим, прилетели ли вообще данные о cuidad/DELETE от браузера
+        print("=== POST DATA ===", self.request.POST)
+        
+        #  Проверка на ошибки в formset
         if formset.is_valid():
-            # Сохраняем саму тренировку в базу данных
-            self.object = form.save() 
-            formset.instance = self.object
-            # 3. Сохраняем подходы
-            formset.save()
-            return super().form_valid(form)
+            print("=== FORMSET IS VALID ===")
+            with transaction.atomic():
+                # 1. Save the main workout object
+                self.object = form.save() 
+                formset.instance = self.object
+                
+                # 2. Save parent exercises (this handles exercise-level deletions automatically)
+                saved_exercises = formset.save(commit=False)
+                for obj in formset.deleted_objects:
+                    obj.delete()
+                    
+                for exercise in saved_exercises:
+                    exercise.workout = self.object
+                    exercise.save()
+                formset.save_m2m()
+                
+                # 3. Explicitly process and save/delete the nested formsets (the sets)
+                for exercise_form in formset.forms:
+                    # Skip if the exercise form is marked for deletion or empty
+                    if not exercise_form.cleaned_data or exercise_form.cleaned_data.get('DELETE'):
+                        continue
+                    
+                    if hasattr(exercise_form, 'nested') and exercise_form.instance.pk:
+                        nested_formset = WorkoutSetFormSet(
+                            self.request.POST,
+                            instance = exercise_form.instance,
+                            prefix = f'sets-{exercise_form.prefix}'
+                        )
+                        print(f"--- Nested formset for {exercise_form.prefix} valid? {nested_formset.is_valid()} ---")
+                        if not nested_formset.is_valid():
+                            print("ERRORS:", nested_formset.errors)
+                            
+                        if nested_formset.is_valid():
+                            nested_formset.save()
+                
+                messages.success(self.request, 'Тренирока успешно обновлена!')
+                return super().form_valid(form)
         else:
+            print("=== FORMSET ERRORS ===", formset.errors)
             return self.render_to_response(self.get_context_data(form=form))
             
     
@@ -342,9 +365,10 @@ class RoutineListCreateAPI(generics.ListCreateAPIView):
     
 # 2. Дженерик для просмотра одной рутины, обновления и удаления (GET, PUT, DELETE)
 class RoutineDetailAPI(generics.RetrieveUpdateDestroyAPIView):
-    queryset = WorkOutRoutine.objects.all()
     serializer_class = RoutineSerializer
     
+    def get_queryset(self):
+        return WorkOutRoutine.objects.filter(user=self.request.user)
     
 class ExerciseListAPI(generics.ListCreateAPIView):
     queryset = Exercise.objects.all()
