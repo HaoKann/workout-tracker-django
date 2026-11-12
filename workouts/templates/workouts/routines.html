@@ -3,15 +3,21 @@
 {% block content %}
 <style>
     .rt-container {
-        max-width: 580px;
+        max-width: 640px;
         margin: 0 auto;
     }
 
     .rt-header {
-        display: flex;
+        display: flex; 
         justify-content: space-between;
         align-items: center;
         margin-bottom: 24px;
+    }
+
+    .rt-subtitle {
+        color: #94A3B8;
+        font-size: 13px;
+        margin: 4px 0 0 0;
     }
 
     .rt-list {
@@ -21,16 +27,22 @@
     }
 
     .rt-card {
-        padding: 20px 22px;
+        padding: 22px 24px;
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.75), rgba(15, 23, 42, 0.9));
+        border: 1px solid #334155;
         border-left: 4px solid #3B82F6;
+        border-radius: 14px;
         display: flex;
         flex-direction: column;
-        gap: 14px;
-        transition: transform 0.15s ease, border-color 0.15s ease;
+        gap: 16px;
+        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .rt-card:hover {
         transform: translateY(-2px);
+        border-color: #475569;
+        border-left-color: #60A5FA;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35);
     }
 
     .rt-card-top {
@@ -40,24 +52,48 @@
         gap: 16px;
     }
 
+    .rt-title-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 6px;
+    }
+
     .rt-title {
-        margin: 0 0 6px 0;
+        margin: 0;
         color: #F8FAFC;
-        font-size: 18px;
+        font-size: 19px;
         font-weight: 700;
+        letter-spacing: -0.01em;
+    }
+
+    .rt-count-badge {
+        background: rgba(59, 130, 246, 0.15);
+        color: #60A5FA;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 999px;
     }
 
     .rt-notes {
         margin: 0;
         color: #94A3B8;
         font-size: 14px;
-        line-height: 1.4;
+        line-height: 1.45;
+    }
+
+    .rt-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
     }
 
     /* Кнопка перехода к рутине */
     .rt-edit-btn {
-        flex-shrink: 0;
-        padding: 7px 14px;
+        padding: 8px 14px;
         background: rgba(59, 130, 246, 0.12);
         border: 1px solid rgba(59, 130, 246, 0.3);
         color: #60A5FA;
@@ -70,6 +106,7 @@
 
     .rt-edit-btn:hover {
         background: #3B82F6;
+        border-color: #3B82F6;
         color: #FFFFFF;
     }
 
@@ -77,19 +114,28 @@
     .rt-exercises-preview {
         display: flex;
         flex-wrap: wrap;
-        gap: 6px;
-        padding-top: 12px;
-        border-top: 1px solid #334155;
+        gap: 8px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(51, 65, 85, 0.7);
     }
 
     .rt-ex-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
         background-color: #0F172A;
-        color: #CBD5E1;
+        color: #E2E8F0;
         border: 1px solid #334155;
-        padding: 4px 10px;
-        border-radius: 6px;
+        padding: 5px 11px;
+        border-radius: 8px;
         font-size: 12px;
         font-weight: 500;
+    }
+
+    .rt-ex-index {
+        color: #60A5FA;
+        font-weight: 700;
+        font-size: 11px;
     }
 
     .rt-ex-empty {
@@ -99,31 +145,51 @@
     }
 
     .rt-empty-state {
-        padding: 40px 20px;
+        padding: 48px 24px;
         text-align: center;
+        border: 1px dashed #334155;
+        border-radius: 14px;
+        background: rgba(15, 23, 42, 0.4);
     }
 
-        /* Выразительная кнопка возврата на главную */
-    .rt-back-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
+        .rt-start-btn {
         padding: 8px 14px;
-        background-color: #1E293B;
-        border: 1px solid #334155;
-        color: #E2E8F0;
+        background: rgba(16, 185, 129, 0.14);
+        border: 1px solid rgba(16, 185, 129, 0.35);
+        color: #34D399;
         border-radius: 8px;
-        text-decoration: none;
         font-size: 13px;
-        font-weight: 500;
-        margin-bottom: 12px;
+        font-weight: 600;
+        cursor: pointer;
         transition: all 0.2s ease;
     }
 
-    .rt-back-btn:hover {
-        background-color: #334155;
+    .rt-start-btn:hover {
+        background: #10B981;
+        border-color: #10B981;
         color: #FFFFFF;
-        border-color: #475569;
+    }
+
+    .rt-delete-btn {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        color: #F87171;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .rt-delete-btn:hover {
+        background: #EF4444;
+        border-color: #EF4444;
+        color: #FFFFFF;
     }
 
 
@@ -134,9 +200,10 @@
     <div class="rt-header">
         <div>
             <h2 class="wf-title" style="margin: 0;">Мои <span>рутины</span></h2>
+            <p class="rt-subtitle">Готовые шаблоны упражнений для быстрых тренировок</p>
         </div>
         
-        <a href="{% url 'create_routine' %}" class="wt-add-btn" style="margin: 0; padding: 8px 16px;">
+        <a href="{% url 'create_routine' %}" class="wt-add-btn" style="margin: 0; padding: 9px 16px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
                 <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
@@ -144,29 +211,51 @@
         </a>
     </div>
 
-
-
     <!-- Сетка рутин -->
     <div class="rt-list">
         {% for routine in object_list %}
-            <div class="wf-card rt-card">
+            <div class="wf-card rt-card" id="routine-card-{{ routine.id }}">
                 <div class="rt-card-top">
                     <div>
-                        <h3 class="rt-title">{{ routine.title }}</h3>
+                        <div class="rt-title-row">
+                            <h3 class="rt-title">{{ routine.title }}</h3>
+                            <span class="rt-count-badge">
+                                {{ routine.routine_exercises.count }} упр.
+                            </span>
+                        </div>
                         {% if routine.notes %}
                             <p class="rt-notes">{{ routine.notes }}</p>
                         {% endif %}
                     </div>
 
-                    <a href="{% url 'routine_details' routine.pk %}" class="rt-edit-btn">
-                        Настроить →
-                    </a>
+                    <div class="rt-actions">
+                        <form method="POST" style="margin: 0;">
+                            {% csrf_token %}
+                            <input type="hidden" name="start_workout" value="1">
+                            <input type="hidden" name="routine_id" value="{{ routine.id }}">
+                            <button type="submit" class="rt-start-btn">
+                                ▶ Начать
+                            </button>
+                        </form>
+
+                        <a href="{% url 'routine_details' routine.pk %}" class="rt-edit-btn">
+                            Настроить →
+                        </a>
+
+                        <button type="button" class="rt-delete-btn" data-routine-id="{{ routine.id }}" title="Удалить рутину">
+                            ✕
+                        </button>
+                    </div>
                 </div>
+
 
                 <!-- Превью упражнений в этой рутине -->
                 <div class="rt-exercises-preview">
                     {% for item in routine.routine_exercises.all %}
-                        <span class="rt-ex-pill">{{ item.exercise.name }}</span>
+                        <span class="rt-ex-pill">
+                            <span class="rt-ex-index">{{ forloop.counter }}.</span>
+                            {{ item.exercise.name }}
+                        </span>
                     {% empty %}
                         <span class="rt-ex-empty">Упражнения ещё не добавлены</span>
                     {% endfor %}
@@ -174,10 +263,40 @@
             </div>
         {% empty %}
             <div class="wf-card rt-empty-state">
-                <p style="color: #94A3B8; margin: 0; font-size: 16px;">У вас пока нет ни одной рутины 😔</p>
+                <p style="color: #E2E8F0; margin: 0; font-size: 16px; font-weight: 600;">У вас пока нет ни одной рутины 😔</p>
                 <p style="color: #64748B; font-size: 14px; margin-top: 8px;">Нажмите кнопку «Создать», чтобы добавить свой первый шаблон!</p>
             </div>
         {% endfor %}
     </div>
 </div>
+
+<script>
+    document.addEventListener('click', async function(e) {
+        const btn = e.target.closest('.rt-delete-btn')
+        if (!btn) return
+
+        const routineID = btn.getAttribute('data-routine-id')
+        const formData = new FormData()
+        formData.append('delete_routine', '1')
+        formData.append('routine_id', routineID)
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+
+        const response = await fetch(window.location.href, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        if (response.ok) {
+            const data = await response.json()
+            if (data.status === 'ok') {
+                const card = document.getElementById(`routine-card-${data.routine_id}`)
+                if (card) {
+                    card.remove()
+                }
+            }
+        }
+    })
+</script>
 {% endblock %}

@@ -15,7 +15,7 @@ from django.core.cache import cache
 from rest_framework import generics
 from .serializers import ExerciseSerializer, RoutineSerializer, ExerciseListSerializer
 from .forms import WorkoutExerciseFormSet, WorkoutSetFormSet
-
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -201,12 +201,8 @@ class WorkOutUpdate(LoginRequiredMixin, UpdateView):
         context = self.get_context_data()
         formset = context['formset']
         
-        # ОТЛАДКА: Посмотрим, прилетели ли вообще данные о cuidad/DELETE от браузера
-        print("=== POST DATA ===", self.request.POST)
-        
         #  Проверка на ошибки в formset
         if formset.is_valid():
-            print("=== FORMSET IS VALID ===")
             with transaction.atomic():
                 # 1. Save the main workout object
                 self.object = form.save() 
@@ -244,7 +240,6 @@ class WorkOutUpdate(LoginRequiredMixin, UpdateView):
                 messages.success(self.request, 'Тренирока успешно обновлена!')
                 return super().form_valid(form)
         else:
-            print("=== FORMSET ERRORS ===", formset.errors)
             return self.render_to_response(self.get_context_data(form=form))
             
     
@@ -256,7 +251,7 @@ class WorkOutDelete(LoginRequiredMixin, DeleteView):
         return WorkOut.objects.filter(user = self.request.user)
     
     def form_valid(self, form):
-        logger.warning("Тренировка успешно удалена!")
+        logger.info("Тренировка успешно удалена!")
         return super().form_valid(form)
     
     
@@ -277,7 +272,41 @@ class RoutineList(LoginRequiredMixin, ListView):
             cache.set(cache_key, routines, 120)
         
         return routines
+    
+    def post(self, request, *args, **kwargs):
+        # 1. Start a new workout from a routine template
+        if 'start_workout' in request.POST:
+            routine_id = request.POST.get('routine_id')
+            routine = get_object_or_404(WorkOutRoutine, id=routine_id, user=request.user)
+            
+            # Create the workout for today
+            workout = WorkOut.objects.create(
+                user = request.user,
+                title = routine.title,
+                notes = routine.notes,
+                date = timezone.localdate()
+            )
+            
+            # Copy all exercises from the routine in their saved order
+            for item in routine.routine_exercises.all().order_by('order'):
+                WorkOutExercise.objects.create(
+                    workout=workout,
+                    exercise=item.exercise
+                )
+            return redirect('workout_detail', pk=workout.pk)
+                
+        if 'delete_routine' in request.POST:
+            routine_id = request.POST.get('routine_id')
+            routine = get_object_or_404(WorkOutRoutine, id=routine_id, user=request.user)
+            routine.delete()
+            cache.delete(f"routines_user_{request.user.id}")
+            return JsonResponse({'status': 'ok', 'routine_id': routine_id})
+            
+        return redirect('workout_routines')
         
+    
+    
+    
 class RoutineCreate(LoginRequiredMixin, CreateView):
     model = WorkOutRoutine
     fields= ['title', 'notes']

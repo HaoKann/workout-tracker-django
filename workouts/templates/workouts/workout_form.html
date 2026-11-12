@@ -297,7 +297,23 @@
             emptyFormTemplate.parentNode.insertBefore(newFormContainer.firstElementChild, emptyFormTemplate)
             totalFormsInput.value = currentFormCount + 1
         })
+
+        // Hide the set or exercise block immediately when its DELETE checkbox is clicked
+        const wfForm = document.querySelector('.wf-form')
+        wfForm.addEventListener('change', function(e) {
+            if (e.target.matches('input[type="checkbox"][name$="-DELETE"]')) {
+                const setBlock = e.target.closest('.sets-block')
+                const exerciseBlock = e.target.closest('.exercise-block')
+
+                if (setBlock) {
+                    setBlock.style.display = 'none'
+                } else if (exerciseBlock) {
+                    exerciseBlock.style.display = 'none'
+                }
+            }
+        })
     })
 </script>
+
 
 {% endblock %}
