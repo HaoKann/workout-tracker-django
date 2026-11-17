@@ -315,6 +315,7 @@ class RoutineCreate(LoginRequiredMixin, CreateView):
     
     def form_valid(self, form):
         form.instance.user = self.request.user
+        cache.delete(f"routines_user_{self.request.user.id}")
         messages.success(self.request, "Рутина успешно создана!")
         
         return super().form_valid(form)
@@ -384,8 +385,10 @@ class ExerciseListCreateAPI(generics.ListCreateAPIView):
     
     
 class ExerciseDetailAPI(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
+    
+    def get_queryset(self):
+        return Exercise.objects.filter(user=self.request.user)
     
 # 1. Дженерик для списка (GET) и создания (POST)
 class RoutineListCreateAPI(generics.ListCreateAPIView):

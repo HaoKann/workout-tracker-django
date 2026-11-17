@@ -4,7 +4,7 @@ from django.contrib import messages
 from .forms import UserUpdateForm, CustomUserCreationForm
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.forms import AuthenticationForm 
-
+from workouts.models import WorkOut, WorkOutSet
 
 def register_view(request):
     # Если кто-то нажал кнопку "Зарегистрироваться" (отправил данные)
@@ -54,6 +54,8 @@ def profile(request):
         
     context = {
         'form': form,
-        'edit_mode': edit_mode
+        'edit_mode': edit_mode,
+        'total_workouts': WorkOut.objects.filter(user=request.user).count(),
+        'total_sets': WorkOutSet.objects.filter(workout_exercise__workout__user=request.user).count(),
     }   
     return render(request, 'users/profile.html', context)

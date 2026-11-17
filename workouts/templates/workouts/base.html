@@ -11,6 +11,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
             padding: 12px 18px;
             margin: 20px 0 24px 0;
             background: rgba(30, 41, 59, 0.75);
@@ -42,6 +44,16 @@
             border-color: #3B82F6;
             background: #1E293B;
         }
+        .wt-nav-link-admin {
+            color: #FBBF24;
+            border-color: rgba(245, 158, 11, 0.35);
+            background: rgba(245, 158, 11, 0.08);
+        }
+        .wt-nav-link-admin:hover {
+            color: #FEF3C7;
+            border-color: #F59E0B;
+            background: rgba(245, 158, 11, 0.18);
+        }
     </style>
 </head>
 <body>
@@ -60,9 +72,16 @@
                     🏋️‍♂️ База упражнений
                 </a>
             </div>
-            <a href="{% url 'profile' %}" class="wt-nav-link">
-                👤 Профиль
-            </a>
+            <div class="wt-nav-links">
+                {% if user.is_staff %}
+                <a href="{% url 'admin:index' %}" class="wt-nav-link wt-nav-link-admin" target="_blank" rel="noopener">
+                    ⚙️ Админ панель
+                </a>
+                {% endif %}
+                <a href="{% url 'profile' %}" class="wt-nav-link">
+                    👤 Профиль
+                </a>
+            </div>
         </nav>
         {% endif %}
 
@@ -82,3 +101,4 @@
 
 </body>
 </html>
+n

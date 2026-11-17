@@ -1,53 +1,203 @@
-{% extends 'workouts/main.html' %}
+{% extends 'workouts/base.html' %}
 
 {% block content %}
 <style>
-    /* Стили для кнопки возврата */
-    .rt-back-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 14px;
-        background-color: #1E293B;
-        border: 1px solid #334155;
-        color: #E2E8F0;
-        border-radius: 8px;
-        text-decoration: none;
-        font-size: 13px;
-        font-weight: 500;
-        margin-bottom: 16px;
-        transition: all 0.2s ease;
+    .pf-container {
+        max-width: 640px;
+        margin: 0 auto;
     }
 
-    .rt-back-btn:hover {
-        background-color: #334155;
+    .pf-card {
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.95));
+        border: 1px solid #334155;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.45);
+    }
+
+    .pf-hero {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid rgba(51, 65, 85, 0.7);
+        margin-bottom: 24px;
+    }
+
+    .pf-avatar {
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #3B82F6;
+        flex-shrink: 0;
+    }
+
+    .pf-avatar-placeholder {
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #2563EB, #1D4ED8);
+        border: 2px solid rgba(96, 165, 250, 0.5);
         color: #FFFFFF;
-        border-color: #475569;
+        font-size: 28px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+
+    .pf-identity {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .pf-name-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .pf-username {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 700;
+        color: #F8FAFC;
+    }
+
+    .pf-role-badge {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: rgba(59, 130, 246, 0.15);
+        color: #60A5FA;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .pf-role-badge--admin {
+        background: rgba(245, 158, 11, 0.14);
+        color: #FBBF24;
+        border-color: rgba(245, 158, 11, 0.35);
+    }
+
+    .pf-joined {
+        margin: 0;
+        font-size: 13px;
+        color: #94A3B8;
+    }
+
+    /* Сетка статистики */
+    .pf-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .pf-stat-box {
+        background: rgba(15, 23, 42, 0.65);
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 14px 16px;
+        text-align: center;
+    }
+
+    .pf-stat-value {
+        font-size: 20px;
+        font-weight: 700;
+        color: #F8FAFC;
+        margin-bottom: 4px;
+    }
+
+    .pf-stat-label {
+        font-size: 12px;
+        color: #94A3B8;
+    }
+
+    /* Кнопки действий */
+    .pf-actions {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .pf-btn {
+        flex: 1;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 16px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .pf-btn--primary {
+        background: #3B82F6;
+        color: #FFFFFF;
+        border: 1px solid #3B82F6;
+    }
+
+    .pf-btn--primary:hover {
+        background: #2563EB;
+    }
+
+    .pf-btn--secondary {
+        background: rgba(30, 41, 59, 0.8);
+        color: #E2E8F0;
+        border: 1px solid #334155;
+    }
+
+    .pf-btn--secondary:hover {
+        background: #334155;
+        color: #FFFFFF;
+    }
+
+    .pf-danger-zone {
+        padding-top: 18px;
+        border-top: 1px solid rgba(51, 65, 85, 0.6);
+    }
+
+    .pf-btn--logout {
+        width: 100%;
+        background: rgba(239, 68, 68, 0.08);
+        color: #F87171;
+        border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+
+    .pf-btn--logout:hover {
+        background: #EF4444;
+        border-color: #EF4444;
+        color: #FFFFFF;
+    }
+
+    @media (max-width: 520px) {
+        .pf-stats, .pf-actions {
+            grid-template-columns: 1fr;
+            flex-direction: column;
+        }
     }
 </style>
 
-<div class="wf-wrapper">
-    <div class="wf-card">
-        <!-- Шапка страницы профиля -->
-        <div class="wf-header">
-            <div class="wf-eyebrow">Личный кабинет</div>
-            <h1 class="wf-title">Мой <span>профиль</span></h1>
-        </div>
-
-        <!-- Сообщения об успешном сохранении / уведомления -->
-        {% if messages %}
-            <div style="padding: 20px 36px 0 36px;">
-                {% for message in messages %}
-                    <div style="padding: 12px 16px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34D399; border-radius: 8px; font-size: 13px;">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-
+<div class="pf-container">
+    <div class="pf-card">
         {% if edit_mode %}
-            <!-- Режим редактирования профиля -->
-            <form method="POST" enctype="multipart/form-data" class="wf-form">
+            <div style="margin-bottom: 20px;">
+                <div class="wf-eyebrow">Настройки аккаунта</div>
+                <h2 class="wf-title" style="margin: 4px 0 0 0;">Редактировать <span>профиль</span></h2>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data" class="wf-form" style="padding: 0;">
                 {% csrf_token %}
 
                 {% for field in form %}
@@ -55,76 +205,81 @@
                         <label class="wf-label" for="{{ field.id_for_label }}">
                             {{ field.label }}
                         </label>
-                        
                         {{ field }}
-
                         {% if field.help_text %}
                             <div class="wf-help">{{ field.help_text|safe }}</div>
                         {% endif %}
-
                         {% if field.errors %}
                             <div class="wf-error">{{ field.errors }}</div>
                         {% endif %}
                     </div>
                 {% endfor %}
 
-                <div style="display: flex; gap: 12px; align-items: center; margin-top: 8px;">
-                    <button type="submit" class="wf-submit" style="margin-top: 0;">
-                        Сохранить
-                    </button>
-                    <a href="{% url 'profile' %}" style="color: #64748B; text-decoration: none; font-size: 13px; font-weight: 500; transition: color 0.15s; padding: 0 8px;" onmouseover="this.style.color='#94A3B8'" onmouseout="this.style.color='#64748B'">
-                        Отмена
-                    </a>
+                <div class="pf-actions" style="margin-top: 12px; margin-bottom: 0;">
+                    <button type="submit" class="pf-btn pf-btn--primary">Сохранить изменения</button>
+                    <a href="{% url 'profile' %}" class="pf-btn pf-btn--secondary">Отмена</a>
                 </div>
             </form>
         {% else %}
-            <!-- Режим просмотра профиля -->
-            <div class="wf-form">
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <div class="wf-label">Пользователь</div>
-                    <div style="font-size: 16px; font-weight: 600; color: #F8FAFC;">{{ user.username }}</div>
-                </div>
-
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <div class="wf-label">Текущий вес</div>
-                    <div style="font-size: 15px; color: #E2E8F0;">
-                        {% if user.weight %}{{ user.weight }} кг{% else %}<span style="color: #475569; font-style: italic;">Не указан</span>{% endif %}
+            <!-- Шапка профиля с аватаром -->
+            <div class="pf-hero">
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="Аватар" class="pf-avatar">
+                {% else %}
+                    <div class="pf-avatar-placeholder">
+                        {{ user.username|slice:":1" }}
                     </div>
-                </div>
+                {% endif %}
 
-                <div style="display: flex; flex-direction: column; gap: 6px;">
-                    <div class="wf-label">Фото профиля</div>
-                    <div>
-                        {% if user.avatar %}
-                            <img src="{{ user.avatar.url }}" alt="Аватар" style="max-width: 140px; height: auto; border-radius: 10px; border: 1px solid #334155; display: block; object-fit: cover;">
+                <div class="pf-identity">
+                    <div class="pf-name-row">
+                        <h1 class="pf-username">{{ user.username }}</h1>
+                        {% if user.is_staff %}
+                            <span class="pf-role-badge pf-role-badge--admin">⚙️ Администратор</span>
                         {% else %}
-                            <p style="color: #475569; font-style: italic; font-size: 13px;">Фото профиля не загружено</p>
+                            <span class="pf-role-badge">🏋️ Атлет</span>
                         {% endif %}
                     </div>
+                    <p class="pf-joined">В клубе с {{ user.date_joined|date:"d E Y" }}</p>
                 </div>
+            </div>
 
-                <div style="margin-top: 8px;">
-                    <a href="?edit=y" class="wf-submit" style="text-decoration: none; box-sizing: border-box; display: inline-flex;">
-                        Редактировать профиль
-                    </a>
+            <!-- Карточки статистики -->
+            <div class="pf-stats">
+                <div class="pf-stat-box">
+                    <div class="pf-stat-value">
+                        {% if user.weight %}{{ user.weight }} кг{% else %}—{% endif %}
+                    </div>
+                    <div class="pf-stat-label">Текущий вес</div>
                 </div>
-
-                <div style="margin-top: 8px;">
-                    <a href="{% url 'password_change' %}" class="wf-submit" style="background: rgba(255, 255, 255, 0.05); color: #E2E8F0; border: 1px solid rgba(255, 255, 255, 0.1); text-decoration: none; box-sizing: border-box; display: inline-flex; justify-content: center; align-items: center; gap: 8px;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                        Сменить пароль
-                    </a>
+                <div class="pf-stat-box">
+                    <div class="pf-stat-value">{{ total_workouts }}</div>
+                    <div class="pf-stat-label">Тренировок</div>
                 </div>
-
-                <div style="margin-top: 8px;">
-                    <form method="POST" action="{% url 'logout' %}" style="display: inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="wf-submit" style="background: rgba(239, 68, 68, 0.1); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.3);">
-                            Выйти из аккаунта
-                        </button>
-                    </form>
+                <div class="pf-stat-box">
+                    <div class="pf-stat-value">{{ total_sets }}</div>
+                    <div class="pf-stat-label">Подходов</div>
                 </div>
+            </div>
 
+            <!-- Основные действия -->
+            <div class="pf-actions">
+                <a href="?edit=y" class="pf-btn pf-btn--primary">
+                    ✏️ Редактировать
+                </a>
+                <a href="{% url 'password_change' %}" class="pf-btn pf-btn--secondary">
+                    🔒 Сменить пароль
+                </a>
+            </div>
+
+            <!-- Выход -->
+            <div class="pf-danger-zone">
+                <form method="POST" action="{% url 'logout' %}" style="margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit" class="pf-btn pf-btn--logout">
+                        Выйти из аккаунта
+                    </button>
+                </form>
             </div>
         {% endif %}
     </div>

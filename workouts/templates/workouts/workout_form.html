@@ -308,6 +308,10 @@
                 if (setBlock) {
                     setBlock.style.display = 'none'
                 } else if (exerciseBlock) {
+                    if (!confirm('Удалить это упражнение из тренировки?')){
+                        e.target.checked = false
+                        return
+                    }
                     exerciseBlock.style.display = 'none'
                 }
             }

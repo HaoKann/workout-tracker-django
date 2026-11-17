@@ -2,6 +2,11 @@
 
 {% block content %}
 <style>
+    .eb-container {
+        max-width: 640px;
+        margin: 0 auto;
+    }
+
     .eb-header {
         display: flex;
         justify-content: space-between;
@@ -9,13 +14,19 @@
         margin-bottom: 24px;
     }
 
+    .eb-subtitle {
+        color: #94A3B8;
+        font-size: 13px;
+        margin: 4px 0 0 0;
+    }
+
     /* Карточка создания упражнения */
     .eb-create-card {
-        padding: 22px;
+        padding: 22px 24px;
         border: 1px dashed #475569;
         margin-bottom: 24px;
-        background: rgba(30, 41, 59, 0.6);
-        border-radius: 12px;
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.65), rgba(15, 23, 42, 0.85));
+        border-radius: 14px;
     }
 
     .eb-create-title {
@@ -65,10 +76,46 @@
         background-color: #059669;
     }
 
+    /* Панель поиска и фильтров */
+    .eb-toolbar {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .eb-tabs {
+        display: flex;
+        gap: 8px;
+    }
+
+    .eb-tab {
+        padding: 7px 14px;
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid #334155;
+        color: #94A3B8;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .eb-tab:hover {
+        border-color: #475569;
+        color: #E2E8F0;
+    }
+
+    .eb-tab.active {
+        background: rgba(59, 130, 246, 0.15);
+        border-color: #3B82F6;
+        color: #60A5FA;
+    }
+
     /* Список упражнений */
     .eb-list-card {
-        background-color: #1E293B;
-        border-radius: 12px;
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.75), rgba(15, 23, 42, 0.9));
+        border-radius: 14px;
         border: 1px solid #334155;
         overflow: hidden;
     }
@@ -79,12 +126,14 @@
         align-items: center;
         gap: 16px;
         padding: 16px 20px;
-        border-bottom: 1px solid #334155;
-        transition: background-color 0.15s ease;
+        border-bottom: 1px solid rgba(51, 65, 85, 0.7);
+        border-left: 3px solid transparent;
+        transition: background-color 0.15s ease, border-left-color 0.15s ease;
     }
 
     .exercise-item:hover {
-        background-color: rgba(15, 23, 42, 0.35);
+        background-color: rgba(15, 23, 42, 0.45);
+        border-left-color: #3B82F6;
     }
 
     .exercise-item:last-child {
@@ -115,13 +164,23 @@
         font-weight: 600;
     }
 
+    .badge-default {
+        background: rgba(148, 163, 184, 0.12);
+        color: #94A3B8;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 500;
+    }
+
     .exercise-desc {
         margin: 0;
         color: #94A3B8;
         font-size: 13px;
+        line-height: 1.4;
     }
 
-    /* Кнопка удаления с крестиком */
     .delete-exercise-btn {
         width: 34px;
         height: 34px;
@@ -145,7 +204,6 @@
         color: #FFFFFF;
     }
 
-    /* Всплывающее уведомление (Toast) */
     #toast-notification {
         position: fixed;
         bottom: 20px;
@@ -170,71 +228,69 @@
         opacity: 1;
         transform: translateY(0);
     }
-
-        .rt-back-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 14px;
-        background-color: #1E293B;
-        border: 1px solid #334155;
-        color: #E2E8F0;
-        border-radius: 8px;
-        text-decoration: none;
-        font-size: 13px;
-        font-weight: 500;
-        margin-bottom: 12px;
-        transition: all 0.2s ease;
-    }
-
-    .rt-back-btn:hover {
-        background-color: #334155;
-        color: #FFFFFF;
-        border-color: #475569;
-    }
-
 </style>
 
-<div class="eb-header" style="display: flex; flex-direction: column; align-items: flex-start;">
-    <h2 class="wf-title" style="margin: 0; color: #F8FAFC;">База <span>упражнений</span></h2>
-</div>
+<div class="eb-container">
+    <div class="eb-header">
+        <div>
+            <h2 class="wf-title" style="margin: 0; color: #F8FAFC;">База <span>упражнений</span></h2>
+            <p class="eb-subtitle">Общий каталог и ваши персональные упражнения</p>
+        </div>
+    </div>
 
+    <!-- Блок формы добавления кастомного упражнения -->
+    <div class="wf-card eb-create-card">
+        <h3 class="eb-create-title">➕ Создать своё упражнение</h3>
+        
+        <form id="create-exercise-form" class="eb-form">
+            {% csrf_token %}
+            <input type="text" id="exercise-name" class="eb-input" placeholder="Название упражнения (например, Тяга верхнего блока)" required>
+            <textarea id="exercise-desc" class="eb-input" placeholder="Описание или заметки по технике (необязательно)" rows="2" style="resize: vertical;"></textarea>
+            <button type="submit" class="eb-submit-btn">+ Добавить в базу</button>
+        </form>
+    </div>
 
-<!-- Блок формы добавления кастомного упражнения -->
-<div class="wf-card eb-create-card">
-    <h3 class="eb-create-title">➕ Создать своё упражнение</h3>
-    
-    <form id="create-exercise-form" class="eb-form">
-        {% csrf_token %}
-        <input type="text" id="exercise-name" class="eb-input" placeholder="Название упражнения (например, Тяга верхнего блока)" required>
-        <textarea id="exercise-desc" class="eb-input" placeholder="Описание или заметки по технике (необязательно)" rows="2" style="resize: vertical;"></textarea>
-        <button type="submit" class="eb-submit-btn">+ Добавить в базу</button>
-    </form>
-</div>
+    <!-- Поиск и вкладки фильтрации -->
+    <div class="eb-toolbar">
+        <input type="text" id="exercise-search" class="eb-input" placeholder="🔍 Поиск упражнения по названию...">
+        <div class="eb-tabs">
+            <button type="button" class="eb-tab active" data-filter="all">Все</button>
+            <button type="button" class="eb-tab" data-filter="custom">Мои</button>
+            <button type="button" class="eb-tab" data-filter="default">Базовые</button>
+        </div>
+    </div>
 
-<!-- Блок со списком упражнений -->
-<div class="wf-card eb-list-card">
-    <div id="exercises-list">
-        {% for exercise in object_list %}
-            <div class="exercise-item">
-                <div>
-                    <div class="exercise-title-row">
-                        <h4 class="exercise-name">{{ exercise.name }}</h4>
-                        {% if exercise.is_custom %}
-                            <span class="badge-custom">Моё</span>
+    <!-- Блок со списком упражнений -->
+    <div class="wf-card eb-list-card">
+        <div id="exercises-list">
+            {% for exercise in object_list %}
+                <div class="exercise-item" data-type="{% if exercise.is_custom %}custom{% else %}default{% endif %}">
+                    <div>
+                        <div class="exercise-title-row">
+                            <h4 class="exercise-name">{{ exercise.name }}</h4>
+                            {% if exercise.is_custom %}
+                                <span class="badge-custom">Моё</span>
+                            {% else %}
+                                <span class="badge-default">Базовое</span>
+                            {% endif %}
+                        </div>
+                        {% if exercise.description %}
+                            <p class="exercise-desc">{{ exercise.description }}</p>
                         {% endif %}
                     </div>
-                    {% if exercise.description %}
-                        <p class="exercise-desc">{{ exercise.description }}</p>
+                    {% if exercise.is_custom %}
+                        <button class="delete-exercise-btn" data-id="{{ exercise.id }}" title="Удалить упражнение">✕</button>
                     {% endif %}
                 </div>
-                <button class="delete-exercise-btn" data-id="{{ exercise.id }}" title="Удалить упражнение">✕</button>
-            </div>
-        {% empty %}
-            <div id="empty-message" style="padding: 24px; color: #94A3B8; text-align: center;">
-                Упражнений пока нет. Добавьте своё первое!
-            </div>
-        {% endfor %}
+            {% empty %}
+                <div id="empty-message" style="padding: 24px; color: #94A3B8; text-align: center;">
+                    Упражнений пока нет. Добавьте своё первое!
+                </div>
+            {% endfor %}
+        </div>
+        <div id="no-results-message" style="display: none; padding: 24px; color: #94A3B8; text-align: center;">
+            Ничего не найдено по вашему запросу 🔎
+        </div>
     </div>
 </div>
 
@@ -244,6 +300,45 @@
 </div>
 
 <script>
+    let currentFilter = 'all';
+
+    function filterExercises() {
+        const query = document.getElementById('exercise-search').value.toLowerCase().trim();
+        const items = document.querySelectorAll('#exercises-list .exercise-item');
+        let visibleCount = 0;
+
+        items.forEach(item => {
+            const name = item.querySelector('.exercise-name').textContent.toLowerCase();
+            const type = item.getAttribute('data-type');
+
+            const matchesSearch = name.includes(query);
+            const matchesTab = currentFilter === 'all' || type === currentFilter;
+
+            if (matchesSearch && matchesTab) {
+                item.style.display = 'flex';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        const noResults = document.getElementById('no-results-message');
+        if (noResults) {
+            noResults.style.display = (items.length > 0 && visibleCount === 0) ? 'block' : 'none';
+        }
+    }
+
+    document.getElementById('exercise-search').addEventListener('input', filterExercises);
+
+    document.querySelectorAll('.eb-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.eb-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            currentFilter = this.getAttribute('data-filter');
+            filterExercises();
+        });
+    });
+
     document.getElementById('create-exercise-form').addEventListener('submit', function(event) {
         event.preventDefault();
 
@@ -251,18 +346,16 @@
         const descInput = document.getElementById('exercise-desc');
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-        const newExercise = {
-            name: nameInput.value,
-            description: descInput.value
-        };
-
         fetch("/api/exercises/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": csrfToken
             },
-            body: JSON.stringify(newExercise)
+            body: JSON.stringify({
+                name: nameInput.value,
+                description: descInput.value
+            })
         })
         .then(response => {
             if (response.ok) return response.json();
@@ -287,7 +380,7 @@
 
             const descHtml = data.description ? `<p class="exercise-desc">${data.description}</p>` : '';
             const newHtml = `
-                <div class="exercise-item">
+                <div class="exercise-item" data-type="custom">
                     <div>
                         <div class="exercise-title-row">
                             <h4 class="exercise-name">${data.name}</h4>
@@ -300,6 +393,7 @@
             `;
 
             list.insertAdjacentHTML('afterbegin', newHtml);
+            filterExercises();
         })
         .catch(error => {
             alert("Произошла ошибка при сохранении!");
@@ -310,27 +404,31 @@
     const listContainer = document.getElementById('exercises-list');
 
     listContainer.addEventListener('click', function(event) {
-        if (event.target.tagName === 'BUTTON' && event.target.hasAttribute('data-id')) {
-            const button = event.target;
-            const exerciseId = button.getAttribute('data-id');
-            const exerciseItem = button.closest('.exercise-item');
+        const button = event.target.closest('.delete-exercise-btn');
+        if (!button) return;
 
-            fetch(`/api/exercises/${exerciseId}/`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    exerciseItem.remove();
-                } else {
-                    alert('Ошибка при удалении');
-                }
-            })
-            .catch(error => console.error('Ошибка:', error));
-        }
+        const exerciseId = button.getAttribute('data-id');
+        const exerciseItem = button.closest('.exercise-item');
+        const exerciseName = exerciseItem.querySelector('.exercise-name').textContent.trim();
+
+        if (!confirm(`Удалить упражнение "${exerciseName}" из базы?`)) return;
+
+        fetch(`/api/exercises/${exerciseId}/`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                exerciseItem.remove();
+                filterExercises();
+            } else {
+                alert('Ошибка при удалении');
+            }
+        })
+        .catch(error => console.error('Ошибка:', error));
     });
 </script>
 {% endblock %}
