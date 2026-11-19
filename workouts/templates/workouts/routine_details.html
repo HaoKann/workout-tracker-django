@@ -3,110 +3,198 @@
 {% block content %}
 <style>
     .rd-container {
-        max-width: 580px;
-        margin: 0 auto;
+        max-width: 720px;
+        margin: 0 auto 40px auto;
     }
 
-    /* Выразительная кнопка возврата */
-    .rt-back-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 14px;
-        background-color: #1E293B;
+    .rd-card {
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.95));
         border: 1px solid #334155;
-        color: #E2E8F0;
-        border-radius: 8px;
-        text-decoration: none;
-        font-size: 13px;
-        font-weight: 500;
-        margin-bottom: 16px;
-        transition: all 0.2s ease;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.45);
     }
 
-    .rt-back-btn:hover {
-        background-color: #334155;
-        color: #FFFFFF;
-        border-color: #475569;
-    }
-
+    /* Шапка рутины */
     .rd-header {
         display: flex;
         justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        flex-wrap: wrap;
+        padding-bottom: 20px;
+        margin-bottom: 22px;
+        border-bottom: 1px solid rgba(51, 65, 85, 0.7);
+    }
+
+    .rd-header-main {
+        display: flex;
         align-items: center;
-        margin-bottom: 20px;
+        gap: 16px;
+    }
+
+    .rd-icon-badge {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: rgba(59, 130, 246, 0.14);
+        border: 1px solid rgba(59, 130, 246, 0.35);
+        color: #60A5FA;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .rd-title {
+        margin: 2px 0 0 0;
+        font-size: 24px;
+        font-weight: 700;
+        color: #F8FAFC;
+        line-height: 1.25;
+    }
+
+    .rd-count-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(59, 130, 246, 0.14);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        color: #60A5FA;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
     }
 
     /* Заметки */
-    .rd-notes-card {
-        padding: 16px 20px;
-        margin-bottom: 20px;
-        border-left: 4px solid #10B981;
-        background: rgba(30, 41, 59, 0.7);
+    .rd-note {
+        padding: 12px 16px;
+        margin-bottom: 22px;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(51, 65, 85, 0.7);
+        border-left: 3px solid #3B82F6;
+        border-radius: 10px;
     }
 
-    /* Карточка добавления */
-    .rd-add-card {
-        padding: 20px;
-        border: 1px dashed #475569;
-        background: rgba(30, 41, 59, 0.5);
-        margin-bottom: 20px;
+    .rd-note-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #94A3B8;
+        margin-bottom: 4px;
     }
 
-    .rd-section-title {
-        margin: 0 0 14px 0;
-        color: #F8FAFC;
-        font-size: 16px;
-        font-weight: 600;
+    .rd-note-text {
+        color: #E2E8F0;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    /* Блок добавления упражнения */
+    .rd-add-box {
+        padding: 16px;
+        margin-bottom: 24px;
+        background: rgba(15, 23, 42, 0.55);
+        border: 1px solid #334155;
+        border-radius: 12px;
+    }
+
+    .rd-add-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #94A3B8;
+        margin-bottom: 10px;
     }
 
     .rd-add-form {
         display: flex;
-        gap: 12px;
+        gap: 10px;
         align-items: center;
     }
 
     .rd-select {
-        flex-grow: 1;
-        height: 42px;
-        padding: 0 14px;
-        border-radius: 8px;
-        background-color: #0F172A;
-        color: #E2E8F0;
+        flex: 1;
+        padding: 10px 14px;
+        background: rgba(15, 23, 42, 0.9);
         border: 1px solid #334155;
-        font-size: 14px;
-        outline: none;
+        color: #F8FAFC;
+        border-radius: 10px;
+        font-size: 13.5px;
+        font-family: inherit;
         cursor: pointer;
-        transition: border-color 0.2s ease;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .rd-select:focus {
+        outline: none;
         border-color: #3B82F6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
     }
 
     .rd-add-btn {
-        height: 42px;
-        background-color: #3B82F6;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 18px;
+        background: #3B82F6;
         color: #FFFFFF;
-        padding: 0 20px;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
+        border: 1px solid #3B82F6;
+        border-radius: 10px;
+        font-size: 13.5px;
         font-weight: 600;
         cursor: pointer;
+        white-space: nowrap;
         transition: background-color 0.2s ease;
     }
 
     .rd-add-btn:hover {
-        background-color: #2563EB;
+        background: #2563EB;
+    }
+
+    /* Заголовок списка упражнений */
+    .rd-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .rd-section-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #94A3B8;
+        white-space: nowrap;
+    }
+
+    .rd-section-title::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: rgba(51, 65, 85, 0.7);
+    }
+
+    .rd-drag-hint {
+        font-size: 11.5px;
+        color: #64748B;
+        white-space: nowrap;
     }
 
     /* Список упражнений */
-    .rd-list-card {
-        padding: 20px;
-        margin-bottom: 24px;
-    }
-
     #exercise-list {
         display: flex;
         flex-direction: column;
@@ -117,50 +205,78 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 12px 16px;
-        background-color: #0F172A;
-        border-radius: 10px;
+        gap: 12px;
+        padding: 12px 14px;
+        background: rgba(15, 23, 42, 0.65);
+        border-radius: 12px;
         border: 1px solid #334155;
         cursor: grab;
-        transition: border-color 0.15s ease, background-color 0.15s ease;
+        transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
     }
 
     .rd-exercise-item:hover {
         border-color: #475569;
+        background: rgba(30, 41, 59, 0.65);
     }
 
     .rd-exercise-item:active {
         cursor: grabbing;
     }
 
-    /* Полупрозрачный след при перетаскивании SortableJS */
     .sortable-ghost {
-        opacity: 0.4;
+        opacity: 0.45;
         border: 1px dashed #3B82F6;
-        background-color: rgba(59, 130, 246, 0.1);
+        background: rgba(59, 130, 246, 0.12);
     }
 
     .rd-item-left {
         display: flex;
         align-items: center;
         gap: 12px;
-        margin: 0;
-        color: #F8FAFC;
-        font-weight: 500;
-        font-size: 15px;
+        min-width: 0;
     }
 
     .rd-drag-handle {
+        display: inline-flex;
+        align-items: center;
         color: #64748B;
-        font-size: 16px;
+        flex-shrink: 0;
         user-select: none;
+    }
+
+    .rd-exercise-item:hover .rd-drag-handle {
+        color: #94A3B8;
+    }
+
+    .rd-order-num {
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+        background: rgba(30, 41, 59, 0.95);
+        border: 1px solid #334155;
+        color: #94A3B8;
+        font-size: 12px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .rd-exercise-name {
+        color: #F8FAFC;
+        font-weight: 600;
+        font-size: 14.5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     /* Кнопка удаления ✕ */
     .rd-delete-btn {
-        width: 34px;
-        height: 34px;
-        display: flex;
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
         background: rgba(239, 68, 68, 0.08);
@@ -168,9 +284,10 @@
         color: #F87171;
         border-radius: 8px;
         text-decoration: none;
-        font-size: 14px;
-        font-weight: 600;
-        transition: all 0.2s ease;
+        font-size: 13px;
+        font-weight: 700;
+        flex-shrink: 0;
+        transition: all 0.15s ease;
     }
 
     .rd-delete-btn:hover {
@@ -179,24 +296,80 @@
         color: #FFFFFF;
     }
 
+    /* Пустое состояние */
+    .rd-empty {
+        padding: 28px 20px;
+        text-align: center;
+        border: 1px dashed rgba(51, 65, 85, 0.9);
+        border-radius: 12px;
+        color: #64748B;
+        font-size: 13.5px;
+    }
+
+    /* Нижняя панель */
+    .rd-actions {
+        display: flex;
+        gap: 12px;
+        padding-top: 22px;
+        margin-top: 24px;
+        border-top: 1px solid rgba(51, 65, 85, 0.6);
+    }
+
+    .rd-btn {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 18px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .rd-btn--secondary {
+        background: rgba(30, 41, 59, 0.8);
+        color: #E2E8F0;
+        border: 1px solid #334155;
+    }
+
+    .rd-btn--secondary:hover {
+        background: #334155;
+        color: #FFFFFF;
+    }
+
     /* Уведомление */
     #toast-notification {
         position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background-color: #10B981;
-        color: white;
-        padding: 12px 24px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-        transition: opacity 0.3s ease, transform 0.3s ease;
+        bottom: 24px;
+        right: 24px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(15, 23, 42, 0.95);
+        color: #34D399;
+        border: 1px solid rgba(16, 185, 129, 0.45);
+        padding: 12px 18px;
+        border-radius: 10px;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(8px);
+        transition: opacity 0.25s ease, transform 0.25s ease;
         z-index: 1000;
-        font-weight: 500;
+        font-size: 13.5px;
+        font-weight: 600;
+    }
+
+    #toast-notification.toast-error {
+        color: #F87171;
+        border-color: rgba(239, 68, 68, 0.45);
     }
 
     .toast-hidden {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(16px);
         pointer-events: none;
     }
 
@@ -204,79 +377,165 @@
         opacity: 1;
         transform: translateY(0);
     }
+
+    @media (max-width: 560px) {
+        .rd-card {
+            padding: 22px 18px;
+        }
+        .rd-add-form {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .rd-drag-hint {
+            display: none;
+        }
+        .rd-btn {
+            width: 100%;
+        }
+    }
 </style>
 
 <div class="rd-container">
-    <!-- Шапка рутины -->
-    <div class="rd-header">
-        <h2 class="wf-title" style="margin: 0;">{{ object.title }}</h2>
-    </div>
+    <div class="rd-card">
+        <!-- Шапка рутины -->
+        <div class="rd-header">
+            <div class="rd-header-main">
+                <div class="rd-icon-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                        <line x1="8" y1="11" x2="16" y2="11"></line>
+                        <line x1="8" y1="15" x2="13" y2="15"></line>
+                    </svg>
+                </div>
+                <div>
+                    <div class="wf-eyebrow">Шаблон тренировки</div>
+                    <h1 class="rd-title">{{ object.title }}</h1>
+                </div>
+            </div>
 
-    <!-- Заметки (если есть) -->
-    {% if object.notes %}
-    <div class="wf-card rd-notes-card">
-        <p style="margin: 0; color: #CBD5E1; font-size: 14px;">📝 {{ object.notes }}</p>
-    </div>
-    {% endif %}
+            <span class="rd-count-pill">
+                Упражнений: {{ object.routine_exercises.count }}
+            </span>
+        </div>
 
-    <!-- Блок формы добавления -->
-    <div class="wf-card rd-add-card">
-        <h3 class="rd-section-title">➕ Добавить упражнение</h3>
-        
-        <form method="POST" class="rd-add-form">
-            {% csrf_token %}
-            <select name="exercise" class="rd-select">
-                {% for ex in exercises %}
-                    <option value="{{ ex.id }}">{{ ex.name }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit" class="rd-add-btn">Добавить</button>
-        </form>
-    </div>
+        <!-- Заметки -->
+        {% if object.notes %}
+            <div class="rd-note">
+                <span class="rd-note-label">Заметки</span>
+                <div class="rd-note-text">{{ object.notes }}</div>
+            </div>
+        {% endif %}
 
-    <!-- Блок со списком упражнений -->
-    <div class="wf-card rd-list-card">
-        <h3 class="rd-section-title">🏋️‍♂️ Упражнения</h3>
-        
+        <!-- Форма добавления упражнения -->
+        <div class="rd-add-box">
+            <span class="rd-add-label">Добавить упражнение</span>
+            <form method="POST" class="rd-add-form">
+                {% csrf_token %}
+                <select name="exercise" class="rd-select" required>
+                    <option value="" disabled selected>Выберите упражнение из базы…</option>
+                    {% for ex in exercises %}
+                        <option value="{{ ex.id }}">{{ ex.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="rd-add-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Добавить
+                </button>
+            </form>
+        </div>
+
+        <!-- Список упражнений -->
+        <div class="rd-section-header">
+            <div class="rd-section-title">Упражнения</div>
+            {% if object.routine_exercises.all %}
+                <span class="rd-drag-hint">Перетащите для сортировки</span>
+            {% endif %}
+        </div>
+
         <div id="exercise-list">
             {% for ex in object.routine_exercises.all %}
                 <div data-id="{{ ex.id }}" class="rd-exercise-item">
-                    <p class="rd-item-left">
-                        <span class="rd-drag-handle">☰</span>
-                        {{ ex.exercise.name }}
-                    </p>
-                    <a href="{% url 'routine_delete_exercise' ex.id %}" class="rd-delete-btn" title="Удалить из рутины">✕</a>
+                    <div class="rd-item-left">
+                        <span class="rd-drag-handle" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="9" cy="6" r="1.5"></circle>
+                                <circle cx="15" cy="6" r="1.5"></circle>
+                                <circle cx="9" cy="12" r="1.5"></circle>
+                                <circle cx="15" cy="12" r="1.5"></circle>
+                                <circle cx="9" cy="18" r="1.5"></circle>
+                                <circle cx="15" cy="18" r="1.5"></circle>
+                            </svg>
+                        </span>
+                        <span class="rd-order-num">{{ forloop.counter }}</span>
+                        <span class="rd-exercise-name">{{ ex.exercise.name }}</span>
+                    </div>
+                    <a
+                        href="{% url 'routine_delete_exercise' ex.id %}"
+                        class="rd-delete-btn"
+                        title="Удалить из рутины"
+                        onclick="return confirm('Удалить упражнение «{{ ex.exercise.name|escapejs }}» из рутины?')"
+                    >✕</a>
                 </div>
             {% empty %}
-                <p style="color: #94A3B8; margin: 0; text-align: center; padding: 12px 0; font-size: 14px;">
+                <div class="rd-empty">
                     Упражнений пока нет. Выберите упражнение выше и нажмите «Добавить».
-                </p> 
+                </div>
             {% endfor %}
+        </div>
+
+        <!-- Нижняя панель -->
+        <div class="rd-actions">
+            <a href="{% url 'workout_routines' %}" class="rd-btn rd-btn--secondary">
+                ← К списку рутин
+            </a>
         </div>
     </div>
 </div>
 
 <div id="toast-notification" class="toast-hidden">
-    ✅ Порядок сохранен
+    ✓ Порядок сохранён
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const list = document.getElementById("exercise-list");
+        const list = document.getElementById('exercise-list');
+        const toast = document.getElementById('toast-notification');
+        let toastTimer = null;
 
-        if (list) {
+        function showToast(message, isError = false) {
+            toast.textContent = message;
+            toast.classList.toggle('toast-error', isError);
+            toast.classList.remove('toast-hidden');
+            toast.classList.add('toast-visible');
+
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('toast-visible');
+                toast.classList.add('toast-hidden');
+            }, 2500);
+        }
+
+        if (list && list.querySelector('[data-id]')) {
             Sortable.create(list, {
                 animation: 150,
                 ghostClass: 'sortable-ghost',
+                filter: '.rd-delete-btn',
+                preventOnFilter: false,
 
                 onEnd: function() {
-                    let newOrder = [];
-                    list.querySelectorAll('[data-id]').forEach(function(item) {
+                    const newOrder = [];
+                    list.querySelectorAll('[data-id]').forEach(function(item, index) {
                         newOrder.push(item.getAttribute('data-id'));
+                        const badge = item.querySelector('.rd-order-num');
+                        if (badge) badge.textContent = index + 1;
                     });
-                    
+
                     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
                     fetch("{% url 'update_exercise_order' %}", {
@@ -289,17 +548,13 @@
                     })
                     .then(response => {
                         if (response.ok) {
-                            const toast = document.getElementById('toast-notification');
-                            toast.classList.remove('toast-hidden');
-                            toast.classList.add('toast-visible');
-
-                            setTimeout(() => {
-                                toast.classList.remove('toast-visible');
-                                toast.classList.add('toast-hidden');
-                            }, 3000);
+                            showToast('✓ Порядок сохранён');
                         } else {
-                            console.error("Ошибка при сохранении");
+                            showToast('✕ Ошибка при сохранении', true);
                         }
+                    })
+                    .catch(() => {
+                        showToast('✕ Ошибка соединения', true);
                     });
                 }
             });

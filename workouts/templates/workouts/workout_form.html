@@ -2,102 +2,226 @@
 {% load static %}
 
 {% block content %}
-
 <style>
+    .wo-container {
+        max-width: 720px;
+        margin: 0 auto 40px auto;
+    }
+
+    .wo-card {
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.95));
+        border: 1px solid #334155;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.45);
+    }
+
+    .wo-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding-bottom: 20px;
+        margin-bottom: 24px;
+        border-bottom: 1px solid rgba(51, 65, 85, 0.7);
+    }
+
+    .wo-icon-badge {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: rgba(59, 130, 246, 0.14);
+        border: 1px solid rgba(59, 130, 246, 0.35);
+        color: #60A5FA;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .wo-form {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .wo-form input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+    .wo-form textarea,
+    .wo-form select {
+        width: 100%;
+        padding: 11px 14px;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid #334155;
+        border-radius: 10px;
+        color: #F8FAFC;
+        font-size: 14px;
+        font-family: inherit;
+        box-sizing: border-box;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .wo-form textarea {
+        resize: vertical;
+        height: 96px;
+        min-height: 76px;
+        line-height: 1.5;
+    }
+
+    .wo-form input:focus,
+    .wo-form textarea:focus,
+    .wo-form select:focus {
+        outline: none;
+        border-color: #3B82F6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
+
+    .wo-form input[type="file"] {
+        width: 100%;
+        padding: 10px 12px;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px dashed #334155;
+        border-radius: 10px;
+        color: #94A3B8;
+        font-size: 13px;
+        box-sizing: border-box;
+        cursor: pointer;
+    }
+
+    .wo-form input[type="file"]::file-selector-button {
+        background: #1E293B;
+        color: #E2E8F0;
+        border: 1px solid #475569;
+        border-radius: 6px;
+        padding: 6px 12px;
+        margin-right: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+
+    .wo-form input[type="file"]::file-selector-button:hover {
+        background: #334155;
+    }
+
+    .wo-form a {
+        color: #60A5FA;
+        font-size: 13px;
+    }
+
+    /* Разделитель секции упражнений */
+    .wo-section-divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 8px;
+    }
+
+    .wo-section-divider span {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #94A3B8;
+        white-space: nowrap;
+    }
+
+    .wo-section-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: rgba(51, 65, 85, 0.7);
+    }
+
     /* Карточка отдельного упражнения */
     .exercise-block {
-        background: rgba(15, 23, 42, 0.45);
+        background: rgba(15, 23, 42, 0.55);
         border: 1px solid #334155;
         padding: 18px;
-        margin-bottom: 18px;
         border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
     }
 
-    /* Шапка упражнения: выбор упражнения слева, Delete справа */
-    .exercise-header {
+    .wo-exercise-header {
         display: grid;
         grid-template-columns: 1fr auto;
-        gap: 16px;
-        align-items: center;
+        gap: 12px;
+        align-items: end;
         padding-bottom: 14px;
-        margin-bottom: 14px;
-        border-bottom: 1px solid #1E293B;
+        border-bottom: 1px solid rgba(51, 65, 85, 0.6);
     }
 
-    .exercise-header p {
-        margin: 0;
-    }
-
-    /* Заголовок секции подходов */
-    .sets-title {
-        font-size: 12px;
+    .wo-sets-title {
+        font-size: 11px;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.08em;
         color: #94A3B8;
-        margin: 0 0 10px 0;
-        font-weight: 600;
+        margin: 0;
+        font-weight: 700;
     }
 
-    /* Строка одного подхода: Вес | Повторения | Удалить в один ряд */
+    .wo-sets-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Строка одного подхода */
     .sets-block {
         display: grid;
         grid-template-columns: 1fr 1fr auto;
         gap: 12px;
-        align-items: start;
-        background: rgba(30, 41, 59, 0.4);
+        align-items: end;
+        background: rgba(30, 41, 59, 0.45);
+        border: 1px solid rgba(51, 65, 85, 0.6);
         padding: 12px;
-        border-radius: 8px;
-        margin-bottom: 8px;
+        border-radius: 10px;
     }
 
-    .sets-block p {
-        margin: 0;
-    }
-
-    /* Подсказки ("Вес в кг", "Количество повторений") делаем компактнее */
-    .sets-block .helptext,
-    .exercise-header .helptext {
+    .wo-sub-label {
         display: block;
         font-size: 11px;
-        color: #64748B;
-        margin-top: 4px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #94A3B8;
+        margin-bottom: 6px;
     }
 
-         /* Квадратная кнопка удаления на уровне полей ввода */
-    .exercise-header p:last-of-type,
-    .sets-block p:last-of-type {
+    /* Квадратная кнопка удаления */
+    .delete-btn-container {
         position: relative;
-        width: 38px;
-        height: 38px;
-        margin-top: 23px;
+        width: 42px;
+        height: 42px;
         display: flex;
         align-items: center;
         justify-content: center;
         background: rgba(239, 68, 68, 0.08);
         border: 1px solid rgba(239, 68, 68, 0.25);
-        border-radius: 8px;
+        border-radius: 10px;
         transition: all 0.2s ease;
+        box-sizing: border-box;
     }
 
-    /* Скрываем надпись "Delete:" */
-    .exercise-header p:last-of-type label,
-    .sets-block p:last-of-type label {
+    .delete-btn-container:hover {
+        background: rgba(239, 68, 68, 0.2);
+        border-color: rgba(239, 68, 68, 0.5);
+    }
+
+    .delete-btn-container label {
         display: none;
     }
 
-    /* Рисуем крестик по центру кнопки */
-    .exercise-header p:last-of-type::after,
-    .sets-block p:last-of-type::after {
+    .delete-btn-container::after {
         content: "✕";
-        font-size: 15px;
-        font-weight: 600;
+        font-size: 14px;
+        font-weight: 700;
         color: #F87171;
         pointer-events: none;
     }
 
-    /* Прозрачный чекбокс поверх всей кнопки для обработки клика */
-    .exercise-header p:last-of-type input[type="checkbox"],
-    .sets-block p:last-of-type input[type="checkbox"] {
+    .delete-btn-container input[type="checkbox"] {
         position: absolute;
         inset: 0;
         width: 100%;
@@ -107,31 +231,29 @@
         cursor: pointer;
     }
 
-    /* Активное состояние: когда нажали на крестик */
-    .exercise-header p:last-of-type:has(input[type="checkbox"]:checked),
-    .sets-block p:last-of-type:has(input[type="checkbox"]:checked) {
+    .delete-btn-container:has(input[type="checkbox"]:checked) {
         background: #EF4444;
         border-color: #EF4444;
     }
 
-    .exercise-header p:last-of-type:has(input[type="checkbox"]:checked)::after,
-    .sets-block p:last-of-type:has(input[type="checkbox"]:checked)::after {
+    .delete-btn-container:has(input[type="checkbox"]:checked)::after {
         color: #FFFFFF;
     }
 
-
-
-    /* Кнопка "+ Добавить упражнение" в стиле тёмной темы */
+    /* Кнопка "+ Добавить упражнение" */
     .add-exercise-btn {
         width: 100%;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
         padding: 12px;
-        margin: 6px 0 22px;
-        background: transparent;
+        background: rgba(15, 23, 42, 0.4);
         border: 1px dashed #475569;
         color: #94A3B8;
         border-radius: 10px;
         font-size: 14px;
-        font-weight: 500;
+        font-weight: 600;
         cursor: pointer;
         transition: all 0.2s ease;
     }
@@ -142,182 +264,265 @@
         background: rgba(59, 130, 246, 0.08);
     }
 
-    .rt-back-btn {
+    /* Ошибки */
+    .wo-error-banner {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #F87171;
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 13px;
+    }
+
+    .wo-error-banner ul,
+    .wo-field-error ul {
+        margin: 0;
+        padding-left: 16px;
+    }
+
+    .wo-field-error {
+        color: #F87171;
+        font-size: 12.5px;
+        margin-top: 6px;
+    }
+
+    /* Кнопки действий */
+    .wo-actions {
+        display: flex;
+        gap: 12px;
+        padding-top: 20px;
+        margin-top: 6px;
+        border-top: 1px solid rgba(51, 65, 85, 0.6);
+    }
+
+    .wo-btn {
+        flex: 1;
         display: inline-flex;
+        justify-content: center;
         align-items: center;
         gap: 8px;
-        padding: 9px 16px;
-        background-color: #1E293B;
-        border: 1px solid #334155;
-        color: #E2E8F0;
-        border-radius: 8px;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
         text-decoration: none;
-        font-size: 13px;
-        font-weight: 500;
-        margin-bottom: 16px; /* Добавили отступ снизу */
+        cursor: pointer;
         transition: all 0.2s ease;
+        box-sizing: border-box;
     }
 
-
-    .rt-back-btn:hover {
-        background-color: #334155;
+    .wo-btn--primary {
+        background: #3B82F6;
         color: #FFFFFF;
-        border-color: #475569;
+        border: 1px solid #3B82F6;
     }
 
-.delete-btn-container {
-    position: relative;
-    width: 38px;
-    height: 38px;
-    margin-top: 23px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(239, 68, 68, 0.08);
-    border: 1px solid rgba(239, 68, 68, 0.25);
-    border-radius: 8px;
-}
+    .wo-btn--primary:hover {
+        background: #2563EB;
+    }
 
-.delete-btn-container label { display: none; }
+    .wo-btn--secondary {
+        background: rgba(30, 41, 59, 0.8);
+        color: #E2E8F0;
+        border: 1px solid #334155;
+    }
 
-.delete-btn-container::after {
-    content: "✕";
-    font-size: 15px;
-    font-weight: 600;
-    color: #F87171;
-}
+    .wo-btn--secondary:hover {
+        background: #334155;
+        color: #FFFFFF;
+    }
 
-.delete-btn-container input[type="checkbox"] {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-}
-
-.delete-btn-container:has(input[type="checkbox"]:checked) {
-    background: #EF4444;
-}
-
-.delete-btn-container:has(input[type="checkbox"]:checked)::after {
-    color: #FFFFFF;
-}
-
+    @media (max-width: 560px) {
+        .wo-card {
+            padding: 22px 18px;
+        }
+        .sets-block {
+            grid-template-columns: 1fr 1fr;
+        }
+        .sets-block .delete-btn-container {
+            grid-column: 1 / -1;
+            width: 100%;
+            height: 36px;
+        }
+        .wo-actions {
+            flex-direction: column;
+        }
+    }
 </style>
 
-<div class="wf-card">
-    <div class="wf-header">
-        <p class="wf-eyebrow">
-            {% if object %}Редактирование{% else %}Добавление{% endif %}
-        </p>
-        <h2 class="wf-title">
-            {% if object %}Изменить <span>запись</span>{% else %}Новая <span>тренировка</span>{% endif %}
-        </h2>
-    </div>
-
-    <form method="post" enctype="multipart/form-data" class="wf-form">
-        {% csrf_token %}
-
-        {{ form.as_p }}
-
-        {{ formset.management_form }}
-
-        {% for exercise_form in formset.forms %}
-        <div class="exercise-block">
-            {{ exercise_form.id }}
-
-            <div class="exercise-header">
-                <div>
-                    {{ exercise_form.exercise.label_tag }}
-                    {{ exercise_form.exercise }}
-                </div>
-                <div class="delete-btn-container">
-                    {{ exercise_form.DELETE }}
-                </div>
+<div class="wo-container">
+    <div class="wo-card">
+        <div class="wo-header">
+            <div class="wo-icon-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6.5 6.5h11M6.5 17.5h11M4 12h16M9 4.5v15M15 4.5v15"></path>
+                </svg>
             </div>
-
-            <!-- ВАЖНО: Обязательный вызов management_form для вложенного формсета подходов -->
-            {{ exercise_form.nested.management_form }}
-            
-            <p class="sets-title">Подходы</p>
-
-            {% for set_form in exercise_form.nested.forms %}
-            <div class="sets-block">
-                {{ set_form.id }}
-                
-                <div>{{ set_form.weight.label_tag }} {{ set_form.weight }}</div>
-                <div>{{ set_form.reps.label_tag }} {{ set_form.reps }}</div>
-                
-                <div class="delete-btn-container">
-                    {{ set_form.DELETE }}
+            <div>
+                <div class="wf-eyebrow">
+                    {% if object %}Редактирование{% else %}Новая запись{% endif %}
                 </div>
-            </div>
-            {% endfor %} 
-        </div>
-        {% endfor %}
-
-        <div id="empty-form-template" style="display: none;">
-            <div class="exercise-block">
-                <div class="exercise-header">
-                    {{ formset.empty_form.as_p }}
-                </div>
+                <h1 class="wf-title" style="margin: 2px 0 0 0; font-size: 24px;">
+                    {% if object %}Изменить <span>тренировку</span>{% else %}Новая <span>тренировка</span>{% endif %}
+                </h1>
             </div>
         </div>
-        
-        <button type="button" id="add-set-btn" class="add-exercise-btn">
-            + Добавить упражнение
-        </button>
 
-        <button type="submit" class="wf-submit">
-            {% if not object %}
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
+        <form method="post" enctype="multipart/form-data" id="workout-form" class="wo-form">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="wo-error-banner">{{ form.non_field_errors }}</div>
             {% endif %}
-            {% if object %}Сохранить изменения{% else %}Сохранить тренировку{% endif %}
-        </button>
-    </form>
-        
+
+            {% for field in form %}
+                <div class="wf-field {% if field.errors %}wf-field--error{% endif %}">
+                    <label class="wf-label" for="{{ field.id_for_label }}">
+                        {{ field.help_text|default:field.label }}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="wo-field-error">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <div class="wo-section-divider">
+                <span>Упражнения и подходы</span>
+            </div>
+
+            {{ formset.management_form }}
+
+            {% if formset.non_form_errors %}
+                <div class="wo-error-banner">{{ formset.non_form_errors }}</div>
+            {% endif %}
+
+            {% for exercise_form in formset.forms %}
+                <div class="exercise-block">
+                    {{ exercise_form.id }}
+
+                    <div class="wo-exercise-header">
+                        <div>
+                            <label class="wo-sub-label" for="{{ exercise_form.exercise.id_for_label }}">Упражнение</label>
+                            {{ exercise_form.exercise }}
+                            {% if exercise_form.exercise.errors %}
+                                <div class="wo-field-error">{{ exercise_form.exercise.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="delete-btn-container" title="Удалить упражнение">
+                            {{ exercise_form.DELETE }}
+                        </div>
+                    </div>
+
+                    {{ exercise_form.nested.management_form }}
+
+                    <p class="wo-sets-title">Подходы</p>
+
+                    <div class="wo-sets-list">
+                        {% for set_form in exercise_form.nested.forms %}
+                            <div class="sets-block">
+                                {{ set_form.id }}
+
+                                <div>
+                                    <label class="wo-sub-label" for="{{ set_form.weight.id_for_label }}">Вес (кг)</label>
+                                    {{ set_form.weight }}
+                                    {% if set_form.weight.errors %}
+                                        <div class="wo-field-error">{{ set_form.weight.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div>
+                                    <label class="wo-sub-label" for="{{ set_form.reps.id_for_label }}">Повторения</label>
+                                    {{ set_form.reps }}
+                                    {% if set_form.reps.errors %}
+                                        <div class="wo-field-error">{{ set_form.reps.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="delete-btn-container" title="Удалить подход">
+                                    {{ set_form.DELETE }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div id="empty-form-template" style="display: none;">
+                <div class="exercise-block">
+                    {{ formset.empty_form.id }}
+                    <div class="wo-exercise-header" style="border-bottom: none; padding-bottom: 0;">
+                        <div>
+                            <label class="wo-sub-label" for="{{ formset.empty_form.exercise.id_for_label }}">Упражнение</label>
+                            {{ formset.empty_form.exercise }}
+                        </div>
+                        <div class="delete-btn-container" title="Удалить упражнение">
+                            {{ formset.empty_form.DELETE }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" id="add-set-btn" class="add-exercise-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Добавить упражнение
+            </button>
+
+            <div class="wo-actions">
+                <button type="submit" class="wo-btn wo-btn--primary">
+                    {% if not object %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    {% endif %}
+                    {% if object %}Сохранить изменения{% else %}Сохранить тренировку{% endif %}
+                </button>
+                <a href="{% if object %}{% url 'workout_detail' object.pk %}{% else %}{% url 'workout_list' %}{% endif %}" class="wo-btn wo-btn--secondary">
+                    Отмена
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const addBtn = document.getElementById('add-set-btn')
-        const totalFormsInput = document.getElementById('id_workout_exercises-TOTAL_FORMS')
-        const emptyFormTemplate = document.getElementById('empty-form-template')
+        const addBtn = document.getElementById('add-set-btn');
+        const totalFormsInput = document.getElementById('id_workout_exercises-TOTAL_FORMS');
+        const emptyFormTemplate = document.getElementById('empty-form-template');
 
         addBtn.addEventListener('click', function() {
-            const currentFormCount = parseInt(totalFormsInput.value)
-            const newFormHtml = emptyFormTemplate.innerHTML.replace(/__prefix__/g, currentFormCount)
+            const currentFormCount = parseInt(totalFormsInput.value, 10);
+            const newFormHtml = emptyFormTemplate.innerHTML.replace(/__prefix__/g, currentFormCount);
 
-            const newFormContainer = document.createElement('div')
-            newFormContainer.innerHTML = newFormHtml
+            const newFormContainer = document.createElement('div');
+            newFormContainer.innerHTML = newFormHtml;
 
-            emptyFormTemplate.parentNode.insertBefore(newFormContainer.firstElementChild, emptyFormTemplate)
-            totalFormsInput.value = currentFormCount + 1
-        })
+            emptyFormTemplate.parentNode.insertBefore(newFormContainer.firstElementChild, emptyFormTemplate);
+            totalFormsInput.value = currentFormCount + 1;
+        });
 
-        // Hide the set or exercise block immediately when its DELETE checkbox is clicked
-        const wfForm = document.querySelector('.wf-form')
-        wfForm.addEventListener('change', function(e) {
+        const workoutForm = document.getElementById('workout-form');
+        workoutForm.addEventListener('change', function(e) {
             if (e.target.matches('input[type="checkbox"][name$="-DELETE"]')) {
-                const setBlock = e.target.closest('.sets-block')
-                const exerciseBlock = e.target.closest('.exercise-block')
+                const setBlock = e.target.closest('.sets-block');
+                const exerciseBlock = e.target.closest('.exercise-block');
 
                 if (setBlock) {
-                    setBlock.style.display = 'none'
+                    setBlock.style.display = 'none';
                 } else if (exerciseBlock) {
-                    if (!confirm('Удалить это упражнение из тренировки?')){
-                        e.target.checked = false
-                        return
+                    if (!confirm('Удалить это упражнение из тренировки?')) {
+                        e.target.checked = false;
+                        return;
                     }
-                    exerciseBlock.style.display = 'none'
+                    exerciseBlock.style.display = 'none';
                 }
             }
-        })
-    })
+        });
+    });
 </script>
-
-
 {% endblock %}

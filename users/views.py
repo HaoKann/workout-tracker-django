@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import UserUpdateForm, CustomUserCreationForm
+from .forms import UserUpdateForm, CustomUserCreationForm, ProfileUpdateForm
+from .models import UserProfile
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.forms import AuthenticationForm 
 from workouts.models import WorkOut, WorkOutSet
@@ -40,20 +41,24 @@ def login_view(request):
 def profile(request): 
     # Проверяем, передан ли GET-параметр ?edit=y
     edit_mode = request.GET.get('edit') == 'y'
-
+    user_profile, _ = UserProfile.objects.get_or_create(user=request.user)
+    
     if request.method == "POST":
-        # Передаем POST-данные и файлы (request.FILES), а также указываем instance (кого именно редактируем)
-        form = UserUpdateForm(request.POST, request.FILES, instance=request.user)
-        if form.is_valid():
-            form.save()
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=user_profile)
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
             messages.success(request, 'Профиль успешно обновлен!')
             return redirect('profile')
     else:
         # Если это обычный GET-запрос, просто заполняем форму текущими данными пользователя
-        form = UserUpdateForm(instance=request.user)
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=user_profile)
         
     context = {
-        'form': form,
+        'u_form': u_form,
+        'p_form': p_form,
         'edit_mode': edit_mode,
         'total_workouts': WorkOut.objects.filter(user=request.user).count(),
         'total_sets': WorkOutSet.objects.filter(workout_exercise__workout__user=request.user).count(),

@@ -3,203 +3,635 @@
 
 {% block content %}
 <style>
-    .rt-back-btn {
+    .wd-container {
+        max-width: 720px;
+        margin: 0 auto 40px auto;
+    }
+
+    .wd-card {
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.95));
+        border: 1px solid #334155;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.45);
+    }
+
+    /* Шапка тренировки */
+    .wd-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        flex-wrap: wrap;
+        padding-bottom: 20px;
+        margin-bottom: 22px;
+        border-bottom: 1px solid rgba(51, 65, 85, 0.7);
+    }
+
+    .wd-header-main {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .wd-icon-badge {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: rgba(59, 130, 246, 0.14);
+        border: 1px solid rgba(59, 130, 246, 0.35);
+        color: #60A5FA;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .wd-title {
+        margin: 2px 0 0 0;
+        font-size: 24px;
+        font-weight: 700;
+        color: #F8FAFC;
+        line-height: 1.25;
+    }
+
+    .wd-date-pill {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        padding: 8px 14px;
-        background-color: #1E293B;
-        border: 1px solid #334155;
-        color: #E2E8F0;
+        gap: 6px;
+        padding: 6px 12px;
         border-radius: 8px;
-        text-decoration: none;
-        font-size: 13px;
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid #334155;
+        color: #94A3B8;
+        font-size: 12.5px;
         font-weight: 500;
-        margin-bottom: 16px;
-        transition: all 0.2s ease;
+        white-space: nowrap;
     }
 
-    .rt-back-btn:hover {
-        background-color: #334155;
+    /* Заметки и фото */
+    .wd-note {
+        padding: 12px 16px;
+        margin-bottom: 18px;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(51, 65, 85, 0.7);
+        border-left: 3px solid #3B82F6;
+        border-radius: 10px;
+    }
+
+    .wd-note-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #94A3B8;
+        margin-bottom: 4px;
+    }
+
+    .wd-note-text {
+        color: #E2E8F0;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .wd-photo-wrap {
+        margin-bottom: 22px;
+    }
+
+    .wd-photo {
+        width: 100%;
+        max-height: 360px;
+        object-fit: cover;
+        border-radius: 12px;
+        border: 1px solid #334155;
+        display: block;
+    }
+
+    /* Блок добавления упражнения */
+    .wd-add-exercise {
+        padding: 16px;
+        margin-bottom: 24px;
+        background: rgba(15, 23, 42, 0.55);
+        border: 1px solid #334155;
+        border-radius: 12px;
+    }
+
+    .wd-add-exercise-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #94A3B8;
+        margin-bottom: 10px;
+    }
+
+    .wd-add-exercise-form {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .wd-select {
+        flex: 1;
+        padding: 10px 14px;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid #334155;
+        color: #F8FAFC;
+        border-radius: 10px;
+        font-size: 13.5px;
+        font-family: inherit;
+        cursor: pointer;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .wd-select:focus {
+        outline: none;
+        border-color: #3B82F6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
+
+    .wd-add-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 18px;
+        background: #3B82F6;
         color: #FFFFFF;
-        border-color: #475569;
+        border: 1px solid #3B82F6;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 13.5px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background-color 0.2s ease;
     }
 
-    .wt-section-header {
-    margin-top: 24px;
-}
+    .wd-add-btn:hover {
+        background: #2563EB;
+    }
 
-.add-exercise-card {
-    margin: 20px 0;
-    padding: 16px;
-    background: #1E293B;
-    border: 1px solid #334155;
-    border-radius: 12px;
-}
+    /* Разделитель секции */
+    .wd-section-divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
 
-.add-exercise-form {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
+    .wd-section-divider span {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #94A3B8;
+        white-space: nowrap;
+    }
 
-.add-exercise-select {
-    flex: 1;
-    padding: 8px 12px;
-    background: #0F172A;
-    border: 1px solid #334155;
-    color: #F8FAFC;
-    border-radius: 8px;
-    font-size: 13px;
-    cursor: pointer;
-}
+    .wd-section-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: rgba(51, 65, 85, 0.7);
+    }
 
-.add-exercise-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    background: #3B82F6;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 13px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
+    /* Карточки упражнений */
+    .wd-exercises {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
 
-.add-exercise-btn:hover {
-    background: #2563EB;
-}
+    .wd-exercise-card {
+        background: rgba(15, 23, 42, 0.55);
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 18px;
+    }
+
+    .wd-exercise-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding-bottom: 12px;
+        margin-bottom: 12px;
+        border-bottom: 1px solid rgba(51, 65, 85, 0.7);
+    }
+
+    .wd-exercise-name {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+        color: #F8FAFC;
+    }
+
+    .wd-set-count {
+        font-size: 11.5px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: rgba(59, 130, 246, 0.14);
+        color: #60A5FA;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        white-space: nowrap;
+    }
+
+    /* Таблица подходов */
+    .wd-sets-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 14px;
+    }
+
+    .wd-sets-table th {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #64748B;
+        padding: 0 0 8px 0;
+        text-align: left;
+    }
+
+    .wd-sets-table td {
+        padding: 9px 0;
+        border-top: 1px solid rgba(51, 65, 85, 0.45);
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    .wd-set-num {
+        color: #94A3B8;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .wd-weight-pill {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 6px;
+        background: rgba(30, 41, 59, 0.9);
+        border: 1px solid #334155;
+        color: #F8FAFC;
+        font-weight: 600;
+        font-size: 13.5px;
+    }
+
+    .wd-weight-pill small {
+        color: #94A3B8;
+        font-weight: 500;
+        font-size: 11.5px;
+    }
+
+    .wd-reps-text {
+        color: #E2E8F0;
+        font-weight: 600;
+    }
+
+    .wd-reps-text small {
+        color: #94A3B8;
+        font-weight: 400;
+        margin-left: 2px;
+    }
+
+    .wd-empty-row td {
+        text-align: center;
+        color: #64748B;
+        font-size: 13px;
+        padding: 14px 0;
+        border-top: none;
+    }
+
+    .delete-set-btn {
+        background: rgba(239, 68, 68, 0.08);
+        color: #F87171;
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        font-weight: 700;
+        font-size: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+
+    .delete-set-btn:hover {
+        background: #EF4444;
+        border-color: #EF4444;
+        color: #FFFFFF;
+    }
+
+    /* Форма добавления подхода */
+    .wd-add-set-form {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        align-items: center;
+        padding-top: 12px;
+        border-top: 1px solid rgba(51, 65, 85, 0.55);
+    }
+
+    .wd-set-input {
+        width: 105px;
+        padding: 8px 11px;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid #334155;
+        color: #F8FAFC;
+        border-radius: 8px;
+        font-size: 13px;
+        font-family: inherit;
+        box-sizing: border-box;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .wd-set-input:focus {
+        outline: none;
+        border-color: #3B82F6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
+
+    .wd-set-submit {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        padding: 8px 14px;
+        background: rgba(16, 185, 129, 0.15);
+        color: #34D399;
+        border: 1px solid rgba(16, 185, 129, 0.35);
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+    }
+
+    .wd-set-submit:hover {
+        background: #10B981;
+        border-color: #10B981;
+        color: #FFFFFF;
+    }
+
+    /* Пустое состояние */
+    .wd-empty {
+        padding: 28px 20px;
+        text-align: center;
+        border: 1px dashed rgba(51, 65, 85, 0.9);
+        border-radius: 12px;
+        color: #64748B;
+        font-size: 13.5px;
+    }
+
+    /* Нижняя панель кнопок */
+    .wd-actions {
+        display: flex;
+        gap: 12px;
+        padding-top: 22px;
+        margin-top: 24px;
+        border-top: 1px solid rgba(51, 65, 85, 0.6);
+    }
+
+    .wd-btn {
+        flex: 1;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 16px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .wd-btn--primary {
+        background: #3B82F6;
+        color: #FFFFFF;
+        border: 1px solid #3B82F6;
+    }
+
+    .wd-btn--primary:hover {
+        background: #2563EB;
+    }
+
+    .wd-btn--secondary {
+        background: rgba(30, 41, 59, 0.8);
+        color: #E2E8F0;
+        border: 1px solid #334155;
+    }
+
+    .wd-btn--secondary:hover {
+        background: #334155;
+        color: #FFFFFF;
+    }
+
+    .wd-btn--danger {
+        flex: 0 0 auto;
+        background: rgba(239, 68, 68, 0.08);
+        color: #F87171;
+        border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+
+    .wd-btn--danger:hover {
+        background: #EF4444;
+        border-color: #EF4444;
+        color: #FFFFFF;
+    }
+
+    @media (max-width: 560px) {
+        .wd-card {
+            padding: 22px 18px;
+        }
+        .wd-add-exercise-form,
+        .wd-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .wd-add-set-form {
+            flex-wrap: wrap;
+        }
+        .wd-set-input {
+            flex: 1;
+            min-width: 0;
+        }
+    }
 </style>
 
-<div class="wt-main" style="max-width: 640px; margin: 0 auto;">
-    <div class="wt-card">
-        <div class="wt-card-body" style="padding: 28px;">
-            <!-- Шапка тренировки -->
-            <div class="wt-card-top" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
-                <h2 class="wt-card-title" style="font-size: 22px; color: #F8FAFC; margin: 0;">{{ object.title }}</h2>
-                <div class="wt-card-date" style="color: #94A3B8; font-size: 14px;">{{ object.date|date:"d M Y" }}</div>
+<div class="wd-container">
+    <div class="wd-card">
+        <!-- Шапка тренировки -->
+        <div class="wd-header">
+            <div class="wd-header-main">
+                <div class="wd-icon-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6.5 6.5h11M6.5 17.5h11M4 12h16M9 4.5v15M15 4.5v15"></path>
+                    </svg>
+                </div>
+                <div>
+                    <div class="wf-eyebrow">Тренировка</div>
+                    <h1 class="wd-title">{{ object.title }}</h1>
+                </div>
             </div>
-
-            <!-- Заметки -->
-            {% if object.notes %}
-            <div class="wt-card-note" style="margin-top: 16px; padding: 12px 16px; background: rgba(30, 41, 59, 0.5); border-radius: 8px; border: 1px solid #334155;">
-                <span style="color: #94A3B8; font-size: 13px; display: block; margin-bottom: 4px;">Заметки</span>
-                <span style="color: #E2E8F0; font-size: 14px;">{{ object.notes }}</span>
-            </div>
-            {% endif %}
-
-            <!-- Фотография -->
-            {% if object.photo %}
-            <div style="margin-top: 16px;">
-                <img src="{{ object.photo.url }}" alt="Фото тренировки" class="wt-card-photo" style="max-width: 100%; border-radius: 8px; border: 1px solid #334155;">
-            </div>
-            {% endif %}
-
-        <!-- Форма добавления упражнения из базы -->
-        <div class="wt-section-header">
-            <div class="add-exercise-card">
-                <form method="POST" class="add-exercise-form">
-                    {% csrf_token %}
-                    <select name="exercise_id" class="add-exercise-select" required>
-                        <option value="" disabled selected>Упражнение из базы</option>
-                        {% for ex in exercises %}
-                        <option value="{{ ex.id }}">{{ ex.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="submit" name="add_exercise" class="add-exercise-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                        Добавить
-                    </button>
-                </form>
+            <div class="wd-date-pill">
+                📅 {{ object.date|date:"d E Y" }}
             </div>
         </div>
 
-            <!-- Разделитель -->
-            <span class="label">Выполненные подходы</span>
-            <span class="line"></span>
+        <!-- Заметки -->
+        {% if object.notes %}
+            <div class="wd-note">
+                <span class="wd-note-label">Заметки</span>
+                <div class="wd-note-text">{{ object.notes }}</div>
+            </div>
+        {% endif %}
 
-            <!-- Блоки упражнений -->
-            {% if object.workout_exercises.all %}
-                <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 16px;">
-                    {% for exercise in object.workout_exercises.all %}
-                    <div style="background: #1E293B; border: 1px solid #334155; border-radius: 12px; padding: 16px;">
-                        
-                        <!-- Заголовок упражнения -->
-                        <h3 style="color: #F8FAFC; font-size: 16px; margin: 0 0 12px 0; padding-bottom: 8px; border-bottom: 1px solid #334155;">
-                            {{ exercise.exercise.name }}
-                        </h3>
+        <!-- Фотография -->
+        {% if object.photo %}
+            <div class="wd-photo-wrap">
+                <img src="{{ object.photo.url }}" alt="Фото тренировки" class="wd-photo">
+            </div>
+        {% endif %}
 
-                        <!-- Таблица подходов для текущего упражнения -->
-                        <table style="width: 100%; margin-bottom: 12px;">
+        <!-- Форма добавления упражнения из базы -->
+        <div class="wd-add-exercise">
+            <span class="wd-add-exercise-label">Добавить упражнение</span>
+            <form method="POST" class="wd-add-exercise-form">
+                {% csrf_token %}
+                <select name="exercise_id" class="wd-select" required>
+                    <option value="" disabled selected>Выберите упражнение из базы…</option>
+                    {% for ex in exercises %}
+                        <option value="{{ ex.id }}">{{ ex.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" name="add_exercise" class="wd-add-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Добавить
+                </button>
+            </form>
+        </div>
+
+        <!-- Разделитель -->
+        <div class="wd-section-divider">
+            <span>Выполненные подходы</span>
+        </div>
+
+        <!-- Блоки упражнений -->
+        {% if object.workout_exercises.all %}
+            <div class="wd-exercises">
+                {% for exercise in object.workout_exercises.all %}
+                    <div class="wd-exercise-card">
+                        <div class="wd-exercise-top">
+                            <h3 class="wd-exercise-name">{{ exercise.exercise.name }}</h3>
+                            <span class="wd-set-count" id="set-count-{{ exercise.id }}">
+                                Подходов: {{ exercise.sets.count }}
+                            </span>
+                        </div>
+
+                        <table class="wd-sets-table">
                             <thead>
                                 <tr>
-                                    <th style="color: #94A3B8; font-size: 13px; text-align: left; width: 50%;">Подход</th>
-                                    <th style="color: #94A3B8; font-size: 13px; text-align: left;">Вес</th>
-                                    <th style="color: #94A3B8; font-size: 13px; text-align: right;">Повторения</th>
+                                    <th style="width: 20%;">Подход</th>
+                                    <th style="width: 35%;">Вес</th>
+                                    <th style="width: 33%;">Повторения</th>
+                                    <th style="width: 12%; text-align: right;"></th>
                                 </tr>
                             </thead>
-                            <tbody id="sets-tbody-{{ exercise.id }}">
+                            <tbody id="sets-tbody-{{ exercise.id }}" data-exercise-id="{{ exercise.id }}">
                                 {% for set in exercise.sets.all %}
                                     <tr id="set-row-{{ set.id }}">
-                                        <td style="padding: 8px 0; color: #E2E8F0;">#{{ forloop.counter }}</td>
-                                        <td style="padding: 8px 0;">
-                                            <span class="wt-weight-badge">{{ set.weight }}</span>
-                                            <span class="wt-weight-unit">кг</span>
+                                        <td class="wd-set-num">#{{ forloop.counter }}</td>
+                                        <td>
+                                            <span class="wd-weight-pill">{{ set.weight }} <small>кг</small></span>
                                         </td>
-                                        <td style="padding: 8px 0; display: flex; justify-content: flex-end; align-items: center; gap: 12px;">
-                                            <span class="wt-reps-badge">
-                                                <span>{{ set.reps }}</span> повт.
-                                            </span>
-                                        <button type="button" class="delete-set-btn" data-set-id="{{ set.id }}" style="background: rgba(239, 68, 68, 0.15); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.3); width: 26px; height: 26px; border-radius: 6px; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">✕</button>
+                                        <td class="wd-reps-text">
+                                            {{ set.reps }} <small>повт.</small>
+                                        </td>
+                                        <td style="text-align: right;">
+                                            <button type="button" class="delete-set-btn" data-set-id="{{ set.id }}" title="Удалить подход">✕</button>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr class="wd-empty-row">
+                                        <td colspan="4">Подходов пока нет — добавьте первый ниже</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
 
                         <!-- Форма добавления нового подхода -->
-                        <form method="POST" action="" class="add-set-form" style="display: flex; gap: 8px; justify-content: flex-end; align-items: center; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05);">
+                        <form method="POST" action="" class="add-set-form wd-add-set-form">
                             {% csrf_token %}
                             <input type="hidden" name="add_set" value="1">
                             <input type="hidden" name="workout_exercise_id" value="{{ exercise.id }}">
-                            
-                            <input type="number" step="0.5" name="weight" placeholder="Вес (кг)" required 
-                                style="width: 85px; padding: 6px 10px; background: #0F172A; border: 1px solid #334155; color: #E2E8F0; border-radius: 6px; font-size: 13px;">
-                            
-                            <input type="number" name="reps" placeholder="Повт." required 
-                                style="width: 70px; padding: 6px 10px; background: #0F172A; border: 1px solid #334155; color: #E2E8F0; border-radius: 6px; font-size: 13px;">
-                            
-                            <button type="submit" style="background: #10B981; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer;">
-                                + 
+
+                            <input type="number" step="0.5" min="0" name="weight" placeholder="Вес (кг)" required class="wd-set-input">
+                            <input type="number" min="1" name="reps" placeholder="Повт." required class="wd-set-input">
+
+                            <button type="submit" class="wd-set-submit">
+                                + Подход
                             </button>
                         </form>
-
                     </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p class="wt-no-sets" style="color: #64748B; font-size: 14px; margin-top: 12px; font-style: italic;">Упражнений пока нет. Добавьте упражнение из базы выше.</p>
-            {% endif %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="wd-empty">
+                Упражнений пока нет. Выберите упражнение из базы выше, чтобы начать записывать подходы.
+            </div>
+        {% endif %}
 
-            <!-- Кнопки управления внизу -->
-            <div style="margin-top: 28px; display: flex; gap: 12px; align-items: center;">
-    <a href="{% url 'workout_update' object.pk %}" style="display: inline-flex; align-items: center; gap: 8px; background-color: #3B82F6; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 14px; transition: background-color 0.2s;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-        </svg>
-        Редактировать
-    </a>
-</div>
-
-
-
+        <!-- Кнопки управления внизу -->
+        <div class="wd-actions">
+            <a href="{% url 'workout_update' object.pk %}" class="wd-btn wd-btn--primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Редактировать
+            </a>
+            <a href="{% url 'workout_list' %}" class="wd-btn wd-btn--secondary">
+                ← К тренировкам
+            </a>
+            <a href="{% url 'workout_delete' object.pk %}" class="wd-btn wd-btn--danger">
+                Удалить
+            </a>
         </div>
     </div>
 </div>
 
 <script>
+function updateSetNumbersAndCount(tbody) {
+    const rows = tbody.querySelectorAll('tr:not(.wd-empty-row)');
+    rows.forEach((tr, index) => {
+        const numCell = tr.querySelector('.wd-set-num');
+        if (numCell) numCell.textContent = `#${index + 1}`;
+    });
+
+    const exerciseId = tbody.getAttribute('data-exercise-id');
+    const countBadge = document.getElementById(`set-count-${exerciseId}`);
+    if (countBadge) {
+        countBadge.textContent = `Подходов: ${rows.length}`;
+    }
+
+    if (rows.length === 0 && !tbody.querySelector('.wd-empty-row')) {
+        tbody.innerHTML = `<tr class="wd-empty-row"><td colspan="4">Подходов пока нет — добавьте первый ниже</td></tr>`;
+    }
+}
+
 // 1. Добавление нового подхода
 document.querySelectorAll('.add-set-form').forEach(form => {
     form.addEventListener('submit', async function(e) {
@@ -218,29 +650,34 @@ document.querySelectorAll('.add-set-form').forEach(form => {
             const data = await response.json();
             if (data.status === 'ok') {
                 const tbody = document.getElementById(`sets-tbody-${data.workout_exercise_id}`);
+                const emptyRow = tbody.querySelector('.wd-empty-row');
+                if (emptyRow) emptyRow.remove();
+
                 const newRow = `
                     <tr id="set-row-${data.set_id}">
-                        <td style="padding: 8px 0; color: #E2E8F0;">#${data.set_number}</td>
-                        <td style="padding: 8px 0;">
-                            <span class="wt-weight-badge">${data.weight}</span>
-                            <span class="wt-weight-unit">кг</span>
+                        <td class="wd-set-num">#${data.set_number}</td>
+                        <td>
+                            <span class="wd-weight-pill">${data.weight} <small>кг</small></span>
                         </td>
-                        <td style="padding: 8px 0; display: flex; justify-content: flex-end; align-items: center; gap: 12px;">
-                            <span class="wt-reps-badge">
-                                <span>${data.reps}</span> повт.
-                            </span>
-                            <button type="button" class="delete-set-btn" data-set-id="${data.set_id}" style="background: rgba(239, 68, 68, 0.15); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.3); width: 26px; height: 26px; border-radius: 6px; font-weight: bold; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">✕</button>
+                        <td class="wd-reps-text">
+                            ${data.reps} <small>повт.</small>
+                        </td>
+                        <td style="text-align: right;">
+                            <button type="button" class="delete-set-btn" data-set-id="${data.set_id}" title="Удалить подход">✕</button>
                         </td>
                     </tr>
                 `;
                 tbody.insertAdjacentHTML('beforeend', newRow);
+                updateSetNumbersAndCount(tbody);
                 this.reset();
+                const weightInput = this.querySelector('input[name="weight"]');
+                if (weightInput) weightInput.focus();
             }
         }
     });
 });
 
-// 2. Удаление подхода (работает и для старых, и для новых строк)
+// 2. Удаление подхода
 document.addEventListener('click', async function(e) {
     const btn = e.target.closest('.delete-set-btn');
     if (!btn) return;
@@ -264,17 +701,12 @@ document.addEventListener('click', async function(e) {
         if (data.status === 'ok') {
             const row = document.getElementById(`set-row-${data.set_id}`);
             if (row) {
-                const  tbody = row.parentElement // 1. Grab the parent <tbody>
-                row.remove(); // 2. Remove the deleted row
-
-                // 3. Loop through remaining rows and update the first <td>
-                tbody.querySelectorAll('tr').forEach((tr, index) => {
-                    tr.querySelector('td').textContent = `#${index + 1}`
-                })
+                const tbody = row.parentElement;
+                row.remove();
+                updateSetNumbersAndCount(tbody);
             }
         }
     }
 });
 </script>
-
 {% endblock %}

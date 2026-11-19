@@ -7,6 +7,8 @@ from django.forms import inlineformset_factory
 class WorkOutForm(forms.ModelForm):
     # Явно описываем поле, чтобы повесить на него валидатор
     notes = forms.CharField(
+        label='Заметки',
+        required=False,
         widget=forms.Textarea,
         validators=[MaxLengthValidator(500, 'Слишком длинное описание')],
     )
@@ -14,6 +16,14 @@ class WorkOutForm(forms.ModelForm):
     class Meta:
         model = WorkOut
         fields = ['title', 'notes', 'photo']
+        labels = {
+            'title': 'Название тренировки',
+            'notes': 'Заметки',
+            'photo': 'Фото тренировки',
+        }
+        widgets = {
+            'photo': forms.FileInput(attrs={'accept': 'image/*'}),
+        }
 
     def clean_title(self):
         # 1. Достаем очищенный текст, который ввел пользователь

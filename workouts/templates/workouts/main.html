@@ -2,122 +2,508 @@
 {% load static %}
 
 {% block content %}
+<style>
+    .db-hero {
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.85), rgba(15, 23, 42, 0.96));
+        border: 1px solid #334155;
+        border-radius: 16px;
+        padding: 28px 32px;
+        margin-bottom: 28px;
+        box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.45);
+    }
+
+    .db-hero-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        padding-bottom: 22px;
+        margin-bottom: 22px;
+        border-bottom: 1px solid rgba(51, 65, 85, 0.7);
+    }
+
+    .db-eyebrow {
+        margin: 0 0 6px 0;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #38BDF8;
+    }
+
+    .db-title {
+        margin: 0;
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: #F8FAFC;
+        line-height: 1.1;
+    }
+
+    .db-title span {
+        color: #3B82F6;
+    }
+
+    .db-add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 20px;
+        background: #3B82F6;
+        color: #FFFFFF;
+        border: 1px solid #3B82F6;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+        box-shadow: 0 8px 20px -6px rgba(59, 130, 246, 0.55);
+    }
+
+    .db-add-btn:hover {
+        background: #2563EB;
+        border-color: #2563EB;
+        color: #FFFFFF;
+        transform: translateY(-1px);
+    }
+
+    .db-stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .db-stat-box {
+        background: rgba(15, 23, 42, 0.65);
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 14px 18px;
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .db-stat-label {
+        font-size: 12.5px;
+        font-weight: 500;
+        color: #94A3B8;
+    }
+
+    .db-stat-value {
+        font-size: 22px;
+        font-weight: 700;
+        color: #F8FAFC;
+    }
+
+    /* Заголовок секции */
+    .db-section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .db-section-label {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #94A3B8;
+        white-space: nowrap;
+    }
+
+    .db-section-count {
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: rgba(59, 130, 246, 0.15);
+        color: #60A5FA;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .db-section-line {
+        flex: 1;
+        height: 1px;
+        background: rgba(51, 65, 85, 0.7);
+    }
+
+    /* Сетка карточек */
+    .db-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 18px;
+        margin-bottom: 40px;
+    }
+
+    .db-card {
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.95));
+        border: 1px solid #334155;
+        border-radius: 16px;
+        overflow: hidden;
+        transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .db-card:hover {
+        border-color: #475569;
+        transform: translateY(-2px);
+        box-shadow: 0 16px 30px -12px rgba(0, 0, 0, 0.55);
+    }
+
+    .db-card-body {
+        padding: 20px 22px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        flex: 1;
+    }
+
+    .db-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .db-card-title-link {
+        text-decoration: none;
+        color: #F8FAFC;
+        transition: color 0.15s ease;
+    }
+
+    .db-card-title-link:hover {
+        color: #60A5FA;
+    }
+
+    .db-card-title {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1.3;
+    }
+
+    .db-card-date {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 6px;
+        padding: 3px 9px;
+        border-radius: 6px;
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(51, 65, 85, 0.8);
+        font-size: 11.5px;
+        color: #94A3B8;
+    }
+
+    .db-card-actions {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+
+    .db-action-btn {
+        padding: 5px 10px;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+
+    .db-action-btn--edit {
+        background: rgba(59, 130, 246, 0.12);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        color: #60A5FA;
+    }
+
+    .db-action-btn--edit:hover {
+        background: #3B82F6;
+        border-color: #3B82F6;
+        color: #FFFFFF;
+    }
+
+    .db-action-btn--delete {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        color: #F87171;
+    }
+
+    .db-action-btn--delete:hover {
+        background: #EF4444;
+        border-color: #EF4444;
+        color: #FFFFFF;
+    }
+
+    .db-card-note {
+        padding: 10px 12px;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(51, 65, 85, 0.6);
+        border-left: 3px solid #3B82F6;
+        border-radius: 8px;
+        font-size: 13px;
+        color: #CBD5E1;
+        line-height: 1.45;
+    }
+
+    .db-card-photo {
+        width: 100%;
+        max-height: 180px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 1px solid #334155;
+        display: block;
+    }
+
+    /* Упражнения и подходы */
+    .db-exercises {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .db-exercise-item {
+        background: rgba(15, 23, 42, 0.55);
+        border: 1px solid rgba(51, 65, 85, 0.7);
+        border-radius: 10px;
+        padding: 10px 12px;
+    }
+
+    .db-exercise-name {
+        font-size: 13px;
+        font-weight: 600;
+        color: #E2E8F0;
+        margin-bottom: 8px;
+    }
+
+    .db-sets-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .db-set-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 9px;
+        border-radius: 6px;
+        background: rgba(30, 41, 59, 0.9);
+        border: 1px solid #334155;
+        font-size: 12px;
+        color: #CBD5E1;
+    }
+
+    .db-set-pill strong {
+        color: #F8FAFC;
+        font-weight: 600;
+    }
+
+    .db-set-pill span {
+        color: #64748B;
+    }
+
+    .db-no-sets {
+        margin: 0;
+        padding: 12px;
+        text-align: center;
+        border-radius: 10px;
+        border: 1px dashed rgba(51, 65, 85, 0.8);
+        font-size: 12.5px;
+        color: #64748B;
+    }
+
+    .db-card-footer {
+        padding: 12px 22px;
+        border-top: 1px solid rgba(51, 65, 85, 0.6);
+        background: rgba(15, 23, 42, 0.4);
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .db-detail-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: #60A5FA;
+        text-decoration: none;
+        transition: color 0.15s ease, gap 0.15s ease;
+    }
+
+    .db-detail-link:hover {
+        color: #93C5FD;
+        gap: 9px;
+    }
+
+    /* Пустое состояние */
+    .db-empty {
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.9));
+        border: 1px dashed #334155;
+        border-radius: 16px;
+        padding: 48px 24px;
+        text-align: center;
+    }
+
+    .db-empty-icon {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 16px auto;
+        border-radius: 50%;
+        background: rgba(59, 130, 246, 0.12);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        color: #60A5FA;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .db-empty h3 {
+        margin: 0 0 8px 0;
+        font-size: 18px;
+        color: #F8FAFC;
+    }
+
+    .db-empty p {
+        margin: 0 0 20px 0;
+        font-size: 14px;
+        color: #94A3B8;
+    }
+
+    @media (max-width: 560px) {
+        .db-hero {
+            padding: 22px 20px;
+        }
+        .db-stats {
+            grid-template-columns: 1fr;
+        }
+        .db-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 
 <!-- HERO HEADER -->
-<div class="wt-hero">
-  <div class="wt-hero-left">
-    <p class="eyebrow">Dashboard</p>
-    <h1>WORKOUT<br><span>TRACKER</span></h1>
-    <div class="wt-hero-meta">
-      <div class="wt-stat">
-        <span class="wt-stat-value">{{ workouts|length }}</span>
-        <span class="wt-stat-label">Тренировок</span>
-      </div>
-      <div class="wt-stat">
-        <span class="wt-stat-value">{{ total_sets }}</span>
-        <span class="wt-stat-label">Всего записей</span>
-      </div>
-    </div>
-  </div>
+<div class="db-hero">
+    <div class="db-hero-top">
+        <div>
+            <p class="db-eyebrow">Панель управления</p>
+            <h1 class="db-title">Workout <span>Tracker</span></h1>
+        </div>
 
-  <div>
-    <a href="{% url 'workout_create' %}" class="wt-add-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
-        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-      </svg>
-      Добавить тренировку
-    </a>
-  </div>
+        <a href="{% url 'workout_create' %}" class="db-add-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="17" height="17">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Добавить тренировку
+        </a>
+    </div>
+
+    <div class="db-stats">
+        <div class="db-stat-box">
+            <span class="db-stat-label">Тренировок</span>
+            <span class="db-stat-value">{{ workouts|length }}</span>
+        </div>
+        <div class="db-stat-box">
+            <span class="db-stat-label">Всего подходов</span>
+            <span class="db-stat-value">{{ total_sets }}</span>
+        </div>
+    </div>
 </div>
 
 <!-- MAIN -->
-<div class="wt-main">
-  {% if workouts %}
-    <div class="wt-section-header">
-      <span class="label">Последние тренировки</span>
-      <span class="line"></span>
-    </div>
-
-    <div class="wt-grid">
-      {% for workout in workouts %}
-      <div class="wt-card">
-        <div class="wt-card-stripe"></div>
-        <div class="wt-card-body">
-
-          <div class="wt-card-top" style="align-items: flex-start;">
-            <div>
-              <a href="{% url 'workout_detail' workout.pk %}" style="text-decoration: none;">
-                <div class="wt-card-title">{{ workout.title }}</div>
-              </a>
-              <div class="wt-card-date" style="margin-top: 4px;">{{ workout.date }}</div>
-            </div>
-
-            <div style="display: flex; gap: 6px;">
-              <a href="{% url 'workout_update' workout.pk %}" style="padding: 5px 10px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); color: #60A5FA; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 500;">
-                Изменить
-              </a>
-              <a href="{% url 'workout_delete' workout.pk %}" style="padding: 5px 10px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); color: #F87171; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 500;">
-                Удалить
-              </a>
-            </div>
-          </div>
-
-          {% if workout.notes %}
-          <div class="wt-card-note">{{ workout.notes }}</div>
-          {% endif %}
-
-          {% if workout.photo %}
-          <img src="{{ workout.photo.url }}" alt="Фото тренировки" class="wt-card-photo">
-          {% endif %}
-
-          {% if workout.workout_exercises.all %}
-            <div class="wt-sets-label">Подходы</div>
-            <table class="wt-sets-table">
-              <thead>
-                <tr>
-                  <th>Упражнение</th>
-                  <th>Вес</th>
-                  <th style="text-align:right;">Повторения</th>
-                </tr>
-              </thead>
-              <tbody>
-              {% for exercise in workout.workout_exercises.all %}
-                  {% for set in exercise.sets.all %}
-                  <tr>
-                    <td>{{ set.workout_exercise.exercise.name }}</td>
-                    <td>
-                      <span class="wt-weight-badge">{{ set.weight }}</span>
-                      <span class="wt-weight-unit">кг</span>
-                    </td>
-                    <td>
-                      <span class="wt-reps-badge">
-                        <span>{{ set.reps }}</span> повт.
-                      </span>
-                    </td>
-                  </tr>
-                {% endfor %}
-            {% endfor %}
-              </tbody>
-            </table>
-          {% else %}
-            <p class="wt-no-sets">Подходов пока нет</p>
-          {% endif %}
-
+<div>
+    {% if workouts %}
+        <div class="db-section-header">
+            <span class="db-section-label">Последние тренировки</span>
+            <span class="db-section-count">{{ workouts|length }}</span>
+            <span class="db-section-line"></span>
         </div>
-      </div>
-      {% endfor %}
-    </div>
 
-  {% else %}
-    <div class="wt-empty">
-      <div class="wt-empty-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6.5 6.5h11M6.5 17.5h11M4 12h16M9 4.5v15M15 4.5v15"/>
-        </svg>
-      </div>
-      <h3>Тренировок пока нет</h3>
-      <p>Нажмите «Добавить тренировку», чтобы начать</p>
-    </div>
-  {% endif %}
+        <div class="db-grid">
+            {% for workout in workouts %}
+                <div class="db-card">
+                    <div class="db-card-body">
+                        <div class="db-card-top">
+                            <div>
+                                <a href="{% url 'workout_detail' workout.pk %}" class="db-card-title-link">
+                                    <h2 class="db-card-title">{{ workout.title }}</h2>
+                                </a>
+                                <div class="db-card-date">
+                                    📅 {{ workout.date }}
+                                </div>
+                            </div>
+
+                            <div class="db-card-actions">
+                                <a href="{% url 'workout_update' workout.pk %}" class="db-action-btn db-action-btn--edit">
+                                    Изменить
+                                </a>
+                                <a href="{% url 'workout_delete' workout.pk %}" class="db-action-btn db-action-btn--delete">
+                                    Удалить
+                                </a>
+                            </div>
+                        </div>
+
+                        {% if workout.notes %}
+                            <div class="db-card-note">{{ workout.notes }}</div>
+                        {% endif %}
+
+                        {% if workout.photo %}
+                            <img src="{{ workout.photo.url }}" alt="Фото тренировки" class="db-card-photo">
+                        {% endif %}
+
+                        {% if workout.workout_exercises.all %}
+                            <div class="db-exercises">
+                                {% for exercise in workout.workout_exercises.all %}
+                                    <div class="db-exercise-item">
+                                        <div class="db-exercise-name">{{ exercise.exercise.name }}</div>
+                                        {% if exercise.sets.all %}
+                                            <div class="db-sets-list">
+                                                {% for set in exercise.sets.all %}
+                                                    <span class="db-set-pill">
+                                                        <strong>{{ set.weight }} кг</strong>
+                                                        <span>×</span>
+                                                        <strong>{{ set.reps }}</strong>
+                                                    </span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            <span style="font-size: 12px; color: #64748B;">Подходы не записаны</span>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="db-no-sets">Подходов пока нет</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="db-card-footer">
+                        <a href="{% url 'workout_detail' workout.pk %}" class="db-detail-link">
+                            Открыть тренировку →
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="db-empty">
+            <div class="db-empty-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="26" height="26">
+                    <path d="M6.5 6.5h11M6.5 17.5h11M4 12h16M9 4.5v15M15 4.5v15"></path>
+                </svg>
+            </div>
+            <h3>Тренировок пока нет</h3>
+            <p>Добавьте первую тренировку, чтобы отслеживать упражнения, веса и прогресс.</p>
+            <a href="{% url 'workout_create' %}" class="db-add-btn">
+                + Добавить тренировку
+            </a>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}

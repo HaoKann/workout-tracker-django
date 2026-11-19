@@ -187,35 +187,130 @@
             flex-direction: column;
         }
     }
+
+        .pf-edit-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding-bottom: 20px;
+        margin-bottom: 24px;
+        border-bottom: 1px solid rgba(51, 65, 85, 0.7);
+    }
+
+    .pf-edit-avatar {
+        width: 52px;
+        height: 52px;
+        font-size: 20px;
+    }
+
+    .pf-edit-form {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .pf-edit-form input:not([type="checkbox"]):not([type="file"]) {
+        width: 100%;
+        padding: 12px 14px;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid #334155;
+        border-radius: 10px;
+        color: #F8FAFC;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .pf-edit-form input:focus {
+        outline: none;
+        border-color: #3B82F6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
+
+    .pf-edit-actions {
+        padding-top: 20px;
+        margin-top: 6px;
+        border-top: 1px solid rgba(51, 65, 85, 0.6);
+        margin-bottom: 0;
+    }
+
+        .pf-edit-form input[type="file"] {
+        width: 100%;
+        padding: 10px 12px;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px dashed #334155;
+        border-radius: 10px;
+        color: #94A3B8;
+        font-size: 13px;
+        box-sizing: border-box;
+        cursor: pointer;
+    }
+
+    .pf-edit-form input[type="file"]::file-selector-button {
+        background: #1E293B;
+        color: #E2E8F0;
+        border: 1px solid #475569;
+        border-radius: 6px;
+        padding: 6px 12px;
+        margin-right: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s ease;
+    }
+
+    .pf-edit-form input[type="file"]::file-selector-button:hover {
+        background: #334155;
+    }
+
+    .pf-edit-form a {
+        color: #60A5FA;
+        font-size: 13px;
+    }
+
 </style>
 
 <div class="pf-container">
     <div class="pf-card">
         {% if edit_mode %}
-            <div style="margin-bottom: 20px;">
-                <div class="wf-eyebrow">Настройки аккаунта</div>
-                <h2 class="wf-title" style="margin: 4px 0 0 0;">Редактировать <span>профиль</span></h2>
+            <div class="pf-edit-header">
+                {% if user.profile.avatar %}
+                    <img src="{{ user.profile.avatar.url }}" alt="Аватар" class="pf-avatar pf-edit-avatar">
+                {% else %}
+                    <div class="pf-avatar-placeholder pf-edit-avatar">
+                        {{ user.username|slice:":1" }}
+                    </div>
+                {% endif %}
+                <div>
+                    <div class="wf-eyebrow">Настройки аккаунта</div>
+                    <h2 class="wf-title" style="margin: 2px 0 0 0; font-size: 24px;">Редактировать <span>профиль</span></h2>
+                </div>
             </div>
 
-            <form method="POST" enctype="multipart/form-data" class="wf-form" style="padding: 0;">
+            <form method="POST" enctype="multipart/form-data" class="pf-edit-form">
                 {% csrf_token %}
 
-                {% for field in form %}
+                {% for field in u_form %}
                     <div class="wf-field {% if field.errors %}wf-field--error{% endif %}">
-                        <label class="wf-label" for="{{ field.id_for_label }}">
-                            {{ field.label }}
-                        </label>
+                        <label class="wf-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                         {{ field }}
-                        {% if field.help_text %}
-                            <div class="wf-help">{{ field.help_text|safe }}</div>
-                        {% endif %}
                         {% if field.errors %}
                             <div class="wf-error">{{ field.errors }}</div>
                         {% endif %}
                     </div>
                 {% endfor %}
 
-                <div class="pf-actions" style="margin-top: 12px; margin-bottom: 0;">
+                {% for field in p_form %}
+                    <div class="wf-field {% if field.errors %}wf-field--error{% endif %}">
+                        <label class="wf-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="wf-error">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <div class="pf-actions pf-edit-actions">
                     <button type="submit" class="pf-btn pf-btn--primary">Сохранить изменения</button>
                     <a href="{% url 'profile' %}" class="pf-btn pf-btn--secondary">Отмена</a>
                 </div>
@@ -223,8 +318,8 @@
         {% else %}
             <!-- Шапка профиля с аватаром -->
             <div class="pf-hero">
-                {% if user.avatar %}
-                    <img src="{{ user.avatar.url }}" alt="Аватар" class="pf-avatar">
+                {% if user.profile.avatar %}
+                    <img src="{{ user.profile.avatar.url }}" alt="Аватар" class="pf-avatar">
                 {% else %}
                     <div class="pf-avatar-placeholder">
                         {{ user.username|slice:":1" }}
@@ -248,7 +343,7 @@
             <div class="pf-stats">
                 <div class="pf-stat-box">
                     <div class="pf-stat-value">
-                        {% if user.weight %}{{ user.weight }} кг{% else %}—{% endif %}
+                        {% if user.profile.weight %}{{ user.profile.weight }} кг{% else %}—{% endif %}
                     </div>
                     <div class="pf-stat-label">Текущий вес</div>
                 </div>

@@ -3,77 +3,176 @@
 {% block content %}
 <style>
     .eb-container {
-        max-width: 640px;
-        margin: 0 auto;
+        max-width: 720px;
+        margin: 0 auto 40px auto;
     }
 
+    .eb-card {
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.95));
+        border: 1px solid #334155;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.45);
+    }
+
+    /* Шапка каталога */
     .eb-header {
         display: flex;
         justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        flex-wrap: wrap;
+        padding-bottom: 20px;
+        margin-bottom: 24px;
+        border-bottom: 1px solid rgba(51, 65, 85, 0.7);
+    }
+
+    .eb-header-main {
+        display: flex;
         align-items: center;
-        margin-bottom: 24px;
+        gap: 16px;
     }
 
-    .eb-subtitle {
-        color: #94A3B8;
-        font-size: 13px;
-        margin: 4px 0 0 0;
+    .eb-icon-badge {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: rgba(59, 130, 246, 0.14);
+        border: 1px solid rgba(59, 130, 246, 0.35);
+        color: #60A5FA;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
     }
 
-    /* Карточка создания упражнения */
-    .eb-create-card {
-        padding: 22px 24px;
-        border: 1px dashed #475569;
-        margin-bottom: 24px;
-        background: linear-gradient(145deg, rgba(30, 41, 59, 0.65), rgba(15, 23, 42, 0.85));
-        border-radius: 14px;
-    }
-
-    .eb-create-title {
-        margin: 0 0 16px 0;
+    .eb-title {
+        margin: 2px 0 0 0;
+        font-size: 24px;
+        font-weight: 700;
         color: #F8FAFC;
-        font-size: 16px;
+        line-height: 1.25;
+    }
+
+    .eb-title span {
+        color: #3B82F6;
+    }
+
+    .eb-count-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(59, 130, 246, 0.14);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        color: #60A5FA;
+        font-size: 12px;
         font-weight: 600;
+        white-space: nowrap;
+    }
+
+    /* Форма создания упражнения */
+    .eb-create-box {
+        padding: 18px;
+        margin-bottom: 24px;
+        background: rgba(15, 23, 42, 0.55);
+        border: 1px solid #334155;
+        border-radius: 12px;
+    }
+
+    .eb-box-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #94A3B8;
+        margin-bottom: 12px;
     }
 
     .eb-form {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 10px;
     }
 
     .eb-input {
-        padding: 11px 14px;
-        background-color: #0F172A;
-        color: #E2E8F0;
-        border: 1px solid #334155;
-        border-radius: 8px;
         width: 100%;
+        padding: 11px 14px;
+        background: rgba(15, 23, 42, 0.9);
+        color: #F8FAFC;
+        border: 1px solid #334155;
+        border-radius: 10px;
         font-size: 14px;
+        font-family: inherit;
         box-sizing: border-box;
-        transition: border-color 0.2s ease;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .eb-input::placeholder {
+        color: #64748B;
     }
 
     .eb-input:focus {
         outline: none;
         border-color: #3B82F6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
+
+    .eb-textarea {
+        resize: vertical;
+        min-height: 68px;
+        line-height: 1.45;
+    }
+
+    .eb-form-footer {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 2px;
     }
 
     .eb-submit-btn {
-        background-color: #10B981;
-        color: #FFFFFF;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
         padding: 10px 18px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
+        background: #3B82F6;
+        color: #FFFFFF;
+        border: 1px solid #3B82F6;
+        border-radius: 10px;
+        font-size: 13.5px;
         font-weight: 600;
-        font-size: 14px;
-        align-self: flex-start;
+        cursor: pointer;
         transition: background-color 0.2s ease;
     }
 
     .eb-submit-btn:hover {
-        background-color: #059669;
+        background: #2563EB;
+    }
+
+    /* Разделитель */
+    .eb-section-divider {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .eb-section-divider span {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #94A3B8;
+        white-space: nowrap;
+    }
+
+    .eb-section-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: rgba(51, 65, 85, 0.7);
     }
 
     /* Панель поиска и фильтров */
@@ -84,17 +183,40 @@
         margin-bottom: 16px;
     }
 
+    .eb-search-wrap {
+        position: relative;
+    }
+
+    .eb-search-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #64748B;
+        pointer-events: none;
+        display: flex;
+        align-items: center;
+    }
+
+    .eb-search-input {
+        padding-left: 40px;
+    }
+
     .eb-tabs {
         display: flex;
         gap: 8px;
+        flex-wrap: wrap;
     }
 
     .eb-tab {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
         padding: 7px 14px;
-        background: rgba(30, 41, 59, 0.6);
+        background: rgba(15, 23, 42, 0.65);
         border: 1px solid #334155;
         color: #94A3B8;
-        border-radius: 8px;
+        border-radius: 9px;
         font-size: 13px;
         font-weight: 600;
         cursor: pointer;
@@ -112,10 +234,23 @@
         color: #60A5FA;
     }
 
+    .eb-tab-count {
+        font-size: 11px;
+        padding: 1px 7px;
+        border-radius: 999px;
+        background: rgba(51, 65, 85, 0.65);
+        color: #CBD5E1;
+    }
+
+    .eb-tab.active .eb-tab-count {
+        background: rgba(59, 130, 246, 0.25);
+        color: #93C5FD;
+    }
+
     /* Список упражнений */
-    .eb-list-card {
-        background: linear-gradient(145deg, rgba(30, 41, 59, 0.75), rgba(15, 23, 42, 0.9));
-        border-radius: 14px;
+    .eb-list-wrap {
+        background: rgba(15, 23, 42, 0.5);
+        border-radius: 12px;
         border: 1px solid #334155;
         overflow: hidden;
     }
@@ -125,14 +260,14 @@
         justify-content: space-between;
         align-items: center;
         gap: 16px;
-        padding: 16px 20px;
-        border-bottom: 1px solid rgba(51, 65, 85, 0.7);
+        padding: 15px 18px;
+        border-bottom: 1px solid rgba(51, 65, 85, 0.6);
         border-left: 3px solid transparent;
         transition: background-color 0.15s ease, border-left-color 0.15s ease;
     }
 
     .exercise-item:hover {
-        background-color: rgba(15, 23, 42, 0.45);
+        background: rgba(30, 41, 59, 0.55);
         border-left-color: #3B82F6;
     }
 
@@ -140,17 +275,22 @@
         border-bottom: none;
     }
 
+    .exercise-info {
+        min-width: 0;
+    }
+
     .exercise-title-row {
         display: flex;
         align-items: center;
-        gap: 10px;
-        margin: 0 0 4px 0;
+        gap: 9px;
+        flex-wrap: wrap;
+        margin: 0;
     }
 
     .exercise-name {
         margin: 0;
         color: #F8FAFC;
-        font-size: 15px;
+        font-size: 14.5px;
         font-weight: 600;
     }
 
@@ -165,9 +305,9 @@
     }
 
     .badge-default {
-        background: rgba(148, 163, 184, 0.12);
+        background: rgba(148, 163, 184, 0.1);
         color: #94A3B8;
-        border: 1px solid rgba(148, 163, 184, 0.25);
+        border: 1px solid rgba(148, 163, 184, 0.22);
         padding: 2px 8px;
         border-radius: 999px;
         font-size: 11px;
@@ -175,27 +315,27 @@
     }
 
     .exercise-desc {
-        margin: 0;
+        margin: 5px 0 0 0;
         color: #94A3B8;
         font-size: 13px;
-        line-height: 1.4;
+        line-height: 1.45;
     }
 
     .delete-exercise-btn {
-        width: 34px;
-        height: 34px;
+        width: 32px;
+        height: 32px;
         flex-shrink: 0;
-        display: flex;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
         background: rgba(239, 68, 68, 0.08);
         border: 1px solid rgba(239, 68, 68, 0.25);
         color: #F87171;
         border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
+        font-size: 13px;
+        font-weight: 700;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.15s ease;
     }
 
     .delete-exercise-btn:hover {
@@ -204,23 +344,42 @@
         color: #FFFFFF;
     }
 
+    .eb-empty-state {
+        padding: 28px 20px;
+        color: #64748B;
+        text-align: center;
+        font-size: 13.5px;
+    }
+
+    /* Уведомление */
     #toast-notification {
         position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background-color: #10B981;
-        color: white;
-        padding: 12px 24px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-        transition: opacity 0.3s ease, transform 0.3s ease;
+        bottom: 24px;
+        right: 24px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(15, 23, 42, 0.95);
+        color: #34D399;
+        border: 1px solid rgba(16, 185, 129, 0.45);
+        padding: 12px 18px;
+        border-radius: 10px;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(8px);
+        transition: opacity 0.25s ease, transform 0.25s ease;
         z-index: 1000;
-        font-weight: 500;
+        font-size: 13.5px;
+        font-weight: 600;
+    }
+
+    #toast-notification.toast-error {
+        color: #F87171;
+        border-color: rgba(239, 68, 68, 0.45);
     }
 
     .toast-hidden {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(16px);
         pointer-events: none;
     }
 
@@ -228,79 +387,160 @@
         opacity: 1;
         transform: translateY(0);
     }
+
+    @media (max-width: 560px) {
+        .eb-card {
+            padding: 22px 18px;
+        }
+        .eb-submit-btn {
+            width: 100%;
+        }
+    }
 </style>
 
 <div class="eb-container">
-    <div class="eb-header">
-        <div>
-            <h2 class="wf-title" style="margin: 0; color: #F8FAFC;">База <span>упражнений</span></h2>
-            <p class="eb-subtitle">Общий каталог и ваши персональные упражнения</p>
+    <div class="eb-card">
+        <!-- Шапка -->
+        <div class="eb-header">
+            <div class="eb-header-main">
+                <div class="eb-icon-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6.5 6.5h11M6.5 17.5h11M4 12h16M9 4.5v15M15 4.5v15"></path>
+                    </svg>
+                </div>
+                <div>
+                    <div class="wf-eyebrow">Каталог</div>
+                    <h1 class="eb-title">База <span>упражнений</span></h1>
+                </div>
+            </div>
+            <span class="eb-count-pill" id="total-exercises-pill">
+                Всего: {{ object_list|length }}
+            </span>
         </div>
-    </div>
 
-    <!-- Блок формы добавления кастомного упражнения -->
-    <div class="wf-card eb-create-card">
-        <h3 class="eb-create-title">➕ Создать своё упражнение</h3>
-        
-        <form id="create-exercise-form" class="eb-form">
-            {% csrf_token %}
-            <input type="text" id="exercise-name" class="eb-input" placeholder="Название упражнения (например, Тяга верхнего блока)" required>
-            <textarea id="exercise-desc" class="eb-input" placeholder="Описание или заметки по технике (необязательно)" rows="2" style="resize: vertical;"></textarea>
-            <button type="submit" class="eb-submit-btn">+ Добавить в базу</button>
-        </form>
-    </div>
-
-    <!-- Поиск и вкладки фильтрации -->
-    <div class="eb-toolbar">
-        <input type="text" id="exercise-search" class="eb-input" placeholder="🔍 Поиск упражнения по названию...">
-        <div class="eb-tabs">
-            <button type="button" class="eb-tab active" data-filter="all">Все</button>
-            <button type="button" class="eb-tab" data-filter="custom">Мои</button>
-            <button type="button" class="eb-tab" data-filter="default">Базовые</button>
+        <!-- Форма добавления кастомного упражнения -->
+        <div class="eb-create-box">
+            <span class="eb-box-label">Создать своё упражнение</span>
+            <form id="create-exercise-form" class="eb-form">
+                {% csrf_token %}
+                <input type="text" id="exercise-name" class="eb-input" placeholder="Название упражнения (например, Тяга верхнего блока)" required>
+                <textarea id="exercise-desc" class="eb-input eb-textarea" placeholder="Описание или заметки по технике (необязательно)" rows="2"></textarea>
+                <div class="eb-form-footer">
+                    <button type="submit" class="eb-submit-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Добавить в базу
+                    </button>
+                </div>
+            </form>
         </div>
-    </div>
 
-    <!-- Блок со списком упражнений -->
-    <div class="wf-card eb-list-card">
-        <div id="exercises-list">
-            {% for exercise in object_list %}
-                <div class="exercise-item" data-type="{% if exercise.is_custom %}custom{% else %}default{% endif %}">
-                    <div>
-                        <div class="exercise-title-row">
-                            <h4 class="exercise-name">{{ exercise.name }}</h4>
-                            {% if exercise.is_custom %}
-                                <span class="badge-custom">Моё</span>
-                            {% else %}
-                                <span class="badge-default">Базовое</span>
+        <!-- Разделитель -->
+        <div class="eb-section-divider">
+            <span>Список упражнений</span>
+        </div>
+
+        <!-- Поиск и вкладки фильтрации -->
+        <div class="eb-toolbar">
+            <div class="eb-search-wrap">
+                <span class="eb-search-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </span>
+                <input type="text" id="exercise-search" class="eb-input eb-search-input" placeholder="Поиск по названию или описанию…">
+            </div>
+
+            <div class="eb-tabs">
+                <button type="button" class="eb-tab active" data-filter="all">
+                    Все <span class="eb-tab-count" id="count-all">0</span>
+                </button>
+                <button type="button" class="eb-tab" data-filter="custom">
+                    Мои <span class="eb-tab-count" id="count-custom">0</span>
+                </button>
+                <button type="button" class="eb-tab" data-filter="default">
+                    Базовые <span class="eb-tab-count" id="count-default">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Список упражнений -->
+        <div class="eb-list-wrap">
+            <div id="exercises-list">
+                {% for exercise in object_list %}
+                    <div class="exercise-item" data-type="{% if exercise.is_custom %}custom{% else %}default{% endif %}">
+                        <div class="exercise-info">
+                            <div class="exercise-title-row">
+                                <h4 class="exercise-name">{{ exercise.name }}</h4>
+                                {% if exercise.is_custom %}
+                                    <span class="badge-custom">Моё</span>
+                                {% else %}
+                                    <span class="badge-default">Базовое</span>
+                                {% endif %}
+                            </div>
+                            {% if exercise.description %}
+                                <p class="exercise-desc">{{ exercise.description }}</p>
                             {% endif %}
                         </div>
-                        {% if exercise.description %}
-                            <p class="exercise-desc">{{ exercise.description }}</p>
+                        {% if exercise.is_custom %}
+                            <button type="button" class="delete-exercise-btn" data-id="{{ exercise.id }}" title="Удалить упражнение">✕</button>
                         {% endif %}
                     </div>
-                    {% if exercise.is_custom %}
-                        <button class="delete-exercise-btn" data-id="{{ exercise.id }}" title="Удалить упражнение">✕</button>
-                    {% endif %}
-                </div>
-            {% empty %}
-                <div id="empty-message" style="padding: 24px; color: #94A3B8; text-align: center;">
-                    Упражнений пока нет. Добавьте своё первое!
-                </div>
-            {% endfor %}
-        </div>
-        <div id="no-results-message" style="display: none; padding: 24px; color: #94A3B8; text-align: center;">
-            Ничего не найдено по вашему запросу 🔎
+                {% empty %}
+                    <div id="empty-message" class="eb-empty-state">
+                        Упражнений пока нет. Добавьте своё первое выше.
+                    </div>
+                {% endfor %}
+            </div>
+            <div id="no-results-message" class="eb-empty-state" style="display: none;">
+                Ничего не найдено по вашему запросу.
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Всплывающее уведомление (Toast) -->
+<!-- Всплывающее уведомление -->
 <div id="toast-notification" class="toast-hidden">
-    ✅ Упражнение успешно добавлено!
+    ✓ Упражнение добавлено
 </div>
 
 <script>
     let currentFilter = 'all';
+    let toastTimer = null;
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function showToast(message, isError = false) {
+        const toast = document.getElementById('toast-notification');
+        toast.textContent = message;
+        toast.classList.toggle('toast-error', isError);
+        toast.classList.remove('toast-hidden');
+        toast.classList.add('toast-visible');
+
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+            toast.classList.remove('toast-visible');
+            toast.classList.add('toast-hidden');
+        }, 2500);
+    }
+
+    function updateCounts() {
+        const allItems = document.querySelectorAll('#exercises-list .exercise-item');
+        const customItems = document.querySelectorAll('#exercises-list .exercise-item[data-type="custom"]');
+        const defaultItems = document.querySelectorAll('#exercises-list .exercise-item[data-type="default"]');
+
+        document.getElementById('count-all').textContent = allItems.length;
+        document.getElementById('count-custom').textContent = customItems.length;
+        document.getElementById('count-default').textContent = defaultItems.length;
+        document.getElementById('total-exercises-pill').textContent = `Всего: ${allItems.length}`;
+    }
 
     function filterExercises() {
         const query = document.getElementById('exercise-search').value.toLowerCase().trim();
@@ -309,9 +549,11 @@
 
         items.forEach(item => {
             const name = item.querySelector('.exercise-name').textContent.toLowerCase();
+            const descEl = item.querySelector('.exercise-desc');
+            const desc = descEl ? descEl.textContent.toLowerCase() : '';
             const type = item.getAttribute('data-type');
 
-            const matchesSearch = name.includes(query);
+            const matchesSearch = name.includes(query) || desc.includes(query);
             const matchesTab = currentFilter === 'all' || type === currentFilter;
 
             if (matchesSearch && matchesTab) {
@@ -327,6 +569,11 @@
             noResults.style.display = (items.length > 0 && visibleCount === 0) ? 'block' : 'none';
         }
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateCounts();
+        filterExercises();
+    });
 
     document.getElementById('exercise-search').addEventListener('input', filterExercises);
 
@@ -346,15 +593,15 @@
         const descInput = document.getElementById('exercise-desc');
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-        fetch("/api/exercises/", {
-            method: "POST",
+        fetch('/api/exercises/', {
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": csrfToken
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
             },
             body: JSON.stringify({
-                name: nameInput.value,
-                description: descInput.value
+                name: nameInput.value.trim(),
+                description: descInput.value.trim()
             })
         })
         .then(response => {
@@ -362,14 +609,7 @@
             throw new Error('Ошибка сервера');
         })
         .then(data => {
-            const toast = document.getElementById('toast-notification');
-            toast.classList.remove('toast-hidden');
-            toast.classList.add('toast-visible');
-
-            setTimeout(() => {
-                toast.classList.remove('toast-visible');
-                toast.classList.add('toast-hidden');
-            }, 3000);
+            showToast('✓ Упражнение добавлено');
 
             nameInput.value = '';
             descInput.value = '';
@@ -378,25 +618,30 @@
             const emptyMessage = document.getElementById('empty-message');
             if (emptyMessage) emptyMessage.remove();
 
-            const descHtml = data.description ? `<p class="exercise-desc">${data.description}</p>` : '';
+            const safeName = escapeHtml(data.name);
+            const descHtml = data.description
+                ? `<p class="exercise-desc">${escapeHtml(data.description)}</p>`
+                : '';
+
             const newHtml = `
                 <div class="exercise-item" data-type="custom">
-                    <div>
+                    <div class="exercise-info">
                         <div class="exercise-title-row">
-                            <h4 class="exercise-name">${data.name}</h4>
+                            <h4 class="exercise-name">${safeName}</h4>
                             <span class="badge-custom">Моё</span>
                         </div>
                         ${descHtml}
                     </div>
-                    <button class="delete-exercise-btn" data-id="${data.id}" title="Удалить упражнение">✕</button>
+                    <button type="button" class="delete-exercise-btn" data-id="${data.id}" title="Удалить упражнение">✕</button>
                 </div>
             `;
 
             list.insertAdjacentHTML('afterbegin', newHtml);
+            updateCounts();
             filterExercises();
         })
         .catch(error => {
-            alert("Произошла ошибка при сохранении!");
+            showToast('✕ Ошибка при сохранении', true);
             console.error(error);
         });
     });
@@ -411,7 +656,7 @@
         const exerciseItem = button.closest('.exercise-item');
         const exerciseName = exerciseItem.querySelector('.exercise-name').textContent.trim();
 
-        if (!confirm(`Удалить упражнение "${exerciseName}" из базы?`)) return;
+        if (!confirm(`Удалить упражнение «${exerciseName}» из базы?`)) return;
 
         fetch(`/api/exercises/${exerciseId}/`, {
             method: 'DELETE',
@@ -423,12 +668,24 @@
         .then(response => {
             if (response.ok) {
                 exerciseItem.remove();
+                if (!listContainer.querySelector('.exercise-item')) {
+                    listContainer.innerHTML = `
+                        <div id="empty-message" class="eb-empty-state">
+                            Упражнений пока нет. Добавьте своё первое выше.
+                        </div>
+                    `;
+                }
+                updateCounts();
                 filterExercises();
+                showToast('✓ Упражнение удалено');
             } else {
-                alert('Ошибка при удалении');
+                showToast('✕ Ошибка при удалении', true);
             }
         })
-        .catch(error => console.error('Ошибка:', error));
+        .catch(error => {
+            showToast('✕ Ошибка соединения', true);
+            console.error(error);
+        });
     });
 </script>
 {% endblock %}

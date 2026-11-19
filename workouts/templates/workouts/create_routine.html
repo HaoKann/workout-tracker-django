@@ -2,62 +2,213 @@
 {% load static %}
 
 {% block content %}
-
 <style>
-    /* Стиль для выразительной кнопки возврата */
-    .rt-back-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 14px;
-        background-color: #1E293B;
-        border: 1px solid #334155;
-        color: #E2E8F0;
-        border-radius: 8px;
-        text-decoration: none;
-        font-size: 13px;
-        font-weight: 500;
-        margin-bottom: 16px;
-        transition: all 0.2s ease;
+    .cr-container {
+        max-width: 640px;
+        margin: 0 auto;
     }
 
-    .rt-back-btn:hover {
-        background-color: #334155;
+    .cr-card {
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.95));
+        border: 1px solid #334155;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.45);
+    }
+
+    .cr-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding-bottom: 20px;
+        margin-bottom: 24px;
+        border-bottom: 1px solid rgba(51, 65, 85, 0.7);
+    }
+
+    .cr-icon-badge {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: rgba(59, 130, 246, 0.14);
+        border: 1px solid rgba(59, 130, 246, 0.35);
+        color: #60A5FA;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .cr-form {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .cr-form input:not([type="checkbox"]):not([type="radio"]),
+    .cr-form textarea,
+    .cr-form select {
+        width: 100%;
+        padding: 12px 14px;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid #334155;
+        border-radius: 10px;
+        color: #F8FAFC;
+        font-size: 14px;
+        font-family: inherit;
+        box-sizing: border-box;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .cr-form textarea {
+        resize: vertical;
+        height: 110px;
+        min-height: 88px;
+        line-height: 1.5;
+    }
+
+    .cr-form input:focus,
+    .cr-form textarea:focus,
+    .cr-form select:focus {
+        outline: none;
+        border-color: #3B82F6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
+
+    .cr-help {
+        color: #64748B;
+        font-size: 12px;
+        margin-top: 6px;
+    }
+
+    .cr-error-banner {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #F87171;
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 13px;
+    }
+
+    .cr-error-banner ul,
+    .cr-field-error ul {
+        margin: 0;
+        padding-left: 16px;
+    }
+
+    .cr-field-error {
+        color: #F87171;
+        font-size: 12.5px;
+        margin-top: 6px;
+    }
+
+    .cr-actions {
+        display: flex;
+        gap: 12px;
+        padding-top: 20px;
+        margin-top: 6px;
+        border-top: 1px solid rgba(51, 65, 85, 0.6);
+    }
+
+    .cr-btn {
+        flex: 1;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 16px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .cr-btn--primary {
+        background: #3B82F6;
         color: #FFFFFF;
-        border-color: #475569;
+        border: 1px solid #3B82F6;
+    }
+
+    .cr-btn--primary:hover {
+        background: #2563EB;
+    }
+
+    .cr-btn--secondary {
+        background: rgba(30, 41, 59, 0.8);
+        color: #E2E8F0;
+        border: 1px solid #334155;
+    }
+
+    .cr-btn--secondary:hover {
+        background: #334155;
+        color: #FFFFFF;
+    }
+
+    @media (max-width: 520px) {
+        .cr-actions {
+            flex-direction: column;
+        }
     }
 </style>
 
-<div class="wf-card">
-    <div class="wf-header">
-        <!-- Умный надзаголовок -->
-        <p class="wf-eyebrow">
-            {% if object %}Редактирование{% else %}Добавление{% endif %}
-        </p>
-        
-        <!-- Умный заголовок -->
-        <h2 class="wf-title">
-            {% if object %}Изменить <span>рутину</span>{% else %}Новая <span>рутина</span>{% endif %}
-        </h2>
-    </div>
+<div class="cr-container">
+    <div class="cr-card">
+        <div class="cr-header">
+            <div class="cr-icon-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                    <line x1="8" y1="11" x2="16" y2="11"></line>
+                    <line x1="8" y1="15" x2="13" y2="15"></line>
+                </svg>
+            </div>
+            <div>
+                <div class="wf-eyebrow">
+                    {% if object %}Редактирование{% else %}Новый шаблон{% endif %}
+                </div>
+                <h1 class="wf-title" style="margin: 2px 0 0 0; font-size: 24px;">
+                    {% if object %}Изменить <span>рутину</span>{% else %}Новая <span>рутина</span>{% endif %}
+                </h1>
+            </div>
+        </div>
 
-    <form method="post" class="wf-form">
-        {% csrf_token %}
+        <form method="post" class="cr-form">
+            {% csrf_token %}
 
-        {{ form.as_p }}
-
-        <button type="submit" class="wf-submit">
-            <!-- Показываем иконку плюса только если это создание новой рутины -->
-            {% if not object %}
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
+            {% if form.non_field_errors %}
+                <div class="cr-error-banner">
+                    {{ form.non_field_errors }}
+                </div>
             {% endif %}
-            
-            <!-- Меняем текст кнопки -->
-            {% if object %}Сохранить изменения{% else %}Сохранить рутину{% endif %}
-        </button>
-    </form>
-</div>
 
+            {% for field in form %}
+                <div class="wf-field {% if field.errors %}wf-field--error{% endif %}">
+                    <label class="wf-label" for="{{ field.id_for_label }}">
+                        {{ field.help_text|default:field.label }}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="cr-field-error">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+
+            <div class="cr-actions">
+                <button type="submit" class="cr-btn cr-btn--primary">
+                    {% if not object %}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    {% endif %}
+                    {% if object %}Сохранить изменения{% else %}Сохранить рутину{% endif %}
+                </button>
+                <a href="{% url 'workout_routines' %}" class="cr-btn cr-btn--secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}
