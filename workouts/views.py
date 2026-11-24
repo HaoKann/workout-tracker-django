@@ -305,8 +305,6 @@ class RoutineList(LoginRequiredMixin, ListView):
         return redirect('workout_routines')
         
     
-    
-    
 class RoutineCreate(LoginRequiredMixin, CreateView):
     model = WorkOutRoutine
     fields= ['title', 'notes']
@@ -344,10 +342,23 @@ class RoutineDetail(LoginRequiredMixin, DetailView):
     def get_queryset(self):
             return WorkOutRoutine.objects.filter(user = self.request.user)
 
-
-class RoutineExerciseDelete(LoginRequiredMixin,DeleteView):
-    model = RoutineExercise
+class RoutineDelete(LoginRequiredMixin, DeleteView):
+    model = WorkOutRoutine
+    template_name = 'workouts/routine_confirm_delete.html'
+    success_url = reverse_lazy('workout_routines')
     
+    def get_queryset(self):
+        return WorkOutRoutine.objects.filter(user=self.request.user)
+    
+    def form_valid(self, form):
+        cache.delete(f"routines_user_{self.request.user.id}")
+        messages.success(self.request, 'Рутина успешно удалена!')
+        return super().form_valid(form)
+
+
+class RoutineExerciseDelete(LoginRequiredMixin, DeleteView):
+    model = RoutineExercise
+    template_name = 'workouts/routine_exercise_confirm_delete.html'
     
     def get_success_url(self):
         routine_id = self.object.routine.id
@@ -357,7 +368,9 @@ class RoutineExerciseDelete(LoginRequiredMixin,DeleteView):
         return RoutineExercise.objects.filter(routine__user = self.request.user)
     
     def form_valid(self, form):
+        cache.delete(f'routines_user_{self.request.user.id}')
         logger.warning("Упражнение было удалено из рутины!")
+        messages.success(self.request, 'Упражнение удалено из рутины!')
         return super().form_valid(form)
     
     

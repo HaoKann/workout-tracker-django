@@ -477,7 +477,6 @@
                         href="{% url 'routine_delete_exercise' ex.id %}"
                         class="rd-delete-btn"
                         title="Удалить из рутины"
-                        onclick="return confirm('Удалить упражнение «{{ ex.exercise.name|escapejs }}» из рутины?')"
                     >✕</a>
                 </div>
             {% empty %}

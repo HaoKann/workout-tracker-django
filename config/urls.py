@@ -4,6 +4,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from users import views as user_views
 from django.contrib.auth import views as auth_views
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -15,7 +20,9 @@ urlpatterns = [
     path('password_change/', auth_views.PasswordChangeView.as_view(template_name='users/password_change.html'), name='password_change'), 
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='users/password_change_done.html'), name='password_change_done'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    path('__debug__/', include("debug_toolbar.urls"))
+    path('__debug__/', include("debug_toolbar.urls")),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 
 

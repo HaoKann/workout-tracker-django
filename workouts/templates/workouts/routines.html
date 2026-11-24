@@ -340,42 +340,7 @@
         font-size: 13.5px;
     }
 
-    /* Уведомление */
-    #toast-notification {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: rgba(15, 23, 42, 0.95);
-        color: #34D399;
-        border: 1px solid rgba(16, 185, 129, 0.45);
-        padding: 12px 18px;
-        border-radius: 10px;
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
-        backdrop-filter: blur(8px);
-        transition: opacity 0.25s ease, transform 0.25s ease;
-        z-index: 1000;
-        font-size: 13.5px;
-        font-weight: 600;
-    }
-
-    #toast-notification.toast-error {
-        color: #F87171;
-        border-color: rgba(239, 68, 68, 0.45);
-    }
-
-    .toast-hidden {
-        opacity: 0;
-        transform: translateY(16px);
-        pointer-events: none;
-    }
-
-    .toast-visible {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    
 
     @media (max-width: 600px) {
         .rt-shell {
@@ -467,9 +432,9 @@
                                 Настроить →
                             </a>
 
-                            <button type="button" class="rt-delete-btn" data-routine-id="{{ routine.id }}" data-routine-title="{{ routine.title }}" title="Удалить рутину">
+                            <a href="{% url 'delete_routine' routine.pk %}" class="rt-delete-btn" style="text-decoration: none;" title="Удалить рутину">
                                 ✕
-                            </button>
+                            </a>
                         </div>
                     </div>
 
@@ -504,88 +469,5 @@
     </div>
 </div>
 
-<div id="toast-notification" class="toast-hidden">
-    ✓ Рутина удалена
-</div>
 
-<script>
-    let toastTimer = null;
-
-    function showToast(message, isError = false) {
-        const toast = document.getElementById('toast-notification');
-        toast.textContent = message;
-        toast.classList.toggle('toast-error', isError);
-        toast.classList.remove('toast-hidden');
-        toast.classList.add('toast-visible');
-
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => {
-            toast.classList.remove('toast-visible');
-            toast.classList.add('toast-hidden');
-        }, 2500);
-    }
-
-    document.addEventListener('click', async function(e) {
-        const btn = e.target.closest('.rt-delete-btn');
-        if (!btn) return;
-
-        const routineTitle = btn.getAttribute('data-routine-title') || '';
-        const confirmText = routineTitle
-            ? `Удалить рутину «${routineTitle}»?`
-            : 'Удалить эту рутину?';
-        if (!confirm(confirmText)) return;
-
-        const routineID = btn.getAttribute('data-routine-id');
-        const formData = new FormData();
-        formData.append('delete_routine', '1');
-        formData.append('routine_id', routineID);
-        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-
-        try {
-            const response = await fetch(window.location.href, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                if (data.status === 'ok') {
-                    const card = document.getElementById(`routine-card-${data.routine_id}`);
-                    if (card) card.remove();
-
-                    const list = document.getElementById('routines-list');
-                    const remaining = list.querySelectorAll('.rt-card').length;
-                    const countEl = document.getElementById('routines-total-count');
-                    if (countEl) countEl.textContent = remaining;
-
-                    if (remaining === 0) {
-                        list.innerHTML = `
-                            <div class="rt-empty-state">
-                                <div class="rt-empty-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-                                    </svg>
-                                </div>
-                                <h3>Рутин пока нет</h3>
-                                <p>Создайте первый шаблон, чтобы запускать любимые тренировки в один клик.</p>
-                                <a href="{% url 'create_routine' %}" class="rt-create-btn">+ Создать рутину</a>
-                            </div>
-                        `;
-                    }
-
-                    showToast('✓ Рутина удалена');
-                }
-            } else {
-                showToast('✕ Ошибка при удалении', true);
-            }
-        } catch (error) {
-            showToast('✕ Ошибка соединения', true);
-            console.error(error);
-        }
-    });
-</script>
 {% endblock %}
